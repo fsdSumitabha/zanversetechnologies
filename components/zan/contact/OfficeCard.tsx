@@ -349,11 +349,11 @@ function OfficeCard() {
   const wayIcon = "size-4 shrink-0";
 
   return (
-    <div ref={wrapRef} className="zan-office">
+    <div ref={wrapRef} className="zan-oc">
       <article
         ref={cardRef}
         aria-labelledby={titleId}
-        className="zan-office-card overflow-hidden rounded-3xl border border-line"
+        className="zan-oc-card overflow-hidden rounded-3xl border border-line"
       >
         {/* Before the sheen and the glare, so the light passes over it. */}
         <div aria-hidden="true" className="zan-oc-map h-24 sm:h-28">
@@ -362,10 +362,10 @@ function OfficeCard() {
           </div>
           <span className="zan-oc-beacon" />
         </div>
-        <div className="zan-office-sheen" aria-hidden="true" />
-        <div className="zan-office-glare" aria-hidden="true" />
+        <div className="zan-oc-sheen" aria-hidden="true" />
+        <div className="zan-oc-glare" aria-hidden="true" />
 
-        <div className="zan-office-content px-6 pb-6 sm:px-7 sm:pb-7">
+        <div className="zan-oc-content px-6 pb-6 sm:px-7 sm:pb-7">
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0 pt-6">
               <p className="truncate font-mono text-eyebrow text-muted uppercase">{office.country}</p>

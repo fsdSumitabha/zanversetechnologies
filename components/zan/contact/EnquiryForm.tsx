@@ -56,7 +56,9 @@ import { cn } from "@/lib/utils";
    It renders in three places: the homepage's contact section, /contact-us, and
    the contact modal, which asks for `compact`. There the dialog is the card and
    carries the heading, so the form gives up both and tightens its rows to stay
-   readable on a phone.
+   readable on a phone. The homepage asks for `fill`: from 1024px the card is
+   at least as tall as its column, so it ends level with the office card
+   beside it, and the project-details box takes the extra height.
    ─────────────────────────────────────────────────────────────────────────── */
 
 type Field = "name" | "email" | "phone" | "service" | "message";
@@ -161,6 +163,7 @@ function EmailFallback({ className }: { className?: string }) {
 export function EnquiryForm({
   defaultService,
   compact = false,
+  fill = false,
   className,
 }: {
   /**
@@ -175,6 +178,11 @@ export function EnquiryForm({
    * still needs the form named.
    */
   compact?: boolean;
+  /**
+   * Beside another card from 1024px: at least the height of the column, the
+   * project-details box growing into whatever the fields leave.
+   */
+  fill?: boolean;
   className?: string;
 }) {
   const uid = useId();
@@ -317,14 +325,25 @@ export function EnquiryForm({
       className={cn(
         "relative",
         !compact && "rounded-3xl border border-line bg-bg p-5 shadow-lift sm:p-8",
+        fill && "lg:flex lg:min-h-full lg:flex-col",
         className,
       )}
     >
-      <h3 id={`${uid}-title`} className={compact ? "sr-only" : "text-h3 text-ink"}>
+      {/* Set like the city on the office card it stands beside (the homepage,
+          /contact-us), so the main action is never the smaller title. */}
+      <h3 id={`${uid}-title`} className={compact ? "sr-only" : "font-display text-h2 text-ink"}>
         Project enquiry
       </h3>
 
-      <div className={cn("grid gap-5 sm:grid-cols-2", compact ? "gap-4" : "mt-6")}>
+      {/* With `fill`, the free height goes to the last row, the message, and
+          not in equal shares to the rows of inputs above it. */}
+      <div
+        className={cn(
+          "grid gap-5 sm:grid-cols-2",
+          compact ? "gap-4" : "mt-6",
+          fill && "lg:flex-auto lg:grid-rows-[auto_auto_1fr]",
+        )}
+      >
         <FieldShell id={id("name")} label="Name" error={errors.name}>
           <input
             id={id("name")}
@@ -417,6 +436,8 @@ export function EnquiryForm({
               control,
               "resize-y py-3 leading-relaxed",
               compact ? "min-h-24" : "min-h-36",
+              // auto, not 0: a box the visitor drags taller still grows the card.
+              fill && "lg:flex-auto",
             )}
             {...invalid("message")}
           />

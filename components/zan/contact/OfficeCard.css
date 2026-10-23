@@ -11,9 +11,14 @@
    no-preference`, so for a visitor who asked for less nothing moves and
    nothing is left mid-way: the rings, the field and the hands are all drawn
    in their resting place, and only the second hand is left off.
+
+   Every class here starts with zan-oc-. zan-office- is the About section's
+   office page (about.css), and these stylesheets are global: when this card's
+   wrapper was .zan-office too, it took that page's grid and was squeezed into
+   one narrow track of it.
    ─────────────────────────────────────────────────────────────────────────── */
 
-.zan-office {
+.zan-oc {
   --zan-oc-px: 50%;
   --zan-oc-py: 50%;
   --zan-oc-bx: 50%;
@@ -27,11 +32,11 @@
   perspective: 1100px;
 }
 
-.zan-office.is-active {
+.zan-oc.is-active {
   --zan-oc-o: 1;
 }
 
-.zan-office-card {
+.zan-oc-card {
   position: relative;
   z-index: 1;
   background-color: var(--color-bg);
@@ -50,18 +55,18 @@
   will-change: transform;
 }
 
-.zan-office.is-active .zan-office-card {
+.zan-oc.is-active .zan-oc-card {
   transition: box-shadow 450ms ease;
 }
 
-.zan-office.is-entering .zan-office-card {
+.zan-oc.is-entering .zan-oc-card {
   transition:
     transform 180ms ease-out,
     box-shadow 450ms ease;
 }
 
-.zan-office-sheen,
-.zan-office-glare {
+.zan-oc-sheen,
+.zan-oc-glare {
   position: absolute;
   inset: 0;
   border-radius: inherit;
@@ -69,7 +74,7 @@
   transition: opacity 500ms ease;
 }
 
-.zan-office-sheen {
+.zan-oc-sheen {
   background-image: linear-gradient(
     115deg,
     transparent 30%,
@@ -83,7 +88,7 @@
   opacity: var(--zan-oc-o);
 }
 
-.zan-office-glare {
+.zan-oc-glare {
   background-image: radial-gradient(
     farthest-corner circle at var(--zan-oc-px) var(--zan-oc-py),
     rgb(255 255 255 / 0.95) 0%,
@@ -93,7 +98,7 @@
   opacity: calc(0.9 * var(--zan-oc-o));
 }
 
-.zan-office-content {
+.zan-oc-content {
   position: relative;
   transform: translate3d(calc(var(--zan-oc-fl) * -6px + 3px), calc(var(--zan-oc-ft) * -6px + 3px), 0);
 }
