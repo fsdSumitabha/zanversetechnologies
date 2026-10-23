@@ -1,0 +1,305 @@
+/* ───────────────────────────────────────────────────────────────────────────
+   The office card: the reference profile card's pointer tilt and glare,
+   relit for a light page, under a band drawn as a map with a beacon on the
+   office, and a dial that keeps Dubai time.
+
+   OfficeCard.tsx writes the --zan-oc-* variables (fine pointer + motion
+   allowed only). Without them every value sits at rest: flat, no glare, the
+   map band centred.
+
+   Every animation here is declared inside `prefers-reduced-motion:
+   no-preference`, so for a visitor who asked for less nothing moves and
+   nothing is left mid-way: the rings, the field and the hands are all drawn
+   in their resting place, and only the second hand is left off.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.zan-office {
+  --zan-oc-px: 50%;
+  --zan-oc-py: 50%;
+  --zan-oc-bx: 50%;
+  --zan-oc-by: 50%;
+  --zan-oc-fl: 0.5;
+  --zan-oc-ft: 0.5;
+  --zan-oc-tilt-x: 0deg;
+  --zan-oc-tilt-y: 0deg;
+  --zan-oc-o: 0;
+  position: relative;
+  perspective: 1100px;
+}
+
+.zan-office.is-active {
+  --zan-oc-o: 1;
+}
+
+.zan-office-card {
+  position: relative;
+  z-index: 1;
+  background-color: var(--color-bg);
+  background-image: linear-gradient(
+    200deg,
+    var(--color-bg) 55%,
+    color-mix(in oklab, var(--color-brand-soft) 55%, var(--color-bg)) 100%
+  );
+  transform: rotateX(var(--zan-oc-tilt-x)) rotateY(var(--zan-oc-tilt-y));
+  transition:
+    transform 900ms var(--ease-out-expo),
+    box-shadow 450ms ease;
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.04),
+    calc(var(--zan-oc-fl) * 18px - 9px) calc(var(--zan-oc-ft) * 18px + 8px) 38px -20px rgb(0 0 0 / 0.2);
+  will-change: transform;
+}
+
+.zan-office.is-active .zan-office-card {
+  transition: box-shadow 450ms ease;
+}
+
+.zan-office.is-entering .zan-office-card {
+  transition:
+    transform 180ms ease-out,
+    box-shadow 450ms ease;
+}
+
+.zan-office-sheen,
+.zan-office-glare {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  transition: opacity 500ms ease;
+}
+
+.zan-office-sheen {
+  background-image: linear-gradient(
+    115deg,
+    transparent 30%,
+    color-mix(in oklab, var(--color-brand) 6%, transparent) 44%,
+    color-mix(in oklab, var(--color-brand) 10%, transparent) 50%,
+    color-mix(in oklab, var(--color-brand) 6%, transparent) 56%,
+    transparent 70%
+  );
+  background-size: 260% 260%;
+  background-position: var(--zan-oc-bx) var(--zan-oc-by);
+  opacity: var(--zan-oc-o);
+}
+
+.zan-office-glare {
+  background-image: radial-gradient(
+    farthest-corner circle at var(--zan-oc-px) var(--zan-oc-py),
+    rgb(255 255 255 / 0.95) 0%,
+    rgb(255 255 255 / 0.4) 20%,
+    rgb(255 255 255 / 0) 48%
+  );
+  opacity: calc(0.9 * var(--zan-oc-o));
+}
+
+.zan-office-content {
+  position: relative;
+  transform: translate3d(calc(var(--zan-oc-fl) * -6px + 3px), calc(var(--zan-oc-ft) * -6px + 3px), 0);
+}
+
+/* ── The map band ─────────────────────────────────────────────────────────
+   A gold wash, a dotted field and contour rings centred on the beacon. The
+   field leans against the pointer, the opposite way to the content, which is
+   what gives the card its depth when it tilts. It is abstract on purpose: no
+   streets, no coordinates, nothing that claims to be a real map. */
+
+.zan-oc-map {
+  --zan-oc-beacon-x: 30%;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--color-line);
+  background-image: linear-gradient(
+    160deg,
+    color-mix(in oklab, var(--color-brand-from) 18%, var(--color-bg)) 0%,
+    color-mix(in oklab, var(--color-brand-to) 8%, var(--color-bg)) 100%
+  );
+}
+
+/* Oversized, so the lean never shows an edge. */
+.zan-oc-field {
+  position: absolute;
+  inset: -0.75rem;
+  background-image: repeating-radial-gradient(
+    circle at var(--zan-oc-beacon-x) 50%,
+    transparent 0 1.375rem,
+    color-mix(in oklab, var(--color-brand-ink) 14%, transparent) 1.375rem calc(1.375rem + 1px)
+  );
+  -webkit-mask-image: linear-gradient(90deg, rgb(0 0 0 / 1) 35%, rgb(0 0 0 / 0.2) 100%);
+  mask-image: linear-gradient(90deg, rgb(0 0 0 / 1) 35%, rgb(0 0 0 / 0.2) 100%);
+  transform: translate3d(calc(var(--zan-oc-fl) * 12px - 6px), calc(var(--zan-oc-ft) * 8px - 4px), 0);
+}
+
+.zan-oc-dots {
+  position: absolute;
+  inset: -1.125rem;
+  background-image: radial-gradient(
+    circle at center,
+    color-mix(in oklab, var(--color-brand-ink) 30%, transparent) 0 1px,
+    transparent 1.5px
+  );
+  background-size: 1.125rem 1.125rem;
+}
+
+.zan-oc-beacon {
+  position: absolute;
+  top: 50%;
+  left: var(--zan-oc-beacon-x);
+  width: 0.625rem;
+  height: 0.625rem;
+  translate: -50% -50%;
+  border-radius: 999px;
+  background-color: var(--color-brand);
+  box-shadow:
+    0 0 0 3px var(--color-bg),
+    0 0 0 4px color-mix(in oklab, var(--color-brand-ink) 45%, transparent);
+}
+
+/* Two rings. At rest they are drawn where the pings would pass. */
+.zan-oc-beacon::before,
+.zan-oc-beacon::after {
+  content: "";
+  position: absolute;
+  inset: -0.75rem;
+  border-radius: inherit;
+  border: 1px solid color-mix(in oklab, var(--color-brand-ink) 40%, transparent);
+  background-color: color-mix(in oklab, var(--color-brand) 10%, transparent);
+}
+
+.zan-oc-beacon::after {
+  inset: -1.625rem;
+  opacity: 0.5;
+}
+
+/* ── The dial ─────────────────────────────────────────────────────────────
+   Each hand stands on the dial's centre (left 50%, bottom 50%) and turns
+   about its own foot. `translate` moves it back by half its width after the
+   turn, so the foot stays on the centre whatever the angle. */
+
+.zan-oc-dial {
+  position: relative;
+  border-radius: 999px;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-line-strong);
+  box-shadow:
+    var(--shadow-lift),
+    inset 0 0 0 4px var(--color-surface);
+}
+
+.zan-oc-tick {
+  stroke: var(--color-line-strong);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.zan-oc-tick-major {
+  stroke: var(--color-ink-2);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+
+.zan-oc-hand {
+  position: absolute;
+  left: 50%;
+  bottom: 50%;
+  translate: -50% 0;
+  transform-origin: 50% 100%;
+  rotate: var(--zan-oc-angle, 0deg);
+  border-radius: 999px;
+  background-color: var(--color-ink);
+}
+
+.zan-oc-hand-hour {
+  width: 3px;
+  height: 25%;
+}
+
+.zan-oc-hand-minute {
+  width: 2px;
+  height: 35%;
+}
+
+.zan-oc-hand-second {
+  display: none;
+  width: 1px;
+  height: 40%;
+  background-color: var(--color-brand-to);
+}
+
+.zan-oc-pivot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0.4375rem;
+  height: 0.4375rem;
+  translate: -50% -50%;
+  border-radius: 999px;
+  background-color: var(--color-brand);
+  box-shadow: 0 0 0 1.5px var(--color-ink);
+}
+
+/* ── Motion ───────────────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: no-preference) {
+  /* One tile per loop, so the field pans without ever jumping. */
+  .zan-oc-dots {
+    animation: zan-oc-drift 14s linear infinite;
+  }
+
+  .zan-oc-beacon::before,
+  .zan-oc-beacon::after {
+    inset: -0.75rem;
+    opacity: 1;
+    animation: zan-oc-ping 3.2s var(--ease-out-expo) infinite;
+  }
+  .zan-oc-beacon::after {
+    animation-delay: 1.6s;
+  }
+
+  /* From twelve to the time, once, as the hands are put on. Only a `from`
+     keyframe: the hand settles on its own angle, and keeps following it as
+     the minutes change. */
+  .zan-oc-hand-hour {
+    animation: zan-oc-set 1.6s var(--ease-out-expo) backwards;
+  }
+  .zan-oc-hand-minute {
+    animation: zan-oc-set 2.1s var(--ease-out-expo) backwards;
+  }
+
+  .zan-oc-hand-second {
+    display: block;
+    animation: zan-oc-sweep 60s linear infinite;
+  }
+}
+
+@keyframes zan-oc-drift {
+  to {
+    translate: -1.125rem 0;
+  }
+}
+
+@keyframes zan-oc-ping {
+  from {
+    scale: 0.4;
+    opacity: 0.9;
+  }
+  to {
+    scale: 3.2;
+    opacity: 0;
+  }
+}
+
+@keyframes zan-oc-set {
+  from {
+    rotate: 0deg;
+  }
+}
+
+@keyframes zan-oc-sweep {
+  from {
+    rotate: 0deg;
+  }
+  to {
+    rotate: 360deg;
+  }
+}

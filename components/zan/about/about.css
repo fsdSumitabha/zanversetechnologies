@@ -1,0 +1,238 @@
+/* About — the scrubbed statement (Apple's "Performance" copy treatment).
+
+   Each word mixes from a faint muted grey to full ink by --zan-ink (0 → 1),
+   which GSAP scrubs word by word. The default is 1, so reduced motion, no-JS
+   and any word GSAP has not reached yet in a revert all read at full ink. */
+
+.zan-about-word {
+  --zan-ink: 1;
+  --zan-word-to: var(--color-ink);
+  color: color-mix(
+    in oklab,
+    var(--zan-word-to) calc(var(--zan-ink) * 100%),
+    color-mix(in oklab, var(--color-muted) 30%, transparent)
+  );
+}
+
+.zan-about-word[data-accent] {
+  --zan-word-to: var(--color-brand-ink);
+}
+
+/* ── The office page (OfficesPortal) ──────────────────────────────────────────
+   A grid with named areas, so the same six elements read as a column on a
+   phone (and in the reduced-motion collage, where the page is the lead card)
+   and as city left, clock right on a wide screen. Sized in cqw against the
+   page's own width and in svh against the screen it fills at the end of the
+   zoom. */
+
+.zan-office {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas:
+    "eyebrow eyebrow"
+    "city city"
+    "dial time"
+    "address address"
+    "phone phone";
+  align-content: space-between;
+  align-items: center;
+  column-gap: 6cqw;
+  row-gap: 3.2svh;
+}
+
+.zan-office-dial {
+  width: 38cqw;
+}
+
+/* The foot of the page: label over value, under a hairline. On a phone the
+   time sits beside the clock instead, so it carries no rule of its own. */
+.zan-office-fact {
+  align-self: start;
+  border-top: 1px solid var(--color-line);
+  padding-top: 2.4svh;
+}
+
+.zan-office-fact.zan-office-time {
+  align-self: center;
+  border-top: 0;
+  padding-top: 0;
+}
+
+@container (min-width: 48rem) {
+  /* The address is the longest of the three facts, so its column is the
+     widest. */
+  .zan-office {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) minmax(0, 1fr) auto;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "eyebrow eyebrow eyebrow dial"
+      "city city city dial"
+      "time address phone dial";
+    align-content: stretch;
+    column-gap: 0;
+    row-gap: 3.2svh;
+  }
+
+  .zan-office-dial {
+    width: min(31cqw, 56svh);
+    padding-left: 5cqw;
+    box-sizing: content-box;
+  }
+
+  /* One continuous rule across the three facts: no column gap, padding in
+     the cells instead. */
+  .zan-office-fact,
+  .zan-office-fact.zan-office-time {
+    align-self: start;
+    border-top: 1px solid var(--color-line);
+    padding-top: 3svh;
+    padding-right: 2.5cqw;
+  }
+}
+
+/* ── The office clock ─────────────────────────────────────────────────────────
+   A white face with sixty ticks (SVG), and four layers turned about its centre
+   by `rotate`: the light that trails the seconds hand, the hour and minute
+   hands at the time React gives them, and the seconds hand. The hands sit at
+   12 and stay hidden until the client clock is known (data-ready).
+
+   The seconds hand and its light sweep once a minute in CSS; --zan-sweep (a
+   negative delay, set by the component) puts the sweep on the real second,
+   and data-paused stops it while the face is off screen. */
+
+.zan-dial {
+  position: relative;
+  isolation: isolate;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  box-shadow:
+    0 1px 2px rgb(17 16 22 / 0.04),
+    0 30px 60px -30px rgb(17 16 22 / 0.2);
+}
+
+/* The warm light the face sits in, as the hero's grid glows under the mark. */
+.zan-dial::before {
+  content: "";
+  position: absolute;
+  inset: -22%;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in oklab, var(--color-brand-glow) 30%, transparent),
+    transparent 72%
+  );
+}
+
+.zan-dial-arm {
+  position: absolute;
+  inset: 0;
+  rotate: var(--a, 0deg);
+  opacity: 0;
+  transition: opacity 0.7s var(--ease-out-expo);
+}
+
+.zan-dial[data-ready] .zan-dial-arm {
+  opacity: 1;
+}
+
+.zan-dial-arm > i {
+  position: absolute;
+  left: 50%;
+  translate: -50% 0;
+  border-radius: 999px;
+  background: var(--color-ink);
+}
+
+/* Hour: short and broad. Minute: long and narrow, reaching the ticks. Both
+   run a little past the centre, as a real hand does. */
+.zan-dial-hour > i {
+  top: 25%;
+  bottom: 45%;
+  width: 3.6%;
+}
+
+.zan-dial-minute > i {
+  top: 8%;
+  bottom: 45%;
+  width: 2.4%;
+}
+
+/* The seconds hand: a brand-ink line with a gold disc near its tip and a
+   counterweight tail. */
+.zan-dial-seconds > i {
+  top: 11%;
+  bottom: 35%;
+  width: 0.9%;
+  background: var(--color-brand-ink);
+}
+
+.zan-dial-seconds > b {
+  position: absolute;
+  left: 50%;
+  top: 14%;
+  width: 7%;
+  aspect-ratio: 1;
+  translate: -50% 0;
+  border-radius: 50%;
+  background: var(--color-brand);
+  box-shadow: inset 0 0 0 1px var(--color-brand-ink);
+}
+
+/* A wedge of the brand's light behind the seconds hand, under the other
+   hands: brightest at the hand, gone sixty degrees back. */
+.zan-dial-trail {
+  inset: 4%;
+  border-radius: 50%;
+  background: conic-gradient(
+    from -60deg,
+    transparent 0deg,
+    color-mix(in oklab, var(--color-brand-glow) 34%, transparent) 60deg,
+    transparent 60.5deg
+  );
+}
+
+.zan-dial-cap {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 4.4%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: var(--color-brand);
+  box-shadow: 0 0 0 2px var(--color-ink);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .zan-dial-trail,
+  .zan-dial-seconds {
+    animation: zan-dial-sweep 60s linear var(--zan-sweep, 0s) infinite;
+  }
+
+  .zan-dial[data-paused] :is(.zan-dial-trail, .zan-dial-seconds) {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes zan-dial-sweep {
+  from {
+    rotate: 0deg;
+  }
+  to {
+    rotate: 360deg;
+  }
+}
+
+/* Reduced motion: a clock that only changes on the minute. A seconds hand
+   that does not move would show a wrong second, so it is not drawn. */
+@media (prefers-reduced-motion: reduce) {
+  .zan-dial-trail,
+  .zan-dial-seconds {
+    display: none;
+  }
+
+  .zan-dial-arm {
+    transition: none;
+  }
+}

@@ -1,0 +1,112 @@
+/* ───────────────────────────────────────────────────────────────────────────
+   SHOWREEL (#showreel) — only what Tailwind cannot say: the pinned stage's
+   height, the wordmark's type inside the SVG mask, the one-line / stacked
+   swap, the picture's drift and band of light, and the reduced-motion band.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* lvh, not svh. The stage is pinned with position: fixed, and on iOS a fixed
+   box is laid out against the large viewport: once the URL bar retracts, a
+   100svh stage stops short of the bottom of the screen and the "full bleed"
+   picture shows a band of page ground under it. */
+.zan-showreel-stage {
+  height: 100vh;
+  height: 100lvh;
+}
+
+/* The knocked-out word. Set once, at a nominal 100 user units: the component
+   measures whatever this produces and fits the nested viewBox to it, so the
+   size on screen comes from the viewBox, never from this number. */
+.zan-showreel-word {
+  font-family: var(--font-hero);
+  font-size: 100px;
+  font-weight: 800;
+  font-stretch: 100%;
+  letter-spacing: -3px; /* -0.03em at the nominal size */
+}
+
+/* One line on wide screens; ZAN over VERSE on narrow ones, where ZANVERSE
+   across 360px would be a thin strip of type with little picture in it.
+   display, not visibility: the layout pass measures whichever branch is
+   rendered. */
+.zan-showreel-word-stack {
+  display: none;
+}
+
+@media (max-width: 767.98px) {
+  .zan-showreel-word-wide {
+    display: none;
+  }
+  .zan-showreel-word-stack {
+    display: inline;
+  }
+}
+
+/* ── The picture ──────────────────────────────────────────────────────────────
+   Dubai at golden hour is a still, so it is kept moving: the whole picture
+   drifts and pushes in over half a minute and back, and a band of warm light
+   crosses it every twelve seconds — a sheen through the letters, the sun
+   catching glass once the picture is full bleed. Both are transforms, and
+   both stop while the section is far off screen (data-paused). */
+
+/* Screen, not soft-light: soft-light of gold over the blue sky turns green.
+   Screened, the band only ever lightens towards a warm white. */
+.zan-showreel-glint {
+  background: linear-gradient(
+    100deg,
+    transparent 44%,
+    color-mix(in oklab, var(--color-brand-glow) 30%, transparent) 50%,
+    transparent 56%
+  );
+  mix-blend-mode: screen;
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .zan-showreel-drift {
+    animation: zan-reel-drift 30s var(--ease-smooth) infinite alternate;
+  }
+
+  .zan-showreel-glint {
+    animation: zan-reel-glint 12s var(--ease-smooth) infinite;
+  }
+
+  .zan-showreel-film[data-paused] :is(.zan-showreel-drift, .zan-showreel-glint) {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes zan-reel-drift {
+  from {
+    transform: scale(1) translate3d(-1.2%, 0.5%, 0);
+  }
+  to {
+    transform: scale(1.06) translate3d(1.2%, -0.6%, 0);
+  }
+}
+
+@keyframes zan-reel-glint {
+  0% {
+    opacity: 0;
+    transform: translate3d(-35%, 0, 0);
+  }
+  12%,
+  42% {
+    opacity: 1;
+  }
+  55%,
+  100% {
+    opacity: 0;
+    transform: translate3d(35%, 0, 0);
+  }
+}
+
+/* Reduced motion: nothing is pinned and nothing moves, so the stage is a
+   still band with the picture held inside the wordmark. */
+@media (prefers-reduced-motion: reduce) {
+  .zan-showreel-stage {
+    height: clamp(22rem, 58vh, 30rem);
+  }
+  .zan-showreel-copy {
+    padding-block: clamp(2.5rem, 6vh, 4rem);
+  }
+}

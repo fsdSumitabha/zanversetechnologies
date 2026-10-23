@@ -1,0 +1,147 @@
+/* ───────────────────────────────────────────────────────────────────────────
+   THE TEAM RAIL — one list, two layouts, both in CSS so every card is in the
+   server HTML and nothing moves on hydration.
+
+   • Default: a horizontal scroll-snap rail, bled to the edge of the screen
+     with the first card still under the heading. Five cards at up to 21rem
+     do not fit any viewport this site supports, so the rail always has
+     somewhere to go, at 360 and at 1440 alike, which is the only thing that
+     earns a slider its place. Native scrolling does the work — touch drag,
+     trackpad, and the arrow keys once the track has focus — and TeamRail.tsx
+     adds the buttons, the mouse drag and the progress line on top of it.
+   • prefers-reduced-motion: reduce — the same list is a plain grid, three
+     cards to a row above 768px, and the controls disappear. Nothing scrolls
+     sideways and every description is on screen at once.
+
+   Proximity snapping, not mandatory, and the group markers are snap targets
+   as well as the cards: under mandatory, or with the markers left out of the
+   snap set, the rail refuses to rest at scroll 0 and pulls the first marker
+   off the screen the moment it is let go. Measured at 360 and 768, where the
+   marker is only 40px wide and went straight past the left edge.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.zan-team-rail {
+  /* The page gutter, and past 82.5rem the gutter plus the container's own
+     margin — container-zan's two rules, resolved here so the first card lines
+     up under the heading while the overflow still runs off the screen. */
+  --gutter: clamp(1.25rem, 0.6rem + 2.8vw, 3rem);
+  --edge: max(var(--gutter), calc((100% - 82.5rem) / 2 + var(--gutter)));
+  --card: min(84vw, 21rem);
+
+  display: flex;
+  align-items: stretch;
+  gap: 1.25rem;
+  margin: 0;
+  padding: 0.5rem var(--edge) 1.75rem;
+  list-style: none;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline-start: var(--edge);
+  scroll-behavior: smooth;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.zan-team-rail::-webkit-scrollbar {
+  display: none;
+}
+.zan-team-rail:focus-visible {
+  outline: 2px solid var(--color-brand-ink);
+  outline-offset: 2px;
+  border-radius: 1.75rem;
+}
+/* Only once the drag handler is mounted; without JavaScript the rail is still
+   a scroller, but nothing about it is grabbable with a mouse. */
+.zan-team-rail[data-drag="on"] {
+  cursor: grab;
+}
+.zan-team-rail[data-grabbing="true"] {
+  cursor: grabbing;
+  user-select: none;
+}
+
+.zan-team-slide {
+  flex: 0 0 auto;
+  width: var(--card);
+  scroll-snap-align: start;
+}
+
+/* The group marker: the practice's name set down a hairline, so the two
+   groups are legible as groups even when only part of the rail is on screen. */
+.zan-team-marker {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.875rem;
+  width: 2.5rem;
+  scroll-snap-align: start;
+}
+.zan-team-marker-label {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+.zan-team-dot {
+  flex: none;
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 9999px;
+  background: var(--color-brand);
+}
+.zan-team-rule {
+  flex: 1 1 auto;
+  width: 1px;
+  background: var(--color-line);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zan-team-rail {
+    display: grid;
+    grid-template-columns: 1fr;
+    overflow: visible;
+    scroll-snap-type: none;
+    padding-block: 0;
+    cursor: auto;
+  }
+  .zan-team-slide {
+    width: auto;
+  }
+  .zan-team-marker {
+    flex-direction: row;
+    width: auto;
+    gap: 1.25rem;
+  }
+  /* The second group's label needs more air above it than the gap between two
+     cards, or it reads as another row rather than the start of one. */
+  .zan-team-marker + .zan-team-slide ~ .zan-team-marker {
+    margin-top: 1.5rem;
+  }
+  .zan-team-marker-label {
+    writing-mode: horizontal-tb;
+    transform: none;
+  }
+  .zan-team-rule {
+    width: auto;
+    height: 1px;
+  }
+  .zan-team-controls {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) and (min-width: 768px) {
+  /* Sixes, not thirds or quarters: three people in Development and two in
+     Digital marketing. A card spans two tracks, so it is the same width in
+     both groups, the first row fills exactly, and the second ends after two
+     under its own marker rather than stranding a fifth card on a row alone. */
+  .zan-team-rail {
+    grid-template-columns: repeat(6, 1fr);
+  }
+  .zan-team-marker {
+    grid-column: 1 / -1;
+  }
+  .zan-team-slide {
+    grid-column: span 2;
+  }
+}

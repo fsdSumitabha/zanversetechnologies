@@ -1,0 +1,89 @@
+/* ───────────────────────────────────────────────────────────────────────────
+   /our-team — the grid the practice groups are laid out on, and the one place
+   a card changes shape.
+
+   THE GRID. Development has three people and Digital marketing has two, and a
+   run of three in a two-track grid strands its third card on a row of its own.
+   So the tracks are chosen per width, and the one width where an odd group
+   would strand a card is handled rather than left to luck:
+
+     < 640      one track. A single column cannot orphan anything.
+     640–1023   two tracks, and an odd group's last card takes the whole row
+                instead of sitting alone on the next one. At 768 that is one
+                706px card under two 343px ones.
+     >= 1024    three tracks. Development fills a row exactly; Digital
+                marketing ends after two, under its own heading, which is the
+                whole of that group rather than the remainder of a longer one.
+
+   Checked at 360, 768, 1024 and 1440: one column, 2 + 1 wide, 3 / 2, 3 / 2.
+   No row anywhere holds a single card that is not also a whole group.
+
+   THE CARD. A card that has just been given a whole row is two to three times
+   the width of its neighbours, and a vertical card at that width stretches one
+   line of description across the page. So the card is a container query rather
+   than a media query: it lays itself out sideways when IT is wide, whoever
+   made it wide — the row-spanning card at 768, and the lead card, which is
+   full width at every size above a phone. The threshold is 30rem, which no
+   card in a two- or three-track row ever reaches.
+
+   Nothing here animates, so there is nothing for prefers-reduced-motion to
+   turn off: the page's only motion is the standing pages' Reveal, which is
+   already under <MotionConfig reducedMotion="user">.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.zan-team-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 40rem) {
+  .zan-team-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+  /* Only in the two-track range: at three tracks a group of three fills its
+     row and a group of two is the whole group. */
+  .zan-team-grid > li:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 64rem) {
+  .zan-team-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .zan-team-grid > li:last-child:nth-child(odd) {
+    grid-column: auto;
+  }
+}
+
+/* The card measures itself. `inline-size` rather than `size`: the card's
+   height is its content's, and a container that also queried height would
+   have to be given one. */
+.zan-person {
+  container-type: inline-size;
+}
+
+.zan-person-top {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+@container (min-width: 30rem) {
+  .zan-person-top {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 1.75rem;
+  }
+  /* The frame grows with the card it is in rather than with the viewport:
+     7rem in a three-up row, 9rem once the card has a row to itself. */
+  .zan-person-plate {
+    width: 9rem;
+    height: 9rem;
+  }
+}

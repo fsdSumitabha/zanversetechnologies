@@ -1,0 +1,97 @@
+# Build checks and deployment to Netlify.
+#
+# The build runs here rather than on Netlify, so the site does not have to be
+# linked to this repository through Netlify's GitHub App. Deploying from
+# Actions with a personal access token reaches the same result without that
+# installation, whichever accounts the repository and the app live under.
+#
+# Two jobs, deliberately asymmetric:
+#
+#   check    every pull request. Compiles and prerenders with no credentials at
+#            all, so it is safe for a fork PR and cannot deploy anything. It
+#            exists so a pull request shows whether it builds before it is
+#            merged: the deploy job only runs after the merge, by which point
+#            a broken build is already on main.
+#
+#   deploy   pushes to main only. Builds through Netlify so the Next runtime
+#            plugin bundles the server handler, then publishes.
+#
+# Two repository secrets:
+#
+#   NETLIFY_AUTH_TOKEN   a personal access token of a Netlify account that can
+#                        deploy the site.
+#   NETLIFY_SITE_ID      the ID of the Netlify site that serves
+#                        zanversetechnologies.com. It must be this site's own,
+#                        never the zanservices.com site's: whichever site the
+#                        ID names is the one a push to main overwrites in
+#                        production.
+#
+# Environment variables are not duplicated into GitHub secrets: `netlify build`
+# pulls them from the site once authenticated, so Netlify remains the single
+# place they are defined, and this site needs its own set there. `next build`
+# alone does not need them — the app reads every credential lazily and
+# degrades rather than failing, which is what makes the credential-free check
+# job possible.
+name: Deploy to Netlify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: netlify-${{ github.event_name == 'pull_request' && github.head_ref || 'production' }}
+  # A superseded PR build is wasted work; a superseded production deploy is a
+  # half-published site. Only the former may be cancelled.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  check:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+
+      # pnpm before setup-node: the Node cache keys off the pnpm lockfile and
+      # needs the binary on PATH to resolve the store location.
+      # Version comes from package.json packageManager — one source of truth.
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm run build
+
+  deploy:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+
+      # Version comes from package.json packageManager — one source of truth.
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Build and deploy to production
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: |
+          npx --yes netlify-cli@26 deploy \
+            --build \
+            --prod \
+            --message "${GITHUB_SHA::8} ${GITHUB_REF_NAME} — ${GITHUB_ACTOR}"

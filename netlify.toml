@@ -1,0 +1,72 @@
+# Netlify configuration.
+#
+# The build command, publish directory and the Next.js runtime plugin are all
+# detected automatically; this file exists only to configure secrets scanning.
+#
+# NOTE ON SCOPE — this file used to also carry the site's security headers.
+# It no longer does, and that is not an oversight. Those rules only ever
+# reached files Netlify's CDN serves directly (everything under public/);
+# every HTML route is rendered by the Next runtime handler, whose responses
+# bypass Netlify's header layer entirely. next.config.ts's `headers()` is the
+# layer that actually owns the pages, and that is where this site sets them.
+
+[build.environment]
+
+  # ── Secrets scanning ──────────────────────────────────────────────────────
+  #
+  # Netlify treats EVERY environment variable as a secret and greps the build
+  # output for its literal value. That is the right default, but it has no way
+  # to tell a credential from a setting — so a variable whose value is a short,
+  # ordinary string fails the build against thousands of coincidental matches
+  # in vendored code, source maps and the build cache.
+  #
+  # LOG_LEVEL is the clearest case: it is a zod enum of
+  # error | warn | info | debug, so its value is a four-letter English word.
+  # The first deploy of the previous build found it 200+ times and none of them
+  # were the variable.
+  #
+  # Only settings and deliberately-public values are listed here. Every actual
+  # credential is still scanned, so a real leak still fails the build:
+  #
+  #   scanned   MONGODB_URI, JWT_SECRET, GEMINI_API_KEY,
+  #             WHATSAPP_ACCESS_TOKEN, WHATSAPP_APP_SECRET,
+  #             WHATSAPP_VERIFY_TOKEN, PUSHER_SECRET,
+  #             WHATSAPP_PHONE_NUMBER_ID, WHATSAPP_BUSINESS_ACCOUNT_ID
+  #
+  # Entries that deserve their reasons stated:
+  #
+  #   NEXT_PUBLIC_PUSHER_KEY      Pusher's client key is designed to be in the
+  #                               browser, and the NEXT_PUBLIC_ prefix is Next's
+  #                               explicit opt-in to inlining it. It is in the
+  #                               client bundle on purpose and always will be.
+  #   PUSHER_APP_ID               An identifier rather than a credential — the
+  #                               secret it pairs with is PUSHER_SECRET, which
+  #                               stays scanned. Seven digits cannot help but
+  #                               collide with content hashes.
+  #   NEXT_PUBLIC_EMAILJS_*       EmailJS runs in the browser: the enquiry form
+  #                               posts from the visitor, so all three values
+  #                               are compiled into the client bundle by design
+  #                               and would fail every build otherwise. EmailJS
+  #                               itself calls the third one a "public key". The
+  #                               control is the origin allow-list in the
+  #                               EmailJS dashboard, not secrecy.
+  #   TRUSTED_IP_HEADER           The NAME of an HTTP header, not a value — and
+  #                               a plausible one like "x-forwarded-for" appears
+  #                               throughout any server bundle. On Netlify it
+  #                               can stay unset (Netlify's own header is the
+  #                               default); listed so that setting it cannot
+  #                               break a deploy for a reason nobody would guess.
+  #
+  # The analytics IDs are NOT listed because they are not environment variables:
+  # GTM, Meta Pixel and LinkedIn are hardcoded public IDs in
+  # components/zan/analytics/TagLoader.tsx, so the scanner never sees them.
+  #
+  # Before adding anything to this list, confirm the variable is genuinely not
+  # a credential. If a future build flags one that is NOT listed here, treat it
+  # as a real finding and investigate rather than extending the list.
+  SECRETS_SCAN_OMIT_KEYS = "LOG_LEVEL,NODE_ENV,GEMINI_MODEL,WHATSAPP_API_VERSION,WHATSAPP_TEMPLATE_LOCALE,WHATSAPP_DRY_RUN,WHATSAPP_LEAD_TEMPLATE,TRUSTED_IP_HEADER,NEXT_PUBLIC_PUSHER_KEY,NEXT_PUBLIC_PUSHER_CLUSTER,PUSHER_APP_ID,NEXT_PUBLIC_EMAILJS_SERVICE_ID,NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,NEXT_PUBLIC_EMAILJS_PUBLIC_KEY"
+
+  # The build cache is restored and saved between builds but is never deployed,
+  # so scanning it reports on bytes no visitor can reach. It produced the
+  # overwhelming majority of the previous build's first-deploy findings.
+  SECRETS_SCAN_OMIT_PATHS = ".netlify/.next/cache/**,.next/cache/**"
