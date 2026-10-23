@@ -402,7 +402,8 @@ export function ShowreelStage({ eyebrow, line, still }: Props) {
             0.06,
           );
 
-          // The picture pushes in a little the whole way.
+          // The picture pushes in a little the whole way, from its foot
+          // (transform-origin, showreel.css), so the skyline stays in frame.
           tl.fromTo(filmRef.current, { scale: 1.02 }, { scale: 1.14, duration: 0.92 }, 0);
 
           // The last slivers of ground go, leaving the picture full bleed.
@@ -466,11 +467,14 @@ export function ShowreelStage({ eyebrow, line, still }: Props) {
             drift and the band of light move what is inside it (CSS). */}
         <div ref={filmRef} className="zan-showreel-film absolute inset-0 overflow-hidden bg-ink">
           <div className="zan-showreel-drift absolute -inset-[4%]">
+            {/* Below 3:2 (every phone), cover fits the picture to the height:
+                a 3:2 photo in a layer 108% tall is drawn about 1.62 screen
+                heights wide, so 110vw alone fetched a file under half that. */}
             <Image
               src={still}
               alt=""
               fill
-              sizes="110vw"
+              sizes="(max-aspect-ratio: 3/2) 165vh, 110vw"
               className="object-cover object-[64%_72%] select-none"
               draggable={false}
             />

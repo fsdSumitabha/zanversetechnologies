@@ -48,6 +48,16 @@
    catching glass once the picture is full bleed. Both are transforms, and
    both stop while the section is far off screen (data-paused). */
 
+/* The skyline is the lower third of the photograph, on a strip of water, and
+   the rest is sky. So the push-in on the film and the drift inside it grow
+   from the foot of the picture: they crop sky off the top and the towers keep
+   their bases. Grown from the centre, they pushed the skyline off the bottom
+   of the screen and the full-bleed hold was almost all sky. */
+.zan-showreel-film,
+.zan-showreel-drift {
+  transform-origin: 50% 100%;
+}
+
 /* Screen, not soft-light: soft-light of gold over the blue sky turns green.
    Screened, the band only ever lightens towards a warm white. */
 .zan-showreel-glint {

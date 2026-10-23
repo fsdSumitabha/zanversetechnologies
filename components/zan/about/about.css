@@ -98,9 +98,14 @@
 
    The seconds hand and its light sweep once a minute in CSS; --zan-sweep (a
    negative delay, set by the component) puts the sweep on the real second,
-   and data-paused stops it while the face is off screen. */
+   and data-paused stops it while the face is off screen.
 
-.zan-dial {
+   The classes are zan-clock-*. zan-dial- is the service dial's prefix
+   (services/dial.css), and these stylesheets are global, so a shared class
+   name would style both: the face's round shadow and glow once landed on the
+   whole service dial section. */
+
+.zan-clock {
   position: relative;
   isolation: isolate;
   aspect-ratio: 1;
@@ -111,7 +116,7 @@
 }
 
 /* The warm light the face sits in, as the hero's grid glows under the mark. */
-.zan-dial::before {
+.zan-clock::before {
   content: "";
   position: absolute;
   inset: -22%;
@@ -124,7 +129,7 @@
   );
 }
 
-.zan-dial-arm {
+.zan-clock-arm {
   position: absolute;
   inset: 0;
   rotate: var(--a, 0deg);
@@ -132,11 +137,11 @@
   transition: opacity 0.7s var(--ease-out-expo);
 }
 
-.zan-dial[data-ready] .zan-dial-arm {
+.zan-clock[data-ready] .zan-clock-arm {
   opacity: 1;
 }
 
-.zan-dial-arm > i {
+.zan-clock-arm > i {
   position: absolute;
   left: 50%;
   translate: -50% 0;
@@ -146,13 +151,13 @@
 
 /* Hour: short and broad. Minute: long and narrow, reaching the ticks. Both
    run a little past the centre, as a real hand does. */
-.zan-dial-hour > i {
+.zan-clock-hour > i {
   top: 25%;
   bottom: 45%;
   width: 3.6%;
 }
 
-.zan-dial-minute > i {
+.zan-clock-minute > i {
   top: 8%;
   bottom: 45%;
   width: 2.4%;
@@ -160,14 +165,14 @@
 
 /* The seconds hand: a brand-ink line with a gold disc near its tip and a
    counterweight tail. */
-.zan-dial-seconds > i {
+.zan-clock-seconds > i {
   top: 11%;
   bottom: 35%;
   width: 0.9%;
   background: var(--color-brand-ink);
 }
 
-.zan-dial-seconds > b {
+.zan-clock-seconds > b {
   position: absolute;
   left: 50%;
   top: 14%;
@@ -181,7 +186,7 @@
 
 /* A wedge of the brand's light behind the seconds hand, under the other
    hands: brightest at the hand, gone sixty degrees back. */
-.zan-dial-trail {
+.zan-clock-trail {
   inset: 4%;
   border-radius: 50%;
   background: conic-gradient(
@@ -192,7 +197,7 @@
   );
 }
 
-.zan-dial-cap {
+.zan-clock-cap {
   position: absolute;
   left: 50%;
   top: 50%;
@@ -205,17 +210,17 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .zan-dial-trail,
-  .zan-dial-seconds {
-    animation: zan-dial-sweep 60s linear var(--zan-sweep, 0s) infinite;
+  .zan-clock-trail,
+  .zan-clock-seconds {
+    animation: zan-clock-sweep 60s linear var(--zan-sweep, 0s) infinite;
   }
 
-  .zan-dial[data-paused] :is(.zan-dial-trail, .zan-dial-seconds) {
+  .zan-clock[data-paused] :is(.zan-clock-trail, .zan-clock-seconds) {
     animation-play-state: paused;
   }
 }
 
-@keyframes zan-dial-sweep {
+@keyframes zan-clock-sweep {
   from {
     rotate: 0deg;
   }
@@ -227,12 +232,12 @@
 /* Reduced motion: a clock that only changes on the minute. A seconds hand
    that does not move would show a wrong second, so it is not drawn. */
 @media (prefers-reduced-motion: reduce) {
-  .zan-dial-trail,
-  .zan-dial-seconds {
+  .zan-clock-trail,
+  .zan-clock-seconds {
     display: none;
   }
 
-  .zan-dial-arm {
+  .zan-clock-arm {
     transition: none;
   }
 }

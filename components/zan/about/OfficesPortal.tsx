@@ -62,7 +62,7 @@ function Dial({ time }: { time: string }) {
   }, []);
 
   return (
-    <div ref={root} aria-hidden="true" className="zan-dial" data-ready={ready || undefined}>
+    <div ref={root} aria-hidden="true" className="zan-clock" data-ready={ready || undefined}>
       <svg viewBox="0 0 200 200" className="absolute inset-0 size-full overflow-visible">
         <circle cx="100" cy="100" r="99" className="fill-bg stroke-line-strong" strokeWidth="1" />
         {TICKS.map((i) => {
@@ -81,18 +81,18 @@ function Dial({ time }: { time: string }) {
           );
         })}
       </svg>
-      <span className="zan-dial-arm zan-dial-trail" />
-      <span className="zan-dial-arm zan-dial-hour" style={angle(ready ? ((h % 12) + m / 60) * 30 : 0)}>
+      <span className="zan-clock-arm zan-clock-trail" />
+      <span className="zan-clock-arm zan-clock-hour" style={angle(ready ? ((h % 12) + m / 60) * 30 : 0)}>
         <i />
       </span>
-      <span className="zan-dial-arm zan-dial-minute" style={angle(ready ? m * 6 : 0)}>
+      <span className="zan-clock-arm zan-clock-minute" style={angle(ready ? m * 6 : 0)}>
         <i />
       </span>
-      <span className="zan-dial-arm zan-dial-seconds">
+      <span className="zan-clock-arm zan-clock-seconds">
         <i />
         <b />
       </span>
-      <span className="zan-dial-cap" />
+      <span className="zan-clock-cap" />
     </div>
   );
 }
