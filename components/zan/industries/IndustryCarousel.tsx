@@ -41,8 +41,9 @@ const ROT = 34;
 const Z_STEP = 150;
 /** Cards further than this from the centre are not painted. */
 const VISIBLE = 3.4;
-/** Autoplay interval. Stops for good the first time the visitor takes over. */
-const AUTOPLAY_MS = 5200;
+/** Autoplay interval. Hovering does not pause it; a drag or keyboard focus inside
+    holds it, and a turn the visitor makes restarts the count. */
+const AUTOPLAY_MS = 3000;
 
 export function IndustryCarousel({ items, label }: { items: readonly CarouselItem[]; label: string }) {
   const stageRef = useRef<HTMLDivElement>(null);
@@ -176,25 +177,37 @@ export function IndustryCarousel({ items, label }: { items: readonly CarouselIte
       target = Math.round(target) + dir;
       run();
     };
-    apiRef.current = { go, to };
 
     /* ── autoplay (rotator only) ─────────────────────────────────────────── */
 
     let timer = 0;
-    let autoAllowed = true;
     let inView = false;
-    let quiet = true; // no pointer over it, no focus inside
+    let keyFocus = false; // focus inside that came from the keyboard, not a click
     const syncAuto = () => {
-      const wanted = autoAllowed && inView && quiet && !document.hidden && mode === "rotator";
+      const wanted = inView && !keyFocus && !dragging && !document.hidden && mode === "rotator";
       if (wanted && !timer) timer = window.setInterval(() => go(1), AUTOPLAY_MS);
       if (!wanted && timer) {
         clearInterval(timer);
         timer = 0;
       }
     };
-    const takeOver = () => {
-      autoAllowed = false;
+    /** The visitor turned the deck, so the next automatic turn waits a full interval. */
+    const restartAuto = () => {
+      if (timer) clearInterval(timer);
+      timer = 0;
       syncAuto();
+    };
+
+    /* What the buttons and dots under the deck call. */
+    apiRef.current = {
+      go: (d) => {
+        restartAuto();
+        go(d);
+      },
+      to: (i) => {
+        restartAuto();
+        to(i);
+      },
     };
 
     /* ── mode ────────────────────────────────────────────────────────────── */
@@ -250,7 +263,7 @@ export function IndustryCarousel({ items, label }: { items: readonly CarouselIte
       vel = 0;
       lastT = performance.now();
       halt();
-      takeOver();
+      syncAuto(); // held until the pointer lets go
       try {
         track.setPointerCapture(e.pointerId);
       } catch {
@@ -280,6 +293,7 @@ export function IndustryCarousel({ items, label }: { items: readonly CarouselIte
       const projected = Math.max(-1.6, Math.min(1.6, (-vel / (cardW * STEP_NEAR)) * 180));
       target = Math.round(pos + projected);
       run();
+      syncAuto(); // a full interval from the release
       if (moved > 6) {
         swallowClick = true;
         setTimeout(() => {
@@ -300,7 +314,7 @@ export function IndustryCarousel({ items, label }: { items: readonly CarouselIte
       const i = Number(el.dataset.i);
       if (mod(Math.round(pos)) !== i) {
         e.preventDefault();
-        takeOver();
+        restartAuto();
         to(i);
       }
     };
@@ -320,7 +334,7 @@ export function IndustryCarousel({ items, label }: { items: readonly CarouselIte
       accT = now;
       acc += horizontal ? e.deltaX : e.deltaY;
       if (now < lock || Math.abs(acc) < 42) return;
-      takeOver();
+      restartAuto();
       go(acc > 0 ? 1 : -1);
       acc = 0;
       lock = now + 230;
@@ -331,16 +345,17 @@ export function IndustryCarousel({ items, label }: { items: readonly CarouselIte
       const k = e.key;
       if (k !== "ArrowRight" && k !== "ArrowLeft" && k !== "Home" && k !== "End") return;
       e.preventDefault();
-      takeOver();
+      restartAuto();
       if (k === "ArrowRight") go(1);
       else if (k === "ArrowLeft") go(-1);
       else to(k === "Home" ? 0 : n - 1);
     };
 
     const onFocusIn = (e: FocusEvent) => {
-      quiet = false;
+      const t = e.target as Element | null;
+      keyFocus = !!t?.matches?.(":focus-visible"); // a Tab holds the deck; a click does not
       syncAuto();
-      const el = (e.target as Element | null)?.closest?.("li[data-i]") as HTMLElement | null;
+      const el = t?.closest?.("li[data-i]") as HTMLElement | null;
       if (!el) return;
       const i = Number(el.dataset.i);
       if (mode === "rotator" && mod(Math.round(target)) !== i) to(i);
@@ -348,16 +363,7 @@ export function IndustryCarousel({ items, label }: { items: readonly CarouselIte
     };
     const onFocusOut = () => {
       if (track.contains(document.activeElement)) return;
-      quiet = true;
-      syncAuto();
-    };
-    const onEnter = () => {
-      quiet = false;
-      syncAuto();
-    };
-    const onLeave = () => {
-      if (track.contains(document.activeElement)) return;
-      quiet = true;
+      keyFocus = false;
       syncAuto();
     };
     const onVisibility = () => syncAuto();
@@ -380,8 +386,6 @@ export function IndustryCarousel({ items, label }: { items: readonly CarouselIte
     track.addEventListener("keydown", onKey);
     track.addEventListener("focusin", onFocusIn);
     track.addEventListener("focusout", onFocusOut);
-    track.addEventListener("pointerenter", onEnter);
-    track.addEventListener("pointerleave", onLeave);
     track.addEventListener("scroll", onScroll, { passive: true });
     document.addEventListener("visibilitychange", onVisibility);
     mqDesk.addEventListener("change", setMode);
@@ -405,8 +409,6 @@ export function IndustryCarousel({ items, label }: { items: readonly CarouselIte
       track.removeEventListener("keydown", onKey);
       track.removeEventListener("focusin", onFocusIn);
       track.removeEventListener("focusout", onFocusOut);
-      track.removeEventListener("pointerenter", onEnter);
-      track.removeEventListener("pointerleave", onLeave);
       track.removeEventListener("scroll", onScroll);
       document.removeEventListener("visibilitychange", onVisibility);
       mqDesk.removeEventListener("change", setMode);

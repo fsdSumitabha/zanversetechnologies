@@ -37,8 +37,9 @@ export const site = {
   /** Where the site is served. Canonicals, the sitemap and the tag loader's
       production-host check are all built from it. */
   url: "https://zanversetechnologies.com",
-  /** The address the previous build published for the UAE pages. */
-  email: "support@zanservices.com",
+  /** The company's address, on its own domain. Every mailto link, the legal
+      pages, the structured data and the chat assistant read it from here. */
+  email: "contact@zanversetechnologies.com",
   /** <html lang> and og:locale. */
   lang: "en-AE",
   ogLocale: "en_AE",

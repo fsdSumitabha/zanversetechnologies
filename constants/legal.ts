@@ -42,13 +42,17 @@
    pages consistently.
    ─────────────────────────────────────────────────────────────────────────── */
 
+import { site } from "@/constants/zan";
+
 /**
  * A block is either literal text, or a `contact` line: the company's email or
  * the Dubai office's phone number. The contact lines carry no text of their
  * own on purpose: both values live in constants/zan.ts (`site.email`,
  * `office.phoneTel` and `office.phoneDisplay`), and a second copy of a
  * published phone number is exactly the kind of thing that drifts.
- * components/zan/page/LegalDocumentView.tsx resolves them.
+ * components/zan/page/LegalDocumentView.tsx resolves them. The one sentence
+ * that names the email inline (the refund policy's cancellation procedure)
+ * interpolates `site.email` for the same reason.
  *
  * The postal address is written into the text instead, because the opening
  * paragraphs name it as part of the sentence that identifies the entity. It
@@ -263,7 +267,7 @@ export const legalDocuments: Record<string, LegalDocument> = {
       { tag: "li", text: "Blockchain/Web3/AI projects involving deployment or live testing (high irreversibility and resource commitment)." },
       { tag: "li", text: "After project sign-off/handover or 7 days post-delivery (whichever is earlier), unless major defects due to our fault (see Warranty below)." },
       { tag: "h2", text: "5. Cancellation Procedure" },
-      { tag: "li", text: "Cancellation must be requested in writing via email to support@zanservices.com with clear subject: \"Project Cancellation Request – [Project Name]\"." },
+      { tag: "li", text: `Cancellation must be requested in writing via email to ${site.email} with clear subject: "Project Cancellation Request – [Project Name]".` },
       { tag: "li", text: "Provide reasons and current status." },
       { tag: "li", text: "We will acknowledge within 2 business days and provide a final invoice/settlement statement showing work completed, any refund due, and outstanding balance." },
       { tag: "li", text: "You must settle any outstanding payments before cancellation takes effect." },
