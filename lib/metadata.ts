@@ -20,8 +20,13 @@ import { site } from "@/constants/zan";
    cannot forget it.
    ─────────────────────────────────────────────────────────────────────────── */
 
-/** The 1200x630 card every share of this site falls back to. */
-export const OG_IMAGE = "/og-default.png";
+/**
+ * The 1200x630 card every share of this site falls back to. The version
+ * query changes whenever the card does: next.config.ts serves images as
+ * immutable for a year, and social networks cache a card by its URL, so a
+ * card redrawn under the same address would keep showing the old one.
+ */
+export const OG_IMAGE = "/og-default.png?v=2";
 export const OG_IMAGE_WIDTH = 1200;
 export const OG_IMAGE_HEIGHT = 630;
 

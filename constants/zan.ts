@@ -46,10 +46,23 @@ export const site = {
   tagline: "Web, mobile, AI and blockchain development, and digital marketing.",
   description:
     "Zan Verse Technologies builds web platforms, mobile apps, AI systems and blockchain products, and runs digital marketing for growing companies. Based at IFZA Business Park, Dubai Silicon Oasis.",
+  /** Under a home-screen icon, where the full name would be cut off. */
+  shortName: "Zan Verse",
   /** The big set-in-type name (footer, showreel mask). */
   wordmark: { lead: "ZAN", trail: "VERSE" },
-  /** The real lockup, from assets-src/brand/zan-verse-technologies-logo.png. */
-  logo: { src: "/images/brand/zan-verse-technologies.webp", width: 640, height: 233 },
+  /**
+   * The lockup: the mark and "zvt". A vector drawn from the supplied artwork
+   * in assets-src/brand, so it is sharp at any size and transparent; width and
+   * height are its viewBox, for the aspect ratio. `png` is the same lockup as
+   * a transparent 1248px PNG, for consumers that will not take an SVG
+   * (structured data, email).
+   */
+  logo: {
+    src: "/images/brand/zan-verse-technologies-logo.svg",
+    width: 1201,
+    height: 415,
+    png: "/images/brand/zan-verse-technologies-logo.png",
+  },
   /** Digits only, for wa.me links: the Dubai desk. */
   whatsapp: "971547867600",
   /**

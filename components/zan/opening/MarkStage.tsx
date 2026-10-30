@@ -13,15 +13,17 @@ const BLANK = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAA
    so — a fine pointer, ≥1024px, motion allowed, enough memory, a real GPU. */
 const ZanMark3D = dynamic(() => import("./ZanMark3D"), { ssr: false });
 
+/** The mark alone, tight to its ink; the 3D mark extrudes the same file. */
+const MARK_SRC = "/images/brand/zan-verse-technologies-mark.svg";
+
 /* Geometry shared by the flat mark and the canvas, so the swap is seamless.
-   The flat image is 90% of the box; the drawing fills 85.3% of its square,
-   so the mark spans ~77% of the box. The canvas is the box grown 8% on each
-   side and 12% top and bottom (room for the explode), so in canvas terms the
-   3D mark spans 0.768 / 1.16 of its width. */
-const FLAT = 0.9;
-const DRAWING = 0.853;
+   The flat image is a centred square 77% of the box, and the mark, a little
+   wider than it is tall, spans that square's full width. The canvas is the
+   box grown 8% on each side and 12% top and bottom (room for the explode), so
+   in canvas terms the 3D mark spans 0.77 / 1.16 of its width. */
+const FLAT = 0.77;
 const GROW_X = 0.08;
-const SPAN = (FLAT * DRAWING) / (1 + 2 * GROW_X);
+const SPAN = FLAT / (1 + 2 * GROW_X);
 
 /**
  * The desktop right column: the Zan mark.
@@ -54,7 +56,7 @@ export function MarkStage() {
       <picture>
         <source media="(max-width: 1023.98px)" srcSet={BLANK} />
         <img
-          src="/images/hero/zan-mark.svg"
+          src={MARK_SRC}
           alt=""
           width={1024}
           height={1024}
@@ -63,7 +65,7 @@ export function MarkStage() {
           decoding="async"
           draggable={false}
           className={cn(
-            "zan-hero-mark-flat pointer-events-none absolute top-[5%] left-[5%] size-[90%] select-none",
+            "zan-hero-mark-flat pointer-events-none absolute top-[11.5%] left-[11.5%] size-[77%] object-contain select-none",
             "transition-opacity duration-700 ease-out-expo",
             showing3D && "opacity-0",
           )}
@@ -71,6 +73,7 @@ export function MarkStage() {
       </picture>
       {mount && (
         <ZanMark3D
+          src={MARK_SRC}
           span={SPAN}
           onReady={() => setReady(true)}
           onFail={() => setFailed(true)}

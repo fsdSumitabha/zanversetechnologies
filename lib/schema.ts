@@ -70,7 +70,8 @@ export function organizationSchema() {
     "@id": ORG_ID,
     name: site.name,
     url: site.url,
-    logo: `${site.url}${site.logo.src}`,
+    // The PNG, not the SVG: not every reader of structured data takes a vector.
+    logo: `${site.url}${site.logo.png}`,
     image: `${site.url}${OG_IMAGE}`,
     description: site.description,
     email: site.email,

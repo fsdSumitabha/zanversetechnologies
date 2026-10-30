@@ -4,21 +4,23 @@ import { useEffect, useEffectEvent, useRef } from "react";
 import * as THREE from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { SVGLoader, type SVGResult } from "three/examples/jsm/loaders/SVGLoader.js";
-import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import { gsap } from "@/lib/gsap";
 
 /* ───────────────────────────────────────────────────────────────────────────
    The Zan mark in three.js: a TypeScript port of the previous site's hero
    logo (vite-react-shift Logo3DHero), relit for a light page. The symbol is
-   the one in the Zan Verse Technologies lockup.
+   the one in the Zan Verse Technologies lockup: a rounded square cut on the
+   diagonal into a navy shard and a cyan-to-blue one.
 
-   The brand SVG's traced outlines are smoothed and extruded, then grouped
-   into a few pieces ("shards"): four navy clusters and one red/orange piece.
-   Every outline keeps its own flat colour (navy, red, orange, periwinkle) as
-   a vertex colour, so merging pieces never loses a colour.
+   The mark's SVG is a clean vector with one path per shard, so each path is
+   extruded as it is and becomes one piece. Each piece keeps its gradient:
+   every vertex carries its height in the drawing, and the shader looks the
+   colour up from the same stops as the SVG for every pixel. (Vertex colours
+   would only blend between the corners of the outline, and the five-stop
+   blue would smear into a two-stop one.)
 
    Behaviour kept from the old site: cursor tilt and parallax, a magnetic
-   pull, hover lift with the neighbours reacting, click to explode and
+   pull, hover lift with the neighbour reacting, click to split and
    reassemble, drag to turn, a slow turn as the hero scrolls away, idle float,
    and a fly-in assembly on mount. It renders only while on screen and while
    the tab is visible.
@@ -34,122 +36,103 @@ import { gsap } from "@/lib/gsap";
      - no OrbitControls (it was disabled anyway), no deprecated Clock.
    ─────────────────────────────────────────────────────────────────────────── */
 
-const SVG_URL = "/images/hero/zan-mark.svg";
 const FOV = 40;
 const MAX_TILT = THREE.MathUtils.degToRad(15);
 /** World size of the mark's longest edge. */
 const TARGET_SIZE = 2.95;
-/** Extrude depth in SVG units (scaled with the geometry). */
-const DEPTH_SVG = 90;
-/** Navy breaks into this many contiguous pieces on explode. */
-const NAVY_PARTS = 4;
-
-// Outline smoothing: sampling density, point dedupe distance, Chaikin passes,
-// dust and sliver thresholds (SVG units).
-const SAMPLE_DIV = 16;
-// Light smoothing only: two Chaikin passes with a 3-unit dedupe rounded the
-// mark's hairline strokes away and widened its white counter-space, so the
-// four navy plates read as separate tiles instead of one pinwheel.
-const SMOOTH_MIN_DIST = 1.5;
-const CHAIKIN_ITERS = 1;
-const AREA_MIN = 22;
-const SLIVER_FRACTION = 0.02;
+/** Extrude depth in SVG units (scaled with the geometry): a tenth of the mark's width. */
+const DEPTH_SVG = 44;
+/** The bevel widens the outline by this much on every side, in SVG units. */
+const BEVEL = 1;
 
 /**
- * The logo's own flat colours. It is the logo, so these are not palette
- * tokens. `match` is the traced fill each bucket collects, `color` what it is
- * drawn in, `glow` the hover emissive.
+ * The mark's own colours: the stops of the two gradients in the SVG, each
+ * running top to bottom over the mark's full height. It is the logo, so these
+ * are not palette tokens. The keys are the paths' ids; `glow` is the hover
+ * emissive.
  */
-const PALETTE = [
-  { match: 0x284378, color: 0x21386b, glow: 0x2b5cff }, // navy
-  { match: 0xcf3a44, color: 0xd23b34, glow: 0xff5a3c }, // red
-  { match: 0xf6952f, color: 0xf2922e, glow: 0xffb14a }, // orange
-  { match: 0x8ea2d6, color: 0x93a6da, glow: 0xa9bdff }, // periwinkle
-] as const;
-const NAVY = 0;
-const RED = 1;
-const ORANGE = 2;
-
-const rgb = (hex: number) => [(hex >> 16) & 255, (hex >> 8) & 255, hex & 255] as const;
+const SHARDS = {
+  "navy-shard": { stops: ["#12326D", "#0B2365", "#030B5B"], glow: 0x2b5cff },
+  "blue-shard": { stops: ["#43F7F6", "#2ADAFB", "#18BAFD", "#0D96FE", "#076EFD"], glow: 0x5fe4ff },
+} as const;
+type ShardId = keyof typeof SHARDS;
+const isShardId = (id: string | undefined): id is ShardId => id !== undefined && id in SHARDS;
 
 /**
- * Which part of the mark a traced fill belongs to.
- *
- * The SVG is a trace: 1,948 paths and 1,086 distinct fills clustered around
- * the brand colours, so there is nothing to match exactly. Nearest-colour
- * matching failed a specific way — the mark's mid-blue diamonds trace at about
- * #566ca7, which is 77 units from navy and 91 from periwinkle, so they were
- * painted navy and disappeared.
- *
- * Family first, then lightness inside the family, so each part has its own
- * independent rule:
- *   blue                 the navy plates
- *   warm, g/r >= 0.5     the orange lens
- *   warm                 the red wedge
- *   neither (greys)      a seam or a trace artefact, dropped
- *
- * The mark's two mid-blue diamonds are NOT split out. The trace stores each
- * as an outline whose interior shards trace nearer the navy, so colouring the
- * outline alone drew hollow rings over the white channel — worse than the
- * diamonds simply carrying the plate's navy, which is what ships. The real
- * fix is a clean vector of the logo rather than this trace; see the README.
+ * Lit-to-flat calibration: the base colour is scaled so the front faces come
+ * out close to the flat SVG under this page's lights and exposure, which is
+ * what lets the flat mark fade into the 3D one without a shift in colour.
+ * Measured against the SVG in the same frame, with the highlights below.
  */
-function bucketFor(hex: number): number {
-  const [r, g, b] = rgb(hex);
-  if (b > r + 10) return NAVY;
-  if (r > b + 20) return g / Math.max(1, r) >= 0.5 ? ORANGE : RED;
-  return -1;
-}
+const LIT_SCALE = 0.95;
 
-/** Dedupe a traced contour, then round its corners with Chaikin cuts. */
-function smoothLoop(pts: THREE.Vector2[]): THREE.Vector2[] {
-  const simp: THREE.Vector2[] = [];
-  for (const p of pts) {
-    if (!simp.length || simp[simp.length - 1].distanceTo(p) > SMOOTH_MIN_DIST) simp.push(p.clone());
-  }
-  if (simp.length > 3 && simp[0].distanceTo(simp[simp.length - 1]) < SMOOTH_MIN_DIST) simp.pop();
-  if (simp.length < 4) return pts;
+/** The shader takes this many stops; a gradient with fewer is resampled to it. */
+const STOPS = 5;
 
-  let loop = simp;
-  for (let it = 0; it < CHAIKIN_ITERS; it++) {
-    const out: THREE.Vector2[] = [];
-    const n = loop.length;
-    for (let i = 0; i < n; i++) {
-      const a = loop[i];
-      const b = loop[(i + 1) % n];
-      out.push(new THREE.Vector2(0.75 * a.x + 0.25 * b.x, 0.75 * a.y + 0.25 * b.y));
-      out.push(new THREE.Vector2(0.25 * a.x + 0.75 * b.x, 0.25 * a.y + 0.75 * b.y));
-    }
-    loop = out;
-  }
-  return loop;
+/** A gradient's sRGB stops, 0-1, evenly spaced as the SVG has them, resampled to STOPS. */
+function shaderStops(hexes: readonly string[]): THREE.Vector3[] {
+  const rgb = hexes.map((h) => {
+    const n = parseInt(h.slice(1), 16);
+    return [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => v / 255);
+  });
+  return Array.from({ length: STOPS }, (_, i) => {
+    const t = (i / (STOPS - 1)) * (rgb.length - 1);
+    const k = Math.min(Math.floor(t), rgb.length - 2);
+    return new THREE.Vector3().fromArray(rgb[k].map((v, c) => v + (rgb[k + 1][c] - v) * (t - k)));
+  });
 }
 
 /**
- * Lit-to-flat calibration. A lit surface always sits lighter than the flat
- * swatch: measured against the SVG in the same frame, the mark's navy came out
- * at rgb(60,77,126) where the flat reads rgb(30,57,106). Scaling the baked
- * colour closes that gap without dimming the whole scene, which would kill the
- * shading.
+ * Satin toy plastic whose base colour is a vertical gradient. `markT` (0 at
+ * the top of the drawing, 1 at the bottom) is linear in position, so it
+ * interpolates exactly across any triangle; the stops are mixed in sRGB, as
+ * the SVG mixes them, and converted to linear for lighting.
  */
-const LIT_SCALE = 0.85;
-
-/** Bakes one flat colour into a geometry as a vertex colour attribute. */
-function paint(geo: THREE.BufferGeometry, color: THREE.Color, scale = LIT_SCALE) {
-  const count = geo.getAttribute("position").count;
-  const data = new Float32Array(count * 3);
-  for (let i = 0; i < count; i++) {
-    data[i * 3] = color.r * scale;
-    data[i * 3 + 1] = color.g * scale;
-    data[i * 3 + 2] = color.b * scale;
-  }
-  geo.setAttribute("color", new THREE.BufferAttribute(data, 3));
+function gradientMaterial(stops: THREE.Vector3[], glow: number): THREE.MeshPhysicalMaterial {
+  // A light clear coat and little reflection, so the navy reads as the
+  // brand's navy on a white page instead of washing out to pale blue wherever
+  // it catches the room's light panels.
+  const material = new THREE.MeshPhysicalMaterial({
+    color: "white",
+    metalness: 0,
+    roughness: 0.62,
+    // The key light sits almost in front of the mark, so its highlight lands
+    // on the whole front face; at full strength it laid a white veil over the
+    // navy (measured: +0.057 linear on every channel at the top). Weaker
+    // highlights leave the bevels to catch the light.
+    specularIntensity: 0.3,
+    // A thin clear coat: the full coat mirrors the bright room environment
+    // across every face and bleaches the navy.
+    clearcoat: 0.05,
+    clearcoatRoughness: 0.5,
+    envMapIntensity: 0.08,
+    emissive: new THREE.Color(glow),
+    emissiveIntensity: 0,
+    side: THREE.DoubleSide,
+  });
+  material.onBeforeCompile = (shader) => {
+    shader.uniforms.uStops = { value: stops };
+    shader.vertexShader = shader.vertexShader
+      .replace("#include <common>", "#include <common>\nattribute float markT;\nvarying float vMarkT;")
+      .replace("#include <begin_vertex>", "#include <begin_vertex>\nvMarkT = markT;");
+    shader.fragmentShader = shader.fragmentShader
+      .replace("#include <common>", `#include <common>\nvarying float vMarkT;\nuniform vec3 uStops[${STOPS}];`)
+      .replace(
+        "#include <color_fragment>",
+        `#include <color_fragment>
+        float markPos = clamp(vMarkT, 0.0, 1.0) * ${STOPS - 1}.0;
+        int markStop = int(min(floor(markPos), ${STOPS - 2}.0));
+        vec3 markSrgb = mix(uStops[markStop], uStops[markStop + 1], markPos - float(markStop));
+        diffuseColor.rgb *= sRGBTransferEOTF(vec4(markSrgb, 1.0)).rgb * ${LIT_SCALE.toFixed(2)};`,
+      );
+  };
+  return material;
 }
 
 /**
- * One piece of the mark: a merged, extruded geometry with independent
- * animation channels (hover lift, parallax, magnetic pull, explode offset),
- * composited each frame in update().
+ * One piece of the mark: an extruded geometry with independent animation
+ * channels (hover lift, parallax, magnetic pull, explode offset), composited
+ * each frame in update().
  */
 class Shard {
   readonly material: THREE.MeshPhysicalMaterial;
@@ -168,6 +151,7 @@ class Shard {
 
   constructor(
     geometry: THREE.BufferGeometry,
+    stops: THREE.Vector3[],
     glow: number,
     readonly index: number,
     readonly depthFactor: number,
@@ -181,23 +165,7 @@ class Shard {
     geometry.translate(-cx, -cy, -cz);
     geometry.computeVertexNormals();
 
-    // Satin toy plastic: a light clear coat and little reflection, so the
-    // navy reads as the brand's navy on a white page instead of washing out
-    // to pale blue wherever it catches the room's light panels.
-    this.material = new THREE.MeshPhysicalMaterial({
-      color: "white",
-      vertexColors: true,
-      metalness: 0,
-      roughness: 0.62,
-      // A thin clear coat: the full coat mirrors the bright room environment
-      // across every face and bleaches the navy.
-      clearcoat: 0.12,
-      clearcoatRoughness: 0.5,
-      envMapIntensity: 0.08,
-      emissive: new THREE.Color(glow),
-      emissiveIntensity: 0,
-      side: THREE.DoubleSide,
-    });
+    this.material = gradientMaterial(stops, glow);
 
     this.mesh = new THREE.Mesh(geometry, this.material);
     this.mesh.castShadow = true;
@@ -232,6 +200,8 @@ class Shard {
 }
 
 export interface ZanMark3DProps {
+  /** The mark's SVG: one path per shard, with the ids in SHARDS. */
+  src: string;
   /** Fraction of the canvas width the mark's longest edge should span. */
   span: number;
   className?: string;
@@ -241,7 +211,7 @@ export interface ZanMark3DProps {
   onFail?: () => void;
 }
 
-export default function ZanMark3D({ span, className, onReady, onFail }: ZanMark3DProps) {
+export default function ZanMark3D({ src, span, className, onReady, onFail }: ZanMark3DProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const announceReady = useEffectEvent(() => onReady?.());
   const announceFail = useEffectEvent(() => onFail?.());
@@ -263,9 +233,9 @@ export default function ZanMark3D({ span, className, onReady, onFail }: ZanMark3
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFShadowMap;
     // Neutral, under-exposed. Measured on the rendered mark: at exposure 1 the
-    // brand navy (#21386b) averaged a periwinkle luminance of ~121; ACES is
-    // worse here (three.js pre-scales it by 1/0.6). Less light, not a
-    // different curve, is what keeps the navy navy on a white page.
+    // brand navy averaged a periwinkle luminance of ~121; ACES is worse here
+    // (three.js pre-scales it by 1/0.6). Less light, not a different curve,
+    // is what keeps the navy navy on a white page.
     renderer.toneMapping = THREE.NeutralToneMapping;
     renderer.toneMappingExposure = 0.58;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -333,81 +303,48 @@ export default function ZanMark3D({ span, className, onReady, onFail }: ZanMark3
 
     const build = (data: SVGResult) => {
       if (disposed) return;
-      const colors = PALETTE.map((p) => new THREE.Color(p.color));
       const extrude: THREE.ExtrudeGeometryOptions = {
         depth: DEPTH_SVG,
         bevelEnabled: true,
-        bevelThickness: 4,
-        bevelSize: 2,
+        bevelThickness: 2,
+        bevelSize: BEVEL,
         bevelOffset: 0,
         bevelSegments: 3,
-        // The lens is a curve: at 1 segment its triangulation showed as hard
-        // banding across the orange.
-        curveSegments: 8,
+        // The shards' big rounded corners facet visibly at fewer segments.
+        curveSegments: 24,
         steps: 1,
       };
 
-      type Entry = {
-        geo: THREE.BufferGeometry;
-        bucket: number;
-        cx: number;
-        cy: number;
-        area: number;
-        bb: THREE.Box3;
-      };
-      const entries: Entry[] = [];
-      let warm = 0;
-
-      // 1) Extrude every kept shape, painted in its bucket's colour.
+      // 1) Extrude each shard's path as it is.
+      const parts: { geo: THREE.BufferGeometry; id: ShardId }[] = [];
+      const union = new THREE.Box3();
       for (const path of data.paths) {
-        const fillStr = (path.userData?.style?.fill as string | undefined) ?? "";
-        if (!fillStr || fillStr === "none") continue;
-        const bucket = bucketFor(new THREE.Color(fillStr).getHex());
-        if (bucket < 0) continue;
-
-        for (const shape of SVGLoader.createShapes(path)) {
-          const outline = smoothLoop(shape.getPoints(SAMPLE_DIV));
-          const area = Math.abs(THREE.ShapeUtils.area(outline));
-          if (area < AREA_MIN) continue;
-          const smoothed = new THREE.Shape(outline);
-          for (const hole of shape.holes) {
-            const hp = smoothLoop(hole.getPoints(SAMPLE_DIV));
-            if (Math.abs(THREE.ShapeUtils.area(hp)) >= AREA_MIN) smoothed.holes.push(new THREE.Path(hp));
-          }
-          const geo = new THREE.ExtrudeGeometry(smoothed, extrude);
-          // Lift the accent and periwinkle shapes clear of the navy faces they
-          // sit on: identical depths z-fight and show as cross-hatch moiré.
-          // Clear of the navy plates, and each warm shape on its own plane:
-          // the lens is many traced shards, and extruding them coincident
-          // stippled it with z-fighting.
-          if (bucket === RED || bucket === ORANGE) geo.translate(0, 0, 7 + (warm++ % 32) * 0.07);
-          paint(geo, colors[bucket]);
-          geo.computeBoundingBox();
-          const bb = geo.boundingBox!;
-          entries.push({ geo, bucket, cx: (bb.min.x + bb.max.x) / 2, cy: (bb.min.y + bb.max.y) / 2, area, bb: bb.clone() });
-        }
+        const id = (path.userData?.node as Element | undefined)?.id;
+        if (!isShardId(id)) continue;
+        const shapes = SVGLoader.createShapes(path);
+        if (!shapes.length) continue;
+        const geo = new THREE.ExtrudeGeometry(shapes, extrude);
+        geo.computeBoundingBox();
+        union.union(geo.boundingBox!);
+        parts.push({ geo, id });
       }
-      if (!entries.length) {
+      if (!parts.length) {
         announceFail();
         return;
       }
 
+      // 2) Each vertex's height in the drawing, 0 at the top and 1 at the
+      //    bottom, before anything moves: both gradients span the whole mark.
+      const top = union.min.y + BEVEL;
+      const height = union.max.y - union.min.y - 2 * BEVEL;
+      for (const { geo } of parts) {
+        const pos = geo.getAttribute("position");
+        const t = new Float32Array(pos.count);
+        for (let i = 0; i < pos.count; i++) t[i] = (pos.getY(i) - top) / height;
+        geo.setAttribute("markT", new THREE.BufferAttribute(t, 1));
+      }
 
-      // 1b) Drop slivers — navy only. The mark's small shapes (the two
-      // periwinkle diamonds at its centre, the red and orange lens) are far
-      // below 2% of the largest navy triangle, and culling them dropped parts
-      // of the logo itself.
-      const maxArea = entries.reduce((m, e) => Math.max(m, e.area), 0);
-      const kept = entries.filter((e) => {
-        if (e.bucket !== NAVY) return true;
-        if (e.area >= maxArea * SLIVER_FRACTION) return true;
-        e.geo.dispose();
-        return false;
-      });
-
-      // 2) Centre, scale and flip Y (SVG is y-down).
-      const union = new THREE.Box3();
-      for (const e of kept) union.union(e.geo.boundingBox!);
+      // 3) Centre, scale and flip Y (SVG is y-down).
       const size = union.getSize(new THREE.Vector3());
       const center = union.getCenter(new THREE.Vector3());
       const s = TARGET_SIZE / Math.max(size.x, size.y);
@@ -415,76 +352,16 @@ export default function ZanMark3D({ span, className, onReady, onFail }: ZanMark3
         .makeScale(s, -s, s)
         .multiply(new THREE.Matrix4().makeTranslation(-center.x, -center.y, -DEPTH_SVG / 2));
 
-      // 3) Navy (and periwinkle) cluster into NAVY_PARTS contiguous pieces,
-      //    seeded by farthest-point spread over the significant shapes.
-      const navy = kept.filter((e) => e.bucket === NAVY).sort((a, b) => b.area - a.area);
-      const cand = navy.slice(0, Math.max(NAVY_PARTS, Math.min(navy.length, 16)));
-      const seeds: { x: number; y: number }[] = [];
-      if (cand.length) {
-        seeds.push({ x: cand[0].cx, y: cand[0].cy });
-        while (seeds.length < Math.min(NAVY_PARTS, cand.length)) {
-          let best = cand[0];
-          let bestD = -1;
-          for (const c of cand) {
-            let md = Infinity;
-            for (const sd of seeds) md = Math.min(md, (c.cx - sd.x) ** 2 + (c.cy - sd.y) ** 2);
-            if (md > bestD) {
-              bestD = md;
-              best = c;
-            }
-          }
-          seeds.push({ x: best.cx, y: best.cy });
-        }
-      }
-      const nearestSeed = (cx: number, cy: number) => {
-        let bi = 0;
-        let bd = Infinity;
-        seeds.forEach((sd, i) => {
-          const d = (cx - sd.x) ** 2 + (cy - sd.y) ** 2;
-          if (d < bd) {
-            bd = d;
-            bi = i;
-          }
-        });
-        return bi;
-      };
-
-      const navyClusters: THREE.BufferGeometry[][] = seeds.map(() => []);
-      const accent: THREE.BufferGeometry[] = [];
-      for (const e of kept) {
-        if (e.bucket === RED || e.bucket === ORANGE) accent.push(e.geo);
-        else if (seeds.length) navyClusters[nearestSeed(e.cx, e.cy)].push(e.geo);
-        else e.geo.dispose();
-      }
-
-      // 4) Merge each piece into one mesh: four navy shards and the accent.
-      const parts = [
-        ...navyClusters.map((geos) => ({ geos, glow: PALETTE[NAVY].glow })),
-        { geos: accent, glow: PALETTE[RED].glow },
-      ];
-      let idx = 0;
-      for (const part of parts) {
-        if (!part.geos.length) continue;
-        const merged = mergeGeometries(part.geos, false);
-        part.geos.forEach((g) => g.dispose());
-        if (!merged) continue;
-        merged.applyMatrix4(toWorld);
-        const shard = new Shard(merged, part.glow, idx, 0.45 + (idx % 3) * 0.2);
+      parts.forEach(({ geo, id }, idx) => {
+        geo.applyMatrix4(toWorld);
+        const shard = new Shard(geo, shaderStops(SHARDS[id].stops), SHARDS[id].glow, idx, 0.45 + (idx % 3) * 0.2);
         shards.push(shard);
         meshes.push(shard.mesh);
         group.add(shard.mesh);
-        idx++;
-      }
-      if (!shards.length) {
-        announceFail();
-        return;
-      }
-
-      // Neighbours in angular order, for the hover reaction.
-      const ordered = [...shards].sort((a, b) => a.angle - b.angle);
-      ordered.forEach((sh, i) => {
-        sh.neighbours = [ordered[(i - 1 + ordered.length) % ordered.length], ordered[(i + 1) % ordered.length]];
       });
+
+      // Each shard's neighbour is the other one.
+      for (const sh of shards) sh.neighbours = shards.filter((o) => o !== sh);
 
       // Fly in and assemble, while the flat mark fades out underneath.
       formTl = gsap.timeline();
@@ -509,9 +386,15 @@ export default function ZanMark3D({ span, className, onReady, onFail }: ZanMark3
       announceReady();
     };
 
-    new SVGLoader().load(SVG_URL, build, undefined, () => {
-      if (!disposed) announceFail();
-    });
+    // The shards' fills are gradient references, which SVGLoader would hand
+    // to THREE.Color (and warn about). The colours come from SHARDS, so the
+    // references are dropped before parsing.
+    fetch(src)
+      .then((res) => (res.ok ? res.text() : Promise.reject(new Error(`${res.status} ${src}`))))
+      .then((text) => build(new SVGLoader().parse(text.replace(/\sfill="url\([^)]*\)"/g, ""))))
+      .catch(() => {
+        if (!disposed) announceFail();
+      });
 
     /* ── Input: on its own box ────────────────────────────────────────── */
     const rawNdc = new THREE.Vector2();
@@ -599,14 +482,16 @@ export default function ZanMark3D({ span, className, onReady, onFail }: ZanMark3
       for (const s of shards) {
         gsap.killTweensOf(s.offset);
         gsap.killTweensOf(s.offsetRot);
-        // Modest spread, so pieces stay inside the canvas.
-        const spread = 0.8 + Math.random() * 0.5;
+        // The mark splits along its cut: the halves slide apart and tilt.
+        // Each half is half the mark, so a bigger spread or spin carries its
+        // corners past the canvas edge, where they are cut off.
+        const spread = 0.32 + Math.random() * 0.12;
         tl.to(
           s.offset,
           {
-            x: s.outward.x * spread + (Math.random() - 0.5) * 0.5,
-            y: s.outward.y * spread + (Math.random() - 0.5) * 0.5,
-            z: (Math.random() - 0.5) * 1.4 + s.outward.z * 0.6,
+            x: s.outward.x * spread + (Math.random() - 0.5) * 0.1,
+            y: s.outward.y * spread + (Math.random() - 0.5) * 0.1,
+            z: (Math.random() - 0.5) * 0.5 + s.outward.z * 0.4,
             duration: OUT,
             ease: "power3.out",
           },
@@ -615,15 +500,16 @@ export default function ZanMark3D({ span, className, onReady, onFail }: ZanMark3
           .to(
             s.offsetRot,
             {
-              x: (Math.random() - 0.5) * Math.PI * 2.5,
-              y: (Math.random() - 0.5) * Math.PI * 2.5,
-              z: (Math.random() - 0.5) * Math.PI * 2.5,
+              x: (Math.random() - 0.5) * Math.PI * 0.4,
+              y: (Math.random() - 0.5) * Math.PI * 0.4,
+              z: (Math.random() - 0.5) * Math.PI * 0.2,
               duration: OUT,
               ease: "power2.out",
             },
             0,
           )
-          .to(s, { glow: 0.6, duration: OUT, ease: "power1.out" }, 0)
+          // The split replaces the hover pose rather than adding to it.
+          .to(s, { glow: 0.6, hoverLift: 0, duration: OUT, ease: "power1.out" }, 0)
           .to(s.offset, { x: 0, y: 0, z: 0, duration: BACK, ease: "elastic.out(1, 0.55)" }, OUT + HOLD)
           .to(s.offsetRot, { x: 0, y: 0, z: 0, duration: BACK, ease: "elastic.out(1, 0.6)" }, OUT + HOLD)
           .to(s, { glow: 0, duration: BACK * 0.6, ease: "power2.out" }, OUT + HOLD);
@@ -788,7 +674,7 @@ export default function ZanMark3D({ span, className, onReady, onFail }: ZanMark3
       renderer.forceContextLoss();
       canvas.remove();
     };
-  }, [span]);
+  }, [src, span]);
 
   return (
     <div

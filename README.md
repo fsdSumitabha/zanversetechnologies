@@ -76,7 +76,7 @@ When a request arrives without the header, for example on localhost, the per-IP 
 | `components/animations/`, `components/ui/` | The scroll scenes |
 | `server/` | The chat backend: environment, MongoDB models, Gemini, WhatsApp, Pusher, rate limits |
 | `public/og-default.png` | The 1200x630 share card every page falls back to |
-| `assets-src/` | Source masters that are not served: the lockup at full size, the original team portraits |
+| `assets-src/` | Source masters that are not served: the logo artwork as supplied, the original team portraits |
 | `ZAN_BRIEF.md` | The rules anyone editing a section follows |
 
 ## Palette
@@ -98,14 +98,21 @@ Components use the tokens (`bg-brand`, `text-brand-ink`, `text-on-brand` …), n
 - **Reduced motion.** Every GSAP scene is built inside `gsap.matchMedia()` and falls back to a static, complete layout for `prefers-reduced-motion`. Framer Motion follows `<MotionConfig reducedMotion="user">`. Lenis is not created at all.
 - **Content stays in the DOM.** Headings, lists and links are server-rendered. Canvases are decorative and `aria-hidden`.
 
-## Known follow-up: the hero's 3D mark
+## The logo
 
-The interactive three.js mark is extruded from `/images/hero/zan-mark.svg`, which is a **raster trace**: 1,948 paths and 1,086 slightly different fills for what is a seven-shape logo. Shape identity is already lost in that file, which costs two small fidelity gaps:
+The artwork was supplied as raster images (`assets-src/brand/zanverse-logo.jpeg`, the lockup on white, and `zanverse-logo-iconmark.png`, the mark). The served files are a vector redrawn from the lockup: measured edge by edge and checked against the original by pixel difference, to within about 1px at the original's 1448px width. If a designer's own vector file turns up, it should replace these.
 
-- The two mid-blue diamonds at the mark's centre render in the plates' navy. Their outlines trace lighter than their interiors, so colouring them separately drew hollow rings across the white channel, which looked worse.
-- The orange lens keeps a faint stipple where its many traced shards overlap, reduced but not removed by giving each shard its own depth.
+| File | Use |
+|---|---|
+| `public/images/brand/zan-verse-technologies-logo.svg` | The lockup, mark and "zvt". `site.logo`, rendered by `ZanLogo` |
+| `public/images/brand/zan-verse-technologies-logo.png` | The same as a transparent PNG (`site.logo.png`): structured data, email |
+| `public/images/brand/zan-verse-technologies-mark.svg` | The mark alone. The hero's flat mark, and what `ZanMark3D` extrudes (it keys on the paths' ids) |
+| `public/images/brand/zan-verse-technologies-mark.png` | The mark as a transparent 1024px PNG, for anywhere else it is needed |
+| `app/favicon.ico`, `app/icon.svg`, `app/icon.png`, `app/apple-icon.png` | The favicon set. `icon.svg` turns the navy shard white in a dark browser theme |
+| `app/manifest.ts`, `public/images/brand/icon-*.png` | Home-screen name and icons, including a maskable one |
+| `public/og-default.png` | The share card. Bump the `?v=` in `OG_IMAGE` (`lib/metadata.ts`) whenever it changes |
 
-Both disappear with a clean vector of the logo: seven paths, seven flat fills. Then each part is one shape with one colour and the colour bucketing in `ZanMark3D.tsx` can go entirely. The geometry work around it (light smoothing, a small bevel, eight curve segments) is correct and carries over unchanged. The flat SVG remains the fallback and is pixel-accurate today.
+The logo's colours (navy and the cyan-to-blue gradient) belong to the logo only; the site's palette stays gold. Images under `public/` are served as immutable for a year, so a changed image gets a new file name or version query rather than being overwritten in place.
 
 ## Third-party notices
 
