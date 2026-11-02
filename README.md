@@ -57,12 +57,14 @@ When a request arrives without the header, for example on localhost, the per-IP 
 | `app/(site)/layout.tsx` | Fonts, the metadata every route inherits (with the pre-launch noindex), the company's JSON-LD, and the shell: consent banner, preloader, scroll progress, smooth scroll, navbar, footer, contact modal, analytics |
 | `app/(site)/page.tsx` | The homepage's section order, with a map of every scene |
 | `app/(site)/*/` | Every other page: services and the sixteen service pages, portfolio, how we work, about us, our team, contact, thank you and the five policies |
+| `app/(landing)/` | The paid landing pages (`/lp/<slug>`), with their own root layout: no preloader, no mega menu, no timed modal. Consent banner and tags as everywhere else. See "Landing pages" below |
 | `app/(console)/agent/` | The agent console, with its own root layout: no site shell, no consent banner, no tags |
 | `app/api/` | The chat, the agent console's API, Pusher auth and the WhatsApp webhook |
 | `app/global-not-found.tsx` | The 404 for unmatched URLs, rendered in the site layout (the two root layouts leave no shared one) |
 | `app/globals.css` | Design tokens and the gold palette. The light theme is the only theme. |
 | `constants/zan.ts` | The company (`site`, `office`) and all homepage content. Sections never hard-code copy. |
 | `constants/pages.ts`, `constants/legal.ts` | The copy for every other page, and the five policies |
+| `constants/landing.ts`, `components/zan/landing/` | The landing pages' copy and configuration, and the sections they are built from |
 | `constants/serviceArt.ts`, `constants/serviceHero.ts` | Card artwork and service photography, with each photograph's source |
 | `lib/brand.ts` | `brandPalette`: the palette as hex strings, for WebGL and canvas |
 | `lib/links.ts`, `lib/useSiteHref.ts` | Href resolution (a homepage anchor becomes `/#…` on any other page) and WhatsApp links |
@@ -78,6 +80,16 @@ When a request arrives without the header, for example on localhost, the per-IP 
 | `public/og-default.png` | The 1200x630 share card every page falls back to |
 | `assets-src/` | Source masters that are not served: the logo artwork as supplied, the original team portraits |
 | `ZAN_BRIEF.md` | The rules anyone editing a section follows |
+
+## Landing pages
+
+`/lp/web-development`, `/lp/app-development` and `/lp/digital-marketing`, for paid traffic. One layout draws them all; `landingPages` in `constants/landing.ts` is the only thing that differs. To add a page, add an entry there: its route, metadata and form follow from it. A page lists one or more groups of packages (`decks`); more than one become tabs. A page with a headline line longer than "Marketing Judged On" needs the size in `LandingHero.tsx` checking. An unknown slug gets a 404 that offers the pages that do exist.
+
+- **Leads** go through the same EmailJS service and template as the site's enquiry form. They are told apart by the hidden `lead_source` field (`landing:<slug>`) and by which form sent them. The template renders a fixed set of variables, so all of this, with the page's address and any campaign tags, is written at the head of `message`; `lead_source` is also sent as a variable of its own, for if the template ever gives it a column. In the GTM dataLayer they are `form_submission` with `form_name: "landing_lead_form"`, `landing_page` and `form_location`.
+- **Conversions** count on the same `/thank-you`. That page sits under the site's root layout, so reaching it is a full page load; the form marks the preloader and the timed modal as seen first, so a new lead sees neither.
+- **Phone numbers** are UAE only, with `+971` fixed in the field (`lib/uaePhone.ts`).
+- **No prices or currency figures** appear anywhere on these pages, by design. Case-study results quoted in money are filtered out in `landingProjects`.
+- **Not indexed.** They carry `noindex, follow` and stay out of the sitemap, so they cannot compete with `/services/*`. This is permanent, unlike the site's pre-launch noindex. To change it, see `app/(landing)/layout.tsx`.
 
 ## Palette
 

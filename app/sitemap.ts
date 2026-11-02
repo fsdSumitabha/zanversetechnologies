@@ -20,6 +20,10 @@ import { absoluteUrl } from "@/lib/metadata";
    crawlers that every page on the site changed at the same instant — a signal
    Google learns to ignore, and then keeps ignoring once there is a real one.
    An absent <lastmod> is honest; a fabricated one is not.
+
+   NO /lp/* PAGES. Those are for paid traffic and carry a noindex, and a sitemap
+   entry for a page that refuses the index is a contradiction Search Console
+   reports as an error. See app/(landing)/layout.tsx.
    ─────────────────────────────────────────────────────────────────────────── */
 
 export default function sitemap(): MetadataRoute.Sitemap {

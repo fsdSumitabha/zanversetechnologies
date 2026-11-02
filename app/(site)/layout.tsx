@@ -125,9 +125,10 @@ export const viewport: Viewport = {
 };
 
 /**
- * The marketing site's root layout — one of two. The agent console has its own
+ * The marketing site's root layout — one of three. The agent console has its own
  * in app/(console)/agent/layout.tsx, so nothing here (the shell, the consent
- * banner, the tags) ever loads on a page that shows leads and transcripts.
+ * banner, the tags) ever loads on a page that shows leads and transcripts. The
+ * paid landing pages have theirs in app/(landing)/layout.tsx, without the shell.
  * app/global-not-found.tsx renders unmatched URLs inside this layout too.
  */
 export default function SiteLayout({ children }: Readonly<{ children: React.ReactNode }>) {

@@ -55,9 +55,17 @@ function push(event: DataLayerEvent) {
  * Google, Meta or LinkedIn, and Google Analytics' terms forbid receiving them
  * at all. The earlier site pushed the whole form as `form_data`; that key is
  * gone on purpose.
+ *
+ * A landing page adds which page and which of its forms, under the keys the
+ * earlier site's landing pages used: campaigns are bought per page, so that is
+ * the unit the reports need.
  */
-export function trackFormSubmission(formName: string, service: string) {
-  push({ event: "form_submission", form_name: formName, service });
+export function trackFormSubmission(
+  formName: string,
+  service: string,
+  landing?: { landing_page: string; form_location: string },
+) {
+  push({ event: "form_submission", form_name: formName, service, ...landing });
 }
 
 /**

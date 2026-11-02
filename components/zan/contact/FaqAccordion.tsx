@@ -12,9 +12,21 @@ const EASE = [0.16, 1, 0.3, 1] as const;
  * One open at a time, the first open to start with. Every answer is in the
  * DOM from the server render: a closed panel collapses to `0fr` and is made
  * inert, so it stays indexable without being read or tabbed into while shut.
+ *
+ * `numberFrom` is for a list that continues one shown above it, which is also
+ * the case for `startClosed`: the visitor has just opened it to scan the
+ * questions, and has not asked for any one answer yet.
  */
-export function FaqAccordion({ items }: { items: readonly FAQ[] }) {
-  const [open, setOpen] = useState<number | null>(0);
+export function FaqAccordion({
+  items,
+  numberFrom = 1,
+  startClosed = false,
+}: {
+  items: readonly FAQ[];
+  numberFrom?: number;
+  startClosed?: boolean;
+}) {
+  const [open, setOpen] = useState<number | null>(startClosed ? null : 0);
   const base = useId();
 
   return (
@@ -48,7 +60,7 @@ export function FaqAccordion({ items }: { items: readonly FAQ[] }) {
                     isOpen ? "text-brand-ink" : "text-muted",
                   )}
                 >
-                  {String(i + 1).padStart(2, "0")}
+                  {String(i + numberFrom).padStart(2, "0")}
                 </span>
                 <span className="flex-1 text-h3 text-ink transition-colors duration-300 group-hover:text-brand-ink">
                   {item.question}
