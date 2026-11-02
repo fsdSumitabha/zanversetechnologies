@@ -27,6 +27,15 @@
    page now quotes its own case study instead, from `projects`, because a figure
    about organic traffic proves nothing about an app.
 
+   WHAT THE ADS ARE JUDGED ON. These pages run on Google Ads in Dubai. Quality
+   Score's landing page component measures how relevant and useful the page is
+   to someone who clicked the ad, so what counts is the service and the city on
+   the page itself: in the h1 (`eyebrow`, which the hero sets inside it), the
+   subhead and the section headings. `seo.keywords` becomes the keywords meta tag,
+   which Google ignores; it is here as the record of what each page is built to
+   match. Only list what the page actually sells and says. A keyword the page
+   does not answer costs more per click and converts worse than no keyword.
+
    The services are the old pages' packages. They carry what they include where
    a price used to be. A page sells one group of them or several; several become
    tabs, so a page with sixteen services is no longer than one with four.
@@ -146,7 +155,9 @@ export interface LandingPage {
   label: string;
   /** The enquiry's `service`: in the words of the site's own form, so reports agree. */
   service: string;
-  seo: { title: string; description: string };
+  /** Title under about 60 characters and description under about 160, or Google cuts them. */
+  seo: { title: string; description: string; keywords: readonly string[] };
+  /** The service and the city, as a searcher types them. Set inside the h1. */
   eyebrow: string;
   headline: { lead: string; accent: string };
   subhead: string;
@@ -181,14 +192,31 @@ export const landingPages: readonly LandingPage[] = [
     label: "Web Development",
     service: "Web Development",
     seo: {
-      title: "Web Development Company in Dubai, UAE: Free Quote",
-      description:
-        "Custom website development in Dubai. Business websites, e-commerce and web applications built to convert. Free consultation, and a written quote before work begins.",
+      title: "Web Development Company in Dubai | Free Website Quote",
+      description: `Website design and web development in Dubai: business websites, e-commerce and custom web apps built to convert. ${stat("projects")} projects, ${stat("rating")} rating. Free quote.`,
+      keywords: [
+        "web development company dubai",
+        "web development dubai",
+        "website development company dubai",
+        "website development dubai",
+        "website design dubai",
+        "web design company dubai",
+        "ecommerce website development dubai",
+        "ecommerce website dubai",
+        "custom web application development dubai",
+        "web app development uae",
+        "business website design dubai",
+        "landing page design dubai",
+        "wordpress development dubai",
+        "next.js development dubai",
+        "seo friendly website dubai",
+        "website cost dubai",
+      ],
     },
-    eyebrow: `${stat("projects")} Projects delivered · ${stat("rating")} Client rating`,
+    eyebrow: "Web Development Company in Dubai",
     headline: { lead: "Websites That Turn", accent: "Traffic Into Revenue" },
     subhead:
-      "From a starter site to a custom web application: designed to convert, built to scale, and priced before a line of code is written.",
+      "Website design and development in Dubai, from a starter site to a custom web application: designed to convert, built to scale, and priced before a line of code is written.",
     outcomes: [
       { value: "340%", label: "Increase in online sales" },
       { value: "1.8s", label: "Page load, down from 6.2s" },
@@ -196,7 +224,7 @@ export const landingPages: readonly LandingPage[] = [
     ],
     proof: { value: "340%", label: "increase in online sales for a fashion retailer" },
     packagesIntro: {
-      title: ["Website & web app", "packages"],
+      title: ["Website & web app", "packages in Dubai"],
       lead: "Every package we sell, from one campaign page to a full online store. Final scope is confirmed in a written quotation before work begins.",
     },
     decks: [
@@ -266,14 +294,32 @@ export const landingPages: readonly LandingPage[] = [
     label: "App Development",
     service: "Mobile App Development",
     seo: {
-      title: "App Development Company in Dubai, UAE: Free Quote",
+      title: "Mobile App Development Company in Dubai | Free Quote",
       description:
-        "Mobile app development in Dubai. iOS, Android, React Native and Flutter apps, from MVP to enterprise. Free consultation, and a written quote before work begins.",
+        "iOS and Android app development in Dubai. Flutter, React Native and native builds, from MVP to enterprise, with AI features where you need them. Free quote.",
+      keywords: [
+        "mobile app development company dubai",
+        "mobile app development dubai",
+        "app development company dubai",
+        "app developers dubai",
+        "ios app development dubai",
+        "android app development dubai",
+        "flutter app development dubai",
+        "react native app development dubai",
+        "cross platform app development uae",
+        "mvp app development dubai",
+        "ai app development dubai",
+        "enterprise app development dubai",
+        "fintech app development dubai",
+        "ecommerce app development dubai",
+        "app maintenance dubai",
+        "app development cost dubai",
+      ],
     },
-    eyebrow: "MVP to Enterprise · iOS, Android & Cross-Platform",
+    eyebrow: "Mobile App Development Company in Dubai",
     headline: { lead: "Mobile Apps Users", accent: "Keep Coming Back To" },
     subhead:
-      "Validate an idea with an MVP or ship a full native build: one team, a single codebase where it makes sense, and a price agreed up front.",
+      "iOS and Android app development in Dubai. Validate an idea with an MVP or ship a full native build: one team, a single codebase where it makes sense, and a price agreed up front.",
     outcomes: [
       { value: "15,000+", label: "Downloads in month one" },
       { value: "4.7", label: "App Store rating" },
@@ -281,8 +327,10 @@ export const landingPages: readonly LandingPage[] = [
     ],
     proof: { value: "15,000+", label: "downloads in month one for a fitness startup" },
     packagesIntro: {
-      title: ["App development", "packages"],
-      lead: "From a first MVP to a full native build, and the upkeep after it. Final scope is confirmed in a written quotation before work begins.",
+      title: ["App development", "packages in Dubai"],
+      /* AI, fintech, e-commerce and healthcare are the site's own practices and
+         industries, named here because the page has to answer those searches. */
+      lead: "From a first MVP to a full native build and the upkeep after it, for e-commerce, fintech, healthcare and more, with AI features such as chatbots where your app needs them. Final scope is confirmed in a written quotation before work begins.",
     },
     decks: [
       {
@@ -356,14 +404,34 @@ export const landingPages: readonly LandingPage[] = [
        this page sells all four of its disciplines. The package goes in the message. */
     service: "Digital Marketing",
     seo: {
-      title: "Digital Marketing Agency in Dubai, UAE: Free Quote",
-      description:
-        "Digital marketing in Dubai. SEO, AEO & GEO, Google and Meta Ads, social media and creator campaigns, reported against revenue. Free audit, and a written quote before work begins.",
+      title: "Digital Marketing Agency in Dubai | SEO, Google Ads & Social",
+      description: `SEO, AEO & GEO, Google and Meta Ads, social media and influencer marketing in Dubai, reported against revenue. ${stat("rating")} client rating. Get a free quote.`,
+      keywords: [
+        "digital marketing agency dubai",
+        "digital marketing company dubai",
+        "digital marketing services dubai",
+        "seo company dubai",
+        "seo agency dubai",
+        "seo services dubai",
+        "google ads agency dubai",
+        "ppc agency dubai",
+        "ppc management dubai",
+        "performance marketing agency dubai",
+        "meta ads agency dubai",
+        "linkedin ads agency uae",
+        "social media marketing agency dubai",
+        "social media management dubai",
+        "influencer marketing agency dubai",
+        "generative engine optimization dubai",
+        "answer engine optimization dubai",
+        "ai seo agency dubai",
+        "app store optimization uae",
+      ],
     },
-    eyebrow: "Search · Paid · Social · Creators",
+    eyebrow: "Digital Marketing Agency in Dubai",
     headline: { lead: "Marketing Judged On", accent: "What It Returns" },
     subhead:
-      "Search, paid media, social and creator campaigns run as one strategy, with the tracking to prove which part of the spend actually worked.",
+      "Digital marketing in Dubai: SEO, Google and Meta Ads, social media and influencer campaigns run as one strategy, with the tracking to prove which part of the spend actually worked.",
     outcomes: [
       { value: "3x", label: "Organic traffic growth" },
       { value: "180%", label: "More qualified leads" },
@@ -371,7 +439,7 @@ export const landingPages: readonly LandingPage[] = [
     ],
     proof: { value: "3x", label: "organic traffic in six months for a B2B SaaS" },
     packagesIntro: {
-      title: ["Digital marketing", "services"],
+      title: ["Digital marketing", "services in Dubai"],
       lead: "Search, paid media, social and creators, bought one at a time or run together. Final scope is confirmed in a written quotation before work begins.",
     },
     decks: [
@@ -709,7 +777,7 @@ export const landingCopy = {
     title: ["Let's build something", "great together"],
     lead: (topic: string) =>
       `Book a free 30-minute consultation. We will tell you what your ${topic} project should cost and how long it should take, whether or not you work with us.`,
-    served: "Serving businesses across the UAE.",
+    served: "Serving businesses in Dubai and across the UAE.",
     form: { title: "Request a callback", lead: "One form, one reply, no sales sequence." },
   },
 

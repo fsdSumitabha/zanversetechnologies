@@ -82,15 +82,6 @@ export function LandingHero({ page }: { page: LandingPage }) {
       <div className="container-zan grid gap-x-12 gap-y-8 pt-[calc(var(--spacing-nav)+1.5rem)] pb-12 sm:pt-[calc(var(--spacing-nav)+2.5rem)] lg:min-h-svh lg:grid-cols-12 lg:content-center lg:gap-y-7 lg:pt-[calc(var(--spacing-nav)+1.5rem)] lg:pb-14 xl:gap-x-16">
         {/* The query container the headline measures against. */}
         <div className="min-w-0 [container-type:inline-size] lg:col-span-7 lg:self-end">
-          <p
-            data-reveal
-            className="zan-hero-in inline-flex max-w-full items-center gap-2 rounded-full border border-line bg-bg/80 px-3.5 py-1.5 text-[0.8125rem] leading-snug font-medium text-ink-2 shadow-lift sm:px-4 sm:text-small"
-            style={delay(0)}
-          >
-            <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-brand" />
-            {page.eyebrow}
-          </p>
-
           <h1
             id="lp-hero-title"
             /* Each line must fit the column at every width, so the size is the
@@ -98,8 +89,23 @@ export function LandingHero({ page }: { page: LandingPage }) {
                "Marketing Judged On", 10.2em wide: 100 / 10.2 is 9.8, taken down
                for margin. A new page with a longer line needs this looking at. */
             style={{ fontSize: "min(5rem, 9.6cqi)" }}
-            className="mt-5 leading-[1] font-extrabold tracking-[-0.042em] text-ink [font-stretch:92%] sm:mt-6"
+            className="leading-[1] font-extrabold tracking-[-0.042em] text-ink [font-stretch:92%]"
           >
+            {/* Part of the h1, not a label above it: what someone searched for and
+                the city is the first thing this page says, to them and to the
+                system scoring how well it matches the ad. It only looks small.
+                A flex box of its own, so the h1's large line height stays out of it. */}
+            <span
+              data-reveal
+              className="zan-hero-in mb-5 flex w-fit max-w-full items-center gap-2 rounded-full border border-line bg-bg/80 px-3.5 py-1.5 text-[0.8125rem] leading-snug font-medium tracking-normal text-ink-2 shadow-lift [font-stretch:100%] sm:mb-6 sm:px-4 sm:text-small"
+              style={delay(0)}
+            >
+              <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-brand" />
+              <span>
+                {page.eyebrow}
+                <span className="sr-only">: </span>
+              </span>
+            </span>
             <span className="block">
               <Words text={page.headline.lead} from={0} />
             </span>

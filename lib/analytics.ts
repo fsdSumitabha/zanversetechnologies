@@ -22,6 +22,8 @@
                        Conversions hashes and matches on
      whatsapp_click    a WhatsApp link was followed
      contact_click     a tel: or mailto: link was followed
+     phone Icon click  a tel: link was followed, under the name the container's
+                       call conversion listens for
      popup_view        an overlay was shown
 
    Every push guards `window.dataLayer` itself rather than assuming the
@@ -96,6 +98,18 @@ export function trackWhatsAppClick(label: string) {
 /** A tel: or mailto: link. */
 export function trackContactClick(label: string) {
   push({ event: "contact_click", click_label: label });
+}
+
+/**
+ * A tel: link, as a Google Ads conversion.
+ *
+ * Spaces and capitals included, this is the exact event the call conversion in
+ * GTM-WKT2N6FF is triggered by. Neither the earlier site nor any build since has
+ * ever sent it (they send contact_click), so that conversion has never fired.
+ * Sent beside contact_click rather than instead of it: the reports keep their row.
+ */
+export function trackPhoneClick() {
+  push({ event: "phone Icon click" });
 }
 
 /** An overlay the visitor was shown. */

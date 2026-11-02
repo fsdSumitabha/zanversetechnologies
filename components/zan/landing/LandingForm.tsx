@@ -46,19 +46,20 @@ import { useQuote } from "./quoteContext";
        the field and what is typed after it is checked (lib/uaePhone.ts).
      - Project details are optional. One line fewer between a visitor and the
        button.
-     - The service is the page's own and is not asked for; the package is
-       offered instead, defaulting to "Not sure yet".
+     - The service is the page's own and is not asked for. The package is, and
+       it has to be answered: "Not sure yet" is one of the answers, so nobody is
+       stuck, but the lead has always said something about what they want.
      - A failed send keeps the lead: the visitor gets a WhatsApp link with what
        they typed already written out, and the address to fall back on.
 
    Uncontrolled, as the site's form is, and read through FormData on submit.
    ─────────────────────────────────────────────────────────────────────────── */
 
-type Field = "name" | "email" | "phone" | "message";
+type Field = "name" | "email" | "phone" | "interest" | "message";
 type Control = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 type State = "idle" | "sending" | "error";
 
-const FIELDS: readonly Field[] = ["name", "phone", "email"];
+const FIELDS: readonly Field[] = ["name", "phone", "email", "interest"];
 const NOT_SURE = "Not sure yet";
 /** What the GTM container's reports call these forms; the old pages' name. */
 const FORM_NAME = "landing_lead_form";
@@ -84,6 +85,8 @@ function messageFor(el: Control): string | undefined {
       return isUaePhone(nationalDigits(el.value))
         ? undefined
         : "Enter a UAE number, for example 50 123 4567 or 4 123 4567.";
+    case "interest":
+      return el.value ? undefined : `Pick the closest option, or “${NOT_SURE}”.`;
     default:
       return undefined;
   }
@@ -167,7 +170,7 @@ export function LandingForm({
 }) {
   const { page } = useQuote();
   const uid = useId();
-  const id = (f: Field | "interest") => `${uid}-${f}`;
+  const id = (f: Field) => `${uid}-${f}`;
   const router = useRouter();
 
   const [errors, setErrors] = useState<Partial<Record<Field, string>>>({});
@@ -265,7 +268,7 @@ export function LandingForm({
 
     const national = nationalDigits(get("phone"));
     const lead = { name: get("name"), email: get("email"), phone: toDisplay(national) };
-    const chosen = get("interest") || NOT_SURE;
+    const chosen = get("interest");
     const details = get("message");
     const source = get("lead_source");
     const where = get("form_location");
@@ -434,15 +437,24 @@ export function LandingForm({
             />
           </FieldShell>
 
-          <FieldShell id={id("interest")} label="What do you need?">
+          <FieldShell id={id("interest")} label="What do you need?" error={errors.interest}>
             <div className="relative">
               <select
                 id={id("interest")}
                 name="interest"
+                required
                 disabled={busy}
-                defaultValue={interest ?? NOT_SURE}
-                className={cn(control, "h-12 cursor-pointer appearance-none pr-10 text-ellipsis")}
+                defaultValue={interest ?? ""}
+                /* Muted while it still shows the prompt; the open list stays ink. */
+                className={cn(
+                  control,
+                  "h-12 cursor-pointer appearance-none pr-10 text-ellipsis invalid:text-muted [&_optgroup]:text-ink [&_option]:text-ink",
+                )}
+                {...invalid("interest")}
               >
+                <option value="" disabled>
+                  Choose one
+                </option>
                 {page.packages.map((group) => {
                   const options = group.titles.map((title) => (
                     <option key={title} value={title}>

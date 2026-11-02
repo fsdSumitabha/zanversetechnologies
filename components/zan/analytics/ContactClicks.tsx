@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { trackContactClick } from "@/lib/analytics";
+import { trackContactClick, trackPhoneClick } from "@/lib/analytics";
 
 /* ───────────────────────────────────────────────────────────────────────────
    contact_click, for every tel: and mailto: link on the site.
@@ -35,6 +35,7 @@ export function ContactClicks() {
         link.dataset.analyticsLabel ?? link.textContent?.trim().replace(/\s+/g, " ") ?? href;
 
       trackContactClick(label || href);
+      if (href.startsWith("tel:")) trackPhoneClick();
     };
 
     document.addEventListener("click", onClick, { capture: true });

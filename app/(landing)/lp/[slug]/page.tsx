@@ -32,6 +32,7 @@ export async function generateMetadata({ params }: RouteParams): Promise<Metadat
       path: landingPath(page.slug),
       absoluteTitle: true,
     }),
+    keywords: [...page.seo.keywords],
     // No canonical on a page that asks not to be indexed: a canonical is a claim
     // that this is the one to rank. The layout sets the noindex.
     alternates: null,

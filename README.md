@@ -87,7 +87,11 @@ When a request arrives without the header, for example on localhost, the per-IP 
 
 - **Leads** go through the same EmailJS service and template as the site's enquiry form. They are told apart by the hidden `lead_source` field (`landing:<slug>`) and by which form sent them. The template renders a fixed set of variables, so all of this, with the page's address and any campaign tags, is written at the head of `message`; `lead_source` is also sent as a variable of its own, for if the template ever gives it a column. In the GTM dataLayer they are `form_submission` with `form_name: "landing_lead_form"`, `landing_page` and `form_location`.
 - **Conversions** count on the same `/thank-you`. That page sits under the site's root layout, so reaching it is a full page load; the form marks the preloader and the timed modal as seen first, so a new lead sees neither.
+- **The form:** name, UAE phone, email and "What do you need?" are required ("Not sure yet" is an answer); project details are optional. One component everywhere: hero, closing section and popup, on every page.
 - **Phone numbers** are UAE only, with `+971` fixed in the field (`lib/uaePhone.ts`).
+- **Where leads arrive** is not in this repo. It is the "To Email" field of the template in the EmailJS dashboard, which has no API for it. The production domain also has to be on that account's Allowed origins, or sends from it are refused.
+- **Tags:** `GTM-WKT2N6FF`, through the same `Analytics` as the rest of this build, on the production host and after consent. It holds Google Ads `AW-17890514943`, with a conversion on `generate_lead` (reaching `/thank-you`) and one on `phone Icon click` (any `tel:` link).
+- **Keywords and metadata** are per page in `seo` in `constants/landing.ts`. Google Ads scores the words on the page, not the keywords meta tag, so the service and the city are in the h1, the subhead and the section headings. Keep a page's keywords to what it actually sells.
 - **No prices or currency figures** appear anywhere on these pages, by design. Case-study results quoted in money are filtered out in `landingProjects`.
 - **Not indexed.** They carry `noindex, follow` and stay out of the sitemap, so they cannot compete with `/services/*`. This is permanent, unlike the site's pre-launch noindex. To change it, see `app/(landing)/layout.tsx`.
 
