@@ -29,7 +29,7 @@ npx pnpm@10.34.6 install
 npx pnpm@10.34.6 dev      # http://localhost:5173
 ```
 
-Copy `.env.example` to `.env.local` for the chat, the agent console and the enquiry form. `next build` succeeds without any of it, because the server reads its credentials only when a request needs them. Values prefixed `NEXT_PUBLIC_` (the Pusher key and cluster, the three EmailJS values) are the exception: they are compiled into the browser bundle, so set them before building. Without the EmailJS values the contact section shows the email address instead of a form that cannot send.
+Copy `.env.example` to `.env.local` for the chat, the agent console and the enquiry form. `next build` succeeds without any of it, because the server reads its credentials only when a request needs them. Values prefixed `NEXT_PUBLIC_` (the Pusher key and cluster) are the exception: they are compiled into the browser bundle, so set them before building. So are `SMTP_USER` and `SMTP_PASS`, because the build decides whether the forms appear: without them the forms show the email address instead of a form that cannot send. Restart the dev server after adding them.
 
 ## Deploy
 
@@ -50,6 +50,21 @@ Any other header can be written by the client, so a caller could claim a new IP,
 
 When a request arrives without the header, for example on localhost, the per-IP limits are skipped and one error is logged per process. The other limits stay: per conversation, per login email, and a site-wide cap of 300 new chat sessions per 5 minutes.
 
+## Enquiry mail
+
+Every enquiry form, on the site and the landing pages, posts to `app/api/leads/route.ts`. That sends two mails from `SMTP_USER` through nodemailer (`server/services/mail.service.ts`):
+
+- **To the team:** `MAIL_TO`, or `site.email` if that is empty. It holds everything the visitor sent, and pressing Reply answers the visitor. If this mail fails, the visitor is told, and they get no confirmation.
+- **To the visitor:** a confirmation. It is fixed text with no words from the form except a checked name, because anyone can type someone else's address into a public form. If only this mail fails, the lead still counts as sent.
+
+To set it up on Gmail or Google Workspace:
+
+1. Turn on 2-Step Verification on the `SMTP_USER` account. A Workspace admin may have to allow it.
+2. Create an App Password for that account, and use it as `SMTP_PASS` with no spaces. The account's sign-in password is refused.
+3. Set the `SMTP_*` values in `.env.local`, and in Netlify for production. Set them before building, because the build decides whether the forms appear.
+
+Limits: 5 leads per IP in 10 minutes, 40 per hour across the site, and 3 confirmations per address per hour. They count in MongoDB and fail open, so a database outage cannot stop a lead. They also fail open if `getEnv()` in `server/config/env.ts` rejects any chat setting, with an error in the log for every request, so check the log after setting up a new environment.
+
 ## Structure
 
 | Path | What it holds |
@@ -59,7 +74,7 @@ When a request arrives without the header, for example on localhost, the per-IP 
 | `app/(site)/*/` | Every other page: services and the sixteen service pages, portfolio, how we work, about us, our team, contact, thank you and the five policies |
 | `app/(landing)/` | The paid landing pages (`/lp/<slug>`), with their own root layout: no preloader, no mega menu, no timed modal. Consent banner and tags as everywhere else. See "Landing pages" below |
 | `app/(console)/agent/` | The agent console, with its own root layout: no site shell, no consent banner, no tags |
-| `app/api/` | The chat, the agent console's API, Pusher auth and the WhatsApp webhook |
+| `app/api/` | The chat, the enquiry forms' leads, the agent console's API, Pusher auth and the WhatsApp webhook |
 | `app/global-not-found.tsx` | The 404 for unmatched URLs, rendered in the site layout (the two root layouts leave no shared one) |
 | `app/globals.css` | Design tokens and the gold palette. The light theme is the only theme. |
 | `constants/zan.ts` | The company (`site`, `office`) and all homepage content. Sections never hard-code copy. |
@@ -76,7 +91,7 @@ When a request arrives without the header, for example on localhost, the per-IP 
 | `components/zan/ui/` | Shared buttons, eyebrow, section heading, icons, logo |
 | `components/zan/chat/`, `components/zan/agent/` | The chat panel and the agent console |
 | `components/animations/`, `components/ui/` | The scroll scenes |
-| `server/` | The chat backend: environment, MongoDB models, Gemini, WhatsApp, Pusher, rate limits |
+| `server/` | The backend: environment, MongoDB models, Gemini, WhatsApp, Pusher, enquiry mail, rate limits |
 | `public/og-default.png` | The 1200x630 share card every page falls back to |
 | `assets-src/` | Source masters that are not served: the logo artwork as supplied, the original team portraits |
 | `ZAN_BRIEF.md` | The rules anyone editing a section follows |
@@ -85,13 +100,12 @@ When a request arrives without the header, for example on localhost, the per-IP 
 
 `/lp/web-development`, `/lp/app-development` and `/lp/digital-marketing`, for paid traffic. One layout draws them all; `landingPages` in `constants/landing.ts` is the only thing that differs. To add a page, add an entry there: its route, metadata and form follow from it. A page lists one or more groups of packages (`decks`); more than one become tabs. A page with a headline line longer than "Marketing Judged On" needs the size in `LandingHero.tsx` checking. An unknown slug gets a 404 that offers the pages that do exist.
 
-- **Leads** go through the same EmailJS service and template as the site's enquiry form. They are told apart by the hidden `lead_source` field (`landing:<slug>`) and by which form sent them. The template renders a fixed set of variables, so all of this, with the page's address and any campaign tags, is written at the head of `message`; `lead_source` is also sent as a variable of its own, for if the template ever gives it a column. In the GTM dataLayer they are `form_submission` with `form_name: "landing_lead_form"`, `landing_page` and `form_location`.
+- **Leads** go through `/api/leads`, the same as the site's enquiry form (see "Enquiry mail"). They are told apart by the hidden `lead_source` field (`landing:<slug>`) and by which form sent them. Both are the Source row of the team's mail, beside the page's address with any campaign tags. In the GTM dataLayer they are `form_submission` with `form_name: "landing_lead_form"`, `landing_page` and `form_location`.
 - **Conversions** count on the same `/thank-you`. That page sits under the site's root layout, so reaching it is a full page load; the form marks the preloader and the timed modal as seen first, so a new lead sees neither.
-- **The form:** name, UAE phone, email and "What do you need?" are required ("Not sure yet" is an answer); project details are optional. One component everywhere: hero, closing section and popup, on every page.
+- **The form:** name, UAE phone, email and "What do you need?" are required ("What do you need?" starts on "Not sure yet"); project details are optional. One component everywhere: hero, closing section and popup, on every page.
 - **Phone numbers** are UAE only, with `+971` fixed in the field (`lib/uaePhone.ts`).
-- **Where leads arrive** is not in this repo. It is the "To Email" field of the template in the EmailJS dashboard, which has no API for it. The production domain also has to be on that account's Allowed origins, or sends from it are refused.
 - **Tags:** `GTM-WKT2N6FF`, through the same `Analytics` as the rest of this build, on the production host and after consent. It holds Google Ads `AW-17890514943`, with a conversion on `generate_lead` (reaching `/thank-you`) and one on `phone Icon click` (any `tel:` link).
-- **Keywords and metadata** are per page in `seo` in `constants/landing.ts`. Google Ads scores the words on the page, not the keywords meta tag, so the service and the city are in the h1, the subhead and the section headings. Keep a page's keywords to what it actually sells.
+- **Keywords and metadata** are per page in `seo` in `constants/landing.ts`. Google Ads scores the words on the page, not the keywords meta tag, so the service and the city are in the h1, the subhead, the hero's service list (`serviceTerms`), the section headings and leads, and the package descriptions. Keep a page's keywords to what it actually sells, and keep them in text a visitor can read.
 - **No prices or currency figures** appear anywhere on these pages, by design. Case-study results quoted in money are filtered out in `landingProjects`.
 - **Not indexed.** They carry `noindex, follow` and stay out of the sitemap, so they cannot compete with `/services/*`. This is permanent, unlike the site's pre-launch noindex. To change it, see `app/(landing)/layout.tsx`.
 

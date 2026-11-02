@@ -37,7 +37,7 @@ function Words({ text, from, className }: { text: string; from: number; classNam
  * waits on JavaScript but the form's own button.
  */
 export function LandingHero({ page }: { page: LandingPage }) {
-  const { heroForm, rating, ratingClients } = landingCopy;
+  const { heroForm, rating, ratingClients, servicesLabel } = landingCopy;
   const leadWords = page.headline.lead.split(" ").length;
 
   return (
@@ -149,9 +149,26 @@ export function LandingHero({ page }: { page: LandingPage }) {
           </div>
         </div>
 
-        {/* Proof: this page's own results under a hairline, as the homepage sets
-            its figures, then the rating beside real client marks. */}
+        {/* What this page sells, in the words people search for, then the proof:
+            this page's own results under a hairline, as the homepage sets its
+            figures, and the rating beside real client marks. */}
         <div data-reveal className="zan-hero-in min-w-0 lg:col-span-7 lg:self-start" style={delay(3)}>
+          <div className="mb-5 max-w-2xl">
+            <p id="lp-hero-services" className="font-mono text-eyebrow text-brand-ink uppercase">
+              {servicesLabel}
+            </p>
+            <ul aria-labelledby="lp-hero-services" className="mt-2.5 flex flex-wrap gap-1.5">
+              {page.serviceTerms.map((term) => (
+                <li
+                  key={term}
+                  className="rounded-full border border-line bg-bg/80 px-2.5 py-1 text-[0.8125rem] leading-snug text-ink-2"
+                >
+                  {term}
+                </li>
+              ))}
+            </ul>
+          </div>
+
           <dl className="grid max-w-2xl grid-cols-3 border-t border-line pt-5">
             {page.outcomes.map((o, i) => (
               <div

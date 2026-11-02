@@ -18,7 +18,7 @@ import { landingCopy } from "@/constants/landing";
 import { site } from "@/constants/zan";
 import { PRELOADER_SEEN_KEY } from "@/components/zan/shell/shellStore";
 import { rememberLead, trackFormSubmission, trackWhatsAppClick } from "@/lib/analytics";
-import { emailjsConfig, emailjsReady } from "@/lib/emailjs";
+import { EMAIL_PATTERN, leadsReady, sendLead } from "@/lib/leads";
 import { formatUaePhone, isUaePhone, nationalDigits, toDisplay, toE164 } from "@/lib/uaePhone";
 import { cn } from "@/lib/utils";
 import { useQuote } from "./quoteContext";
@@ -26,18 +26,15 @@ import { useQuote } from "./quoteContext";
 /* ───────────────────────────────────────────────────────────────────────────
    THE LANDING PAGES' ENQUIRY FORM
 
-   The same channel as the rest of the site: EmailJS, with the same service,
-   template and variables as components/zan/contact/EnquiryForm.tsx, so these
-   leads land in the same inbox with the same layout, and a send that resolves
-   goes to /thank-you, which is where the Google Ads conversion is counted.
+   The same channel as the rest of the site: /api/leads, as
+   components/zan/contact/EnquiryForm.tsx uses, so these leads land in the same
+   inbox with the same layout, and a send that resolves goes to /thank-you, which
+   is where the Google Ads conversion is counted.
 
    WHAT TELLS THESE LEADS APART. The hidden `lead_source` field, and where it
-   came from on the page. The template renders a fixed set of variables and
-   predates this form, so a new variable alone would never be seen: both go at
-   the head of the message too, beside the page's address, which keeps its query
-   string so a tagged ad link says which campaign paid for the click. The
-   variable is sent as well, for the day the template wants it as a column of
-   its own.
+   came from on the page. Both reach the team's mail as its Source row, beside
+   the page's address, which keeps its query string so a tagged ad link says
+   which campaign paid for the click.
 
    Where it differs from the site's form, because these visitors came from an ad
    and the business wants to call them back:
@@ -47,8 +44,8 @@ import { useQuote } from "./quoteContext";
      - Project details are optional. One line fewer between a visitor and the
        button.
      - The service is the page's own and is not asked for. The package is, and
-       it has to be answered: "Not sure yet" is one of the answers, so nobody is
-       stuck, but the lead has always said something about what they want.
+       it starts on "Not sure yet", so nobody has to stop and choose, but the
+       lead has always said something about what they want.
      - A failed send keeps the lead: the visitor gets a WhatsApp link with what
        they typed already written out, and the address to fall back on.
 
@@ -237,7 +234,7 @@ export function LandingForm({
 
     // Read the form NOW. "sending" disables every control, and the HTML spec
     // leaves disabled controls out of FormData, so reading it any later sends
-    // a blank enquiry that EmailJS happily answers 200 to.
+    // a blank enquiry.
     const data = new FormData(form);
     const get = (name: string) => String(data.get(name) ?? "").trim();
 
@@ -273,30 +270,14 @@ export function LandingForm({
     const source = get("lead_source");
     const where = get("form_location");
 
-    /* The variables the template renders, plus `lead_source`. See the note at
-       the top of this file for why the head of the message repeats it. */
-    const params = {
-      name: lead.name,
-      email: lead.email,
-      phone: lead.phone,
-      businessName: "",
-      service: page.service,
-      lead_source: source,
-      message: [
-        `Sent from: ${window.location.host}${window.location.pathname}${window.location.search}`,
-        `Lead source: ${source} (${where})`,
-        `Interested in: ${chosen}`,
-        "",
-        details || "No project details given.",
-      ].join("\n"),
-    };
-
     setState("sending");
     try {
-      // Fetched when someone actually submits, not by every visitor to the page.
-      const emailjs = (await import("@emailjs/browser")).default;
-      await emailjs.send(emailjsConfig.serviceId, emailjsConfig.templateId, params, {
-        publicKey: emailjsConfig.publicKey,
+      await sendLead({
+        ...lead,
+        service: page.service,
+        interest: chosen,
+        message: details,
+        source: `${source} (${where})`,
       });
 
       trackFormSubmission(FORM_NAME, page.service, { landing_page: page.slug, form_location: where });
@@ -316,9 +297,8 @@ export function LandingForm({
       setPhoneOk(false);
       router.push("/thank-you");
     } catch (err) {
-      // EmailJS rejects with { status, text }. Without this the visitor sees
-      // the error state and nobody else ever learns why.
-      console.error("[LandingForm] EmailJS send failed", err);
+      // The cause is in the route's log. This says which request to look for.
+      console.error("[LandingForm] send failed", err);
       const note = encodeURIComponent(
         `Hi ${site.name}! I'm interested in ${page.label}.\n\nName: ${lead.name}\nPhone: ${lead.phone}\nEmail: ${lead.email}\nInterested in: ${chosen}${details ? `\n\n${details}` : ""}`,
       );
@@ -328,7 +308,7 @@ export function LandingForm({
     }
   };
 
-  if (!emailjsReady) {
+  if (!leadsReady) {
     return (
       <div className={className}>
         <p className="text-body text-ink-2">Tell us what you are building and we will come back within 24 hours.</p>
@@ -432,6 +412,7 @@ export function LandingForm({
               autoComplete="email"
               required
               disabled={busy}
+              pattern={EMAIL_PATTERN}
               className={cn(control, "h-12")}
               {...invalid("email")}
             />
@@ -444,17 +425,11 @@ export function LandingForm({
                 name="interest"
                 required
                 disabled={busy}
-                defaultValue={interest ?? ""}
-                /* Muted while it still shows the prompt; the open list stays ink. */
-                className={cn(
-                  control,
-                  "h-12 cursor-pointer appearance-none pr-10 text-ellipsis invalid:text-muted [&_optgroup]:text-ink [&_option]:text-ink",
-                )}
+                defaultValue={interest ?? NOT_SURE}
+                className={cn(control, "h-12 cursor-pointer appearance-none pr-10 text-ellipsis")}
                 {...invalid("interest")}
               >
-                <option value="" disabled>
-                  Choose one
-                </option>
+                <option value={NOT_SURE}>{NOT_SURE}</option>
                 {page.packages.map((group) => {
                   const options = group.titles.map((title) => (
                     <option key={title} value={title}>
@@ -469,7 +444,6 @@ export function LandingForm({
                     options
                   );
                 })}
-                <option value={NOT_SURE}>{NOT_SURE}</option>
               </select>
               <ChevronDown
                 aria-hidden="true"

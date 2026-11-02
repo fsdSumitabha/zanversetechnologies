@@ -66,21 +66,43 @@ const schema = z.object({
   NEXT_PUBLIC_PUSHER_CLUSTER: z.string().default("ap2"),
 });
 
+/**
+ * The enquiry forms' mail account. A schema of its own on purpose: the one above
+ * needs Mongo, WhatsApp and Pusher, and a gap in any of those must not stop a
+ * lead reaching the inbox.
+ */
+const mailSchema = z.object({
+  SMTP_HOST: z.string().min(1).default("smtp.gmail.com"),
+  /** 465 opens encrypted; anything else starts plain and upgrades. */
+  SMTP_PORT: z.coerce.number().int().positive().default(465),
+  SMTP_USER: z.string().email(),
+  SMTP_PASS: z.string().min(1),
+  /** Empty means site.email. */
+  MAIL_TO: z.string().email().optional().or(z.literal("")),
+});
+
+function parse<T extends z.ZodType>(from: T): z.infer<T> {
+  const parsed = from.safeParse(process.env);
+  if (!parsed.success) {
+    const issues = parsed.error.issues.map((i) => `  • ${i.path.join(".")}: ${i.message}`).join("\n");
+    throw new Error(`Invalid environment configuration:\n${issues}\n\nSee .env.example.`);
+  }
+  return parsed.data;
+}
+
 let cached: z.infer<typeof schema> | null = null;
+let cachedMail: z.infer<typeof mailSchema> | null = null;
 
 /**
  * Validated at first use rather than at module load: a build-time import of a
  * route handler must not crash `next build` on a machine without secrets.
  */
 export function getEnv() {
-  if (cached) return cached;
-  const parsed = schema.safeParse(process.env);
-  if (!parsed.success) {
-    const issues = parsed.error.issues.map((i) => `  • ${i.path.join(".")}: ${i.message}`).join("\n");
-    throw new Error(`Invalid environment configuration:\n${issues}\n\nSee .env.example.`);
-  }
-  cached = parsed.data;
-  return cached;
+  return (cached ??= parse(schema));
+}
+
+export function getMailEnv() {
+  return (cachedMail ??= parse(mailSchema));
 }
 
 export const isProduction = () => process.env.NODE_ENV === "production";

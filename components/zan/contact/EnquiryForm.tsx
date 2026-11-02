@@ -15,13 +15,13 @@ import { ChevronDown, Loader2, TriangleAlert } from "lucide-react";
 import { serviceOptions, site } from "@/constants/zan";
 import { Button } from "@/components/zan/ui/Button";
 import { rememberLead, trackFormSubmission } from "@/lib/analytics";
-import { emailjsConfig, emailjsReady } from "@/lib/emailjs";
+import { EMAIL_PATTERN, leadsReady, sendLead } from "@/lib/leads";
 import { serviceFromPath } from "@/lib/services";
 import { useSiteHref } from "@/lib/useSiteHref";
 import { cn } from "@/lib/utils";
 
 /* ───────────────────────────────────────────────────────────────────────────
-   The enquiry form, wired to EmailJS.
+   The enquiry form, posting to /api/leads.
 
    It used to set window.location.href to a mailto: URL and then call
    setSent(true) on the next line, unconditionally. On a machine with no mail
@@ -30,14 +30,12 @@ import { cn } from "@/lib/utils";
    been sent. Long project descriptions were also truncated silently by the
    query string. Every one of those enquiries was lost.
 
-   EmailJS posts from the browser straight to their API, so there is no route
-   of ours in the path and nothing to deploy server-side. The trade is that the
-   credentials are in the bundle; see lib/emailjs.ts for why that is expected
-   and what actually protects the account.
+   The route sends the mail: one to the team, and one to the visitor saying it
+   arrived. See server/services/mail.service.ts.
 
    Three things this now does that the mailto did not:
 
-     - It refuses to pretend. With no credentials configured it does not render
+     - It refuses to pretend. With no mail account configured it does not render
        a form at all, it renders the address.
      - It reports failure. A rejected send puts the message back in front of
        the visitor with the address to fall back on, instead of a success state
@@ -233,8 +231,7 @@ export function EnquiryForm({
 
     // Read the form NOW. "sending" re-renders every control with `disabled`,
     // and the HTML spec excludes disabled controls from FormData, so reading
-    // after that — which is what happens if this waits on the SDK import
-    // first — sends a blank enquiry that EmailJS happily answers 200 to.
+    // any later sends a blank enquiry.
     const data = new FormData(form);
     const get = (f: Field) => String(data.get(f) ?? "").trim();
 
@@ -267,31 +264,9 @@ export function EnquiryForm({
     const lead = { name: get("name"), email: get("email"), phone: get("phone") };
     const chosen = get("service");
 
-    /* The variable names the EmailJS template renders, and only those. The
-       template predates this build: it was written for the company's earlier
-       site, whose form sent name / email / phone / businessName / service /
-       message. This form has no business field, so businessName travels empty
-       rather than missing. The page the enquiry came from goes at the head of
-       the message, host included: the form appears in three places, and an
-       inbox that takes enquiries from more than one site can tell at a glance
-       which one this came from. */
-    const params = {
-      name: lead.name,
-      email: lead.email,
-      phone: lead.phone,
-      businessName: "",
-      service: chosen,
-      message: `Sent from: ${window.location.host}${window.location.pathname}\n\n${get("message")}`,
-    };
-
     setState("sending");
     try {
-      // Imported here rather than at module scope, so the SDK is fetched when
-      // someone actually submits and not by every page that renders the form.
-      const emailjs = (await import("@emailjs/browser")).default;
-      await emailjs.send(emailjsConfig.serviceId, emailjsConfig.templateId, params, {
-        publicKey: emailjsConfig.publicKey,
-      });
+      await sendLead({ ...lead, service: chosen, message: get("message"), source: FORM_NAME });
 
       trackFormSubmission(FORM_NAME, chosen);
       // What /thank-you reports as user_data for Enhanced Conversions.
@@ -299,15 +274,13 @@ export function EnquiryForm({
       form.reset();
       router.push(href("/thank-you"));
     } catch (err) {
-      // EmailJS rejects with { status, text } — "The template ID not found",
-      // a quota message, an origin refusal. Without this the visitor sees the
-      // error state and nobody else ever learns why.
-      console.error("[EnquiryForm] EmailJS send failed", err);
+      // The cause is in the route's log. This says which request to look for.
+      console.error("[EnquiryForm] send failed", err);
       setState("error");
     }
   };
 
-  if (!emailjsReady) return <EmailFallback className={className} />;
+  if (!leadsReady) return <EmailFallback className={className} />;
 
   const busy = state === "sending";
   const invalid = (f: Field) => (errors[f] ? { "aria-invalid": true, "aria-describedby": `${id(f)}-error` } : {});
@@ -367,6 +340,7 @@ export function EnquiryForm({
             autoComplete="email"
             required
             disabled={busy}
+            pattern={EMAIL_PATTERN}
             className={cn(control, "h-12")}
             {...invalid("email")}
           />

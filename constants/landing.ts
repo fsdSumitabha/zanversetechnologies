@@ -22,6 +22,9 @@
                      than "120+ businesses", three months of support rather than
                      "30 days", and no "15+ years", which it does not claim.
      House style.    No em dashes in visible copy, and no "seamless".
+     Search terms.   Each section lead and many package descriptions now open
+                     with the service as people search for it, so the keywords
+                     are words a visitor reads. See below.
 
    The hero's outcomes were the same three marketing results on every page. Each
    page now quotes its own case study instead, from `projects`, because a figure
@@ -31,10 +34,12 @@
    Score's landing page component measures how relevant and useful the page is
    to someone who clicked the ad, so what counts is the service and the city on
    the page itself: in the h1 (`eyebrow`, which the hero sets inside it), the
-   subhead and the section headings. `seo.keywords` becomes the keywords meta tag,
-   which Google ignores; it is here as the record of what each page is built to
-   match. Only list what the page actually sells and says. A keyword the page
-   does not answer costs more per click and converts worse than no keyword.
+   subhead, the hero's list (`serviceTerms`), the section headings and leads, and
+   the package descriptions. `seo.keywords` becomes the keywords meta tag, which
+   Google ignores; it is here as the record of what each page is built to match.
+   Only list what the page actually sells and says. A keyword the page does not
+   answer costs more per click and converts worse than no keyword. Keep every term
+   in a sentence or a list a visitor can read: hidden text breaks Google's rules.
 
    The services are the old pages' packages. They carry what they include where
    a price used to be. A page sells one group of them or several; several become
@@ -161,6 +166,8 @@ export interface LandingPage {
   eyebrow: string;
   headline: { lead: string; accent: string };
   subhead: string;
+  /** The services in the words people search for: the hero's visible list. */
+  serviceTerms: readonly string[];
   /** Three results from this page's own case studies. */
   outcomes: readonly { value: string; label: string }[];
   /** One headline number, taken from a case study shown on this page. */
@@ -193,30 +200,80 @@ export const landingPages: readonly LandingPage[] = [
     service: "Web Development",
     seo: {
       title: "Web Development Company in Dubai | Free Website Quote",
-      description: `Website design and web development in Dubai: business websites, e-commerce and custom web apps built to convert. ${stat("projects")} projects, ${stat("rating")} rating. Free quote.`,
+      description: `Website development services in Dubai from a web development agency: business websites, e-commerce and custom web apps. ${stat("projects")} projects, ${stat("rating")} rating. Free quote.`,
+      /* From the client's Keyword Planner report (searches July to September 2026):
+         highest searches first, then the rows the report has no figures for. Left
+         out: "best" and "top", which this site cannot prove, and the India group,
+         which the client is not running. */
       keywords: [
+        "website development",
+        "website development company",
+        "web development company",
+        "web development agency",
+        "website development services",
+        "web development services",
+        "website design and development",
+        "web developers near me",
+        "build shopify website",
+        "shopify website development",
+        "shopify web development company",
+        "web design and development services",
+        "website development company near me",
+        "website development near me",
+        "web development near me",
+        "web designing company near me",
+        "ecommerce web development",
+        "web application development",
+        "website and app development",
+        "website development cost",
+        "web design company",
+        "website development firm",
+        "custom website development",
+        "professional website development",
+        "corporate website development",
+        "web development agency near me",
+        "ecommerce website development company",
+        "ecommerce website development services",
+        "build ecommerce website",
+        "ecommerce website design companies",
+        "wordpress website development company",
+        "wordpress website development",
+        "wordpress development services",
+        "shopify website developer",
+        "web app development company",
+        "web application development company",
+        "custom web app development services",
+        "web portal development company",
+        "website development packages",
+        "website development prices",
+        "web development pricing",
+        "cost of web design",
         "web development company dubai",
-        "web development dubai",
-        "website development company dubai",
-        "website development dubai",
-        "website design dubai",
+        "website development company in dubai",
         "web design company dubai",
+        "website design dubai",
+        "web development agency dubai",
+        "website development company uae",
+        "web design company uae",
         "ecommerce website development dubai",
-        "ecommerce website dubai",
-        "custom web application development dubai",
-        "web app development uae",
-        "business website design dubai",
-        "landing page design dubai",
-        "wordpress development dubai",
-        "next.js development dubai",
-        "seo friendly website dubai",
-        "website cost dubai",
+        "shopify developer dubai",
+        "website design cost dubai",
       ],
     },
     eyebrow: "Web Development Company in Dubai",
     headline: { lead: "Websites That Turn", accent: "Traffic Into Revenue" },
     subhead:
-      "Website design and development in Dubai, from a starter site to a custom web application: designed to convert, built to scale, and priced before a line of code is written.",
+      "Website development services in Dubai, from a starter site to a custom web application: designed to convert, built to scale, and priced before a line of code is written.",
+    serviceTerms: [
+      "Website development",
+      "Web development services",
+      "Website design and development",
+      "Corporate website development",
+      "E-commerce website development",
+      "Shopify website development",
+      "Web application development",
+      "WordPress website development",
+    ],
     outcomes: [
       { value: "340%", label: "Increase in online sales" },
       { value: "1.8s", label: "Page load, down from 6.2s" },
@@ -224,8 +281,8 @@ export const landingPages: readonly LandingPage[] = [
     ],
     proof: { value: "340%", label: "increase in online sales for a fashion retailer" },
     packagesIntro: {
-      title: ["Website & web app", "packages in Dubai"],
-      lead: "Every package we sell, from one campaign page to a full online store. Final scope is confirmed in a written quotation before work begins.",
+      title: ["Website development", "packages in Dubai"],
+      lead: "We are a web development agency and website development company in Dubai. Our web developers provide web design and development services, from landing pages to e-commerce websites, Shopify stores and custom web apps. Website development cost in Dubai depends on scope, so the final price is confirmed in a written quotation before work begins.",
     },
     decks: [
       {
@@ -235,21 +292,21 @@ export const landingPages: readonly LandingPage[] = [
           {
             title: "Landing Page Development",
             description:
-              "A single page built to convert one campaign. Fast-loading and mobile-first, with the lead form, WhatsApp handoff and conversion tracking wired in.",
+              "Landing page design and development for one campaign. Fast-loading and mobile-first, with the lead form, WhatsApp handoff and conversion tracking wired in.",
             includes: ["Lead form and WhatsApp", "Mobile-first build", "Conversion tracking", "Live in 3-5 days"],
             art: "campaign-page",
           },
           {
             title: "Starter Websites",
             description:
-              "Perfect for new businesses and personal brands. Includes 5-7 responsive pages, CMS integration, and essential features to establish your online presence.",
+              "Professional website development for new businesses and personal brands. Includes 5-7 responsive pages, CMS integration, and essential features to establish your online presence.",
             includes: ["5-7 responsive pages", "CMS integration", "SEO ready", "Contact forms"],
             art: "starter-site",
           },
           {
             title: "Business Websites",
             description:
-              "Custom UI design, advanced analytics integration, and enhanced functionality for growing companies seeking professional digital storefronts.",
+              "Corporate website development and website design in Dubai, with a custom UI, advanced analytics integration, and enhanced functionality for growing companies seeking professional digital storefronts.",
             includes: ["Custom UI design", "Advanced analytics", "Blog integration", "Security hardened"],
             popular: true,
             art: "business-site",
@@ -257,7 +314,7 @@ export const landingPages: readonly LandingPage[] = [
           {
             title: "E-commerce Platforms",
             description:
-              "Full-featured online stores with secure payment gateways, inventory management, and a checkout built to drive conversions.",
+              "E-commerce website development in Dubai: full-featured online stores with secure payment gateways, inventory management, and a checkout built to drive conversions. We can also build a Shopify website if that suits your store.",
             includes: ["Payment gateway", "Inventory management", "Order tracking", "Customer accounts"],
             popular: true,
             art: "online-store",
@@ -284,9 +341,18 @@ export const landingPages: readonly LandingPage[] = [
         { feature: "Best for", values: ["Blogs, small business sites", "E-commerce, SaaS, enterprise apps"] },
       ],
       recommendation:
-        "Choose WordPress for quick, budget-friendly sites with standard features. Choose custom development when you need unique functionality, high performance, or plan to scale significantly. We build both, and help you pick the right approach for your goals.",
+        "Choose WordPress for quick, budget-friendly sites with standard features. Choose custom development when you need unique functionality, high performance, or plan to scale significantly. As a web design company in Dubai, we provide WordPress development services and custom builds, and help you pick the right approach for your goals.",
     },
-    faqs: webDevFaqs,
+    /* The Shopify question is this page's own: webDevFaqs is also the main site's
+       service page, and that page does not offer Shopify. */
+    faqs: [
+      {
+        question: "Are you a Shopify developer in Dubai?",
+        answer:
+          "Yes. We are a Shopify web development company as well as a custom and WordPress developer. A Shopify website developer on our team builds your store, and we help you decide whether Shopify or a custom build suits it. The scope is confirmed in a written quotation before work begins.",
+      },
+      ...webDevFaqs,
+    ],
     featuredFaqs: ["How much does website development cost?", "How long does it take to build a custom website?"],
   },
   {
@@ -320,6 +386,16 @@ export const landingPages: readonly LandingPage[] = [
     headline: { lead: "Mobile Apps Users", accent: "Keep Coming Back To" },
     subhead:
       "iOS and Android app development in Dubai. Validate an idea with an MVP or ship a full native build: one team, a single codebase where it makes sense, and a price agreed up front.",
+    serviceTerms: [
+      "iOS app development",
+      "Android app development",
+      "Flutter app development",
+      "React Native app development",
+      "Cross-platform app development",
+      "MVP app development",
+      "Enterprise app development",
+      "AI app development",
+    ],
     outcomes: [
       { value: "15,000+", label: "Downloads in month one" },
       { value: "4.7", label: "App Store rating" },
@@ -327,10 +403,10 @@ export const landingPages: readonly LandingPage[] = [
     ],
     proof: { value: "15,000+", label: "downloads in month one for a fitness startup" },
     packagesIntro: {
-      title: ["App development", "packages in Dubai"],
-      /* AI, fintech, e-commerce and healthcare are the site's own practices and
-         industries, named here because the page has to answer those searches. */
-      lead: "From a first MVP to a full native build and the upkeep after it, for e-commerce, fintech, healthcare and more, with AI features such as chatbots where your app needs them. Final scope is confirmed in a written quotation before work begins.",
+      title: ["Mobile app development", "packages in Dubai"],
+      /* AI, fintech and e-commerce are the site's own practices and industries,
+         named here because the page has to answer those searches. */
+      lead: "We are an app development company in Dubai, and our app developers cover everything from a first MVP to e-commerce app development, fintech app development and AI features such as chatbots. App development cost in Dubai depends on scope, so the final price is confirmed in a written quotation before work begins.",
     },
     decks: [
       {
@@ -340,7 +416,7 @@ export const landingPages: readonly LandingPage[] = [
           {
             title: "MVP Apps",
             description:
-              "Android or iOS applications perfect for testing your concept and gaining early traction in the market.",
+              "MVP app development: Android or iOS applications perfect for testing your concept and gaining early traction in the market.",
             includes: ["Core features", "App store submission", "Push notifications", "Cloud backend"],
             popular: true,
             art: "mvp-app",
@@ -348,7 +424,7 @@ export const landingPages: readonly LandingPage[] = [
           {
             title: "Cross-Platform Apps",
             description:
-              "Flutter or React Native apps that work across both iOS and Android devices with a single codebase.",
+              "Cross-platform app development: Flutter or React Native apps that work across both iOS and Android devices with a single codebase.",
             includes: ["Single codebase", "iOS and Android", "Native performance", "Platform-specific UI"],
             popular: true,
             art: "cross-platform",
@@ -356,14 +432,14 @@ export const landingPages: readonly LandingPage[] = [
           {
             title: "Enterprise Native Apps",
             description:
-              "Full-featured native applications with advanced functionality and optimal performance for demanding business needs.",
+              "Enterprise app development: full-featured native applications with advanced functionality and optimal performance for demanding business needs.",
             includes: ["Native Swift and Kotlin", "Offline support", "Enterprise security", "Custom integrations"],
             art: "enterprise-app",
           },
           {
             title: "App Maintenance",
             description:
-              "Ongoing updates, bug fixes, and feature enhancements to keep your app running smoothly and up-to-date.",
+              "App maintenance: ongoing updates, bug fixes, and feature enhancements to keep your app running smoothly and up-to-date.",
             includes: ["Bug fixes", "OS updates", "Security patches", "Analytics reports"],
             art: "app-care",
           },
@@ -431,7 +507,19 @@ export const landingPages: readonly LandingPage[] = [
     eyebrow: "Digital Marketing Agency in Dubai",
     headline: { lead: "Marketing Judged On", accent: "What It Returns" },
     subhead:
-      "Digital marketing in Dubai: SEO, Google and Meta Ads, social media and influencer campaigns run as one strategy, with the tracking to prove which part of the spend actually worked.",
+      "Digital marketing services in Dubai: SEO, Google Ads, Meta Ads, social media marketing and influencer marketing run as one strategy, with the tracking to prove which part of the spend actually worked.",
+    serviceTerms: [
+      "SEO services",
+      "AI SEO (AEO and GEO)",
+      "Google Ads management",
+      "PPC management",
+      "Performance marketing",
+      "Meta Ads",
+      "LinkedIn Ads",
+      "Social media marketing",
+      "Social media management",
+      "Influencer marketing",
+    ],
     outcomes: [
       { value: "3x", label: "Organic traffic growth" },
       { value: "180%", label: "More qualified leads" },
@@ -440,7 +528,7 @@ export const landingPages: readonly LandingPage[] = [
     proof: { value: "3x", label: "organic traffic in six months for a B2B SaaS" },
     packagesIntro: {
       title: ["Digital marketing", "services in Dubai"],
-      lead: "Search, paid media, social and creators, bought one at a time or run together. Final scope is confirmed in a written quotation before work begins.",
+      lead: "We are a digital marketing company in Dubai, so you brief one team instead of a separate SEO agency, AI SEO agency, PPC agency, social media marketing agency and influencer marketing agency. Buy one service or run them together. Final scope is confirmed in a written quotation before work begins.",
     },
     decks: [
       {
@@ -451,7 +539,7 @@ export const landingPages: readonly LandingPage[] = [
           {
             title: "SEO",
             description:
-              "Technical, on-page and content-led SEO that compounds. We fix what blocks crawlers, build the pages that rank, and earn the links that hold those rankings.",
+              "SEO services from an SEO company in Dubai: technical, on-page and content-led SEO that compounds. We fix what blocks crawlers, build the pages that rank, and earn the links that hold those rankings.",
             includes: ["Technical audit", "On-page optimisation", "Link building", "Monthly reporting"],
             popular: true,
             art: "seo",
@@ -459,7 +547,7 @@ export const landingPages: readonly LandingPage[] = [
           {
             title: "AEO + GEO (AI Search)",
             description:
-              "Answer Engine and Generative Engine Optimisation: structuring your content so AI assistants quote you by name instead of your competitor.",
+              "AI SEO: answer engine optimisation and generative engine optimisation, structuring your content so AI assistants quote you by name instead of your competitor.",
             includes: ["Schema markup", "Entity building", "Citation-worthy content", "AI visibility tracking"],
             art: "ai-search",
           },
@@ -488,28 +576,28 @@ export const landingPages: readonly LandingPage[] = [
           {
             title: "Google Ads",
             description:
-              "Search, Display, Shopping and Performance Max campaigns built around intent, and kept clean with disciplined negative-keyword hygiene.",
+              "PPC management from a Google Ads agency in Dubai: Search, Display, Shopping and Performance Max campaigns built around intent, and kept clean with disciplined negative-keyword hygiene.",
             includes: ["Keyword strategy", "Bid management", "PMax setup", "Conversion tracking"],
             art: "google-ads",
           },
           {
             title: "Meta Ads",
             description:
-              "Facebook and Instagram campaigns driven by creative testing and tight audience work, including click-to-WhatsApp for markets that convert in chat.",
+              "Facebook and Instagram campaigns from a Meta Ads agency in Dubai, driven by creative testing and tight audience work, including click-to-WhatsApp for markets that convert in chat.",
             includes: ["Audience building", "Creative testing", "Click-to-WhatsApp", "Pixel and CAPI setup"],
             art: "meta-ads",
           },
           {
             title: "LinkedIn Ads",
             description:
-              "B2B lead generation and account-based marketing aimed at the specific seniority tiers that sign off on your deal.",
+              "B2B lead generation and account-based marketing from a LinkedIn Ads agency in the UAE, aimed at the specific seniority tiers that sign off on your deal.",
             includes: ["ABM setup", "Seniority-tier targeting", "Lead-gen forms", "Pipeline reporting"],
             art: "linkedin-ads",
           },
           {
             title: "Full-Funnel Performance Marketing",
             description:
-              "Every paid channel run as one system: shared creative testing, shared audiences, and one dashboard that reconciles spend against revenue.",
+              "As a performance marketing agency in Dubai, we run every paid channel as one system: shared creative testing, shared audiences, and one dashboard that reconciles spend against revenue.",
             includes: ["Cross-platform campaign build", "A/B testing", "Budget optimisation", "Unified reporting"],
             popular: true,
             art: "full-funnel",
@@ -524,14 +612,14 @@ export const landingPages: readonly LandingPage[] = [
           {
             title: "Social Starter",
             description:
-              "Organic social for local businesses and new brands that need a consistent, credible presence before they spend on ads.",
+              "Social media management for local businesses and new brands that need a consistent, credible presence before they spend on ads.",
             includes: ["1-2 platforms", "12-14 posts a month", "Caption and hashtag strategy", "Monthly report"],
             art: "social-starter",
           },
           {
             title: "Social Growth",
             description:
-              "Reels, carousels and active community management for brands ready to turn followers into a pipeline.",
+              "Social media marketing with reels, carousels and active community management, for brands ready to turn followers into a pipeline.",
             includes: ["2-3 platforms", "16-20 posts a month", "Reels and carousels", "Community management"],
             popular: true,
             art: "social-growth",
@@ -560,7 +648,7 @@ export const landingPages: readonly LandingPage[] = [
           {
             title: "Creator Discovery & Vetting",
             description:
-              "Shortlists built on audience quality, not follower count: engagement authenticity, audience overlap and brand-safety checks before any money moves.",
+              "Influencer marketing starts with the shortlist, built on audience quality, not follower count: engagement authenticity, audience overlap and brand-safety checks before any money moves.",
             includes: [
               "Audience quality analysis",
               "Engagement authenticity",
@@ -681,6 +769,9 @@ export const landingCopy = {
   /** Five client marks beside the rating, in place of the old page's stock faces. */
   ratingClients: clients.slice(0, 5),
 
+  /** The heading of the hero's list. It puts the city beside every term in it. */
+  servicesLabel: "Services in Dubai",
+
   heroForm: {
     title: "Get your free growth plan",
     lead: "Takes under a minute. A real strategist replies, not a bot.",
@@ -697,7 +788,7 @@ export const landingCopy = {
     eyebrow: "Free consultation",
     title: ["Tell us what you need.", "We'll price it honestly."],
     lead: (topic: string) =>
-      `Expert guidance on scope, cost and timeline for your ${topic} project, before you commit to anything.`,
+      `Expert guidance on scope, cost and timeline for your ${topic} project in Dubai, before you commit to anything.`,
     steps: [
       {
         title: "A 30-minute discovery call",
@@ -765,7 +856,7 @@ export const landingCopy = {
   faq: {
     eyebrow: "FAQ",
     title: ["Questions we get", "every week"],
-    lead: (topic: string) => `Everything worth knowing about ${topic} before you brief anyone.`,
+    lead: (topic: string) => `Everything worth knowing about ${topic} in Dubai before you brief anyone.`,
     more: (count: number) => `See ${count} more questions`,
     less: "Hide these questions",
     still: "Still unsure?",
@@ -776,7 +867,7 @@ export const landingCopy = {
   closing: {
     title: ["Let's build something", "great together"],
     lead: (topic: string) =>
-      `Book a free 30-minute consultation. We will tell you what your ${topic} project should cost and how long it should take, whether or not you work with us.`,
+      `Book a free 30-minute consultation about ${topic} in Dubai. We will tell you what your project should cost and how long it should take, whether or not you work with us.`,
     served: "Serving businesses in Dubai and across the UAE.",
     form: { title: "Request a callback", lead: "One form, one reply, no sales sequence." },
   },

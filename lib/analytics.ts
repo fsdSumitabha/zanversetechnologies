@@ -15,8 +15,8 @@
    payload shapes are the earlier site's exactly, bar one deliberate change:
    form_submission no longer carries what the visitor typed.
 
-     form_submission   an enquiry reached EmailJS: the form name and the
-                       service, nothing personal
+     form_submission   an enquiry was sent: the form name and the service,
+                       nothing personal
      generate_lead     the /thank-you page was reached — the Google Ads
                        conversion, with the user_data block Enhanced
                        Conversions hashes and matches on
@@ -49,7 +49,7 @@ function push(event: DataLayerEvent) {
 }
 
 /**
- * An enquiry that EmailJS accepted. Not fired on a failed send.
+ * An enquiry that was sent. Not fired on a failed send.
  *
  * The form's name and the service picked from its list, and nothing the
  * visitor typed. Every tag in the container can read the dataLayer, so a name,
