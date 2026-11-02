@@ -180,6 +180,9 @@ export function ConsentBanner() {
           exit={{ opacity: 0, y: 12 }}
           transition={{ duration: 0.45, ease: EASE }}
           data-lenis-prevent
+          /* Measured by the landing pages' sticky button, which rides on top of
+             this rather than disappearing behind it. */
+          data-consent-banner=""
           className={cn(
             "fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-44",
             "md:inset-x-6 md:bottom-6",

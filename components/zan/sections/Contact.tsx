@@ -1,5 +1,5 @@
 import { contactIntro } from "@/constants/zan";
-import { emailjsReady } from "@/lib/emailjs";
+import { leadsReady } from "@/lib/leads";
 import { SectionHeading } from "@/components/zan/ui/SectionHeading";
 import { ContactRays } from "@/components/zan/contact/ContactRays";
 import { ContactDirect } from "@/components/zan/contact/ContactDirect";
@@ -19,7 +19,7 @@ import { OfficeCards } from "@/components/zan/contact/OfficeCard";
  * the address and the UAE number stay a glance away. Below 1024px the office
  * follows the form.
  *
- * Without EmailJS credentials there is no form (EnquiryForm explains why). The
+ * Without a mail account there is no form (EnquiryForm explains why). The
  * call and the inbox are already the two buttons above, so the office card
  * then stands alone, centred, instead of beside a short card repeating them.
  */
@@ -40,7 +40,7 @@ export function Contact() {
         />
         <ContactDirect className="mt-9" />
 
-        {emailjsReady ? (
+        {leadsReady ? (
           <div className="mt-16 grid gap-12 lg:mt-24 lg:grid-cols-12">
             <div className="lg:col-span-7">
               <EnquiryForm fill />

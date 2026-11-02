@@ -1,0 +1,63 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   The landing pages (components/zan/landing). Only what Tailwind cannot say.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* The hero's subhead is the largest text on a phone, which makes it the LCP
+   there, so like the h1 it moves but never fades: it paints with the first frame. */
+@media (prefers-reduced-motion: no-preference) {
+  .zan-lp-rise {
+    animation: zan-lp-rise 1s var(--ease-out-expo) 120ms backwards;
+  }
+}
+
+@keyframes zan-lp-rise {
+  from {
+    transform: translate3d(0, 14px, 0);
+  }
+}
+
+/* The paper grain is a full-screen blend the phone has to redo on every scrolled
+   frame. At 4.5% it cannot be told from nothing on that screen, and these pages
+   are paid for by the phone's first second. */
+@media (max-width: 1023.98px) {
+  .noise-overlay {
+    display: none;
+  }
+}
+
+/* A form a call to action has just pointed at: one gold ring, opening outwards. */
+[data-lp-form][data-attention] {
+  animation: zan-lp-attention 1.3s var(--ease-smooth);
+}
+
+@keyframes zan-lp-attention {
+  from {
+    box-shadow:
+      0 0 0 0 color-mix(in oklab, var(--color-brand) 75%, transparent),
+      var(--shadow-float);
+  }
+  to {
+    box-shadow:
+      0 0 0 22px color-mix(in oklab, var(--color-brand) 0%, transparent),
+      var(--shadow-float);
+  }
+}
+
+/* The small drawing boards the package art sits on: the hero's grid, at the
+   scale of a card, fading out so it has no hard edge against the card. */
+.zan-lp-board {
+  --zan-lp-rule: color-mix(in oklab, var(--color-ink) 6%, transparent);
+  background-image:
+    linear-gradient(to right, var(--zan-lp-rule) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--zan-lp-rule) 1px, transparent 1px);
+  background-size: 16px 16px;
+  background-position: center;
+}
+
+/* The closing artwork comes up out of the section's own ground. A mask rather
+   than a gradient laid over it: a mask has no edge to see a line at, whatever
+   height the section ends up. The foot melts too, into the footer's ground. */
+.zan-lp-skyline {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 38%, black 88%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 38%, black 88%, transparent 100%);
+}

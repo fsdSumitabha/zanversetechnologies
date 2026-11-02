@@ -28,7 +28,7 @@
   # Only settings and deliberately-public values are listed here. Every actual
   # credential is still scanned, so a real leak still fails the build:
   #
-  #   scanned   MONGODB_URI, JWT_SECRET, GEMINI_API_KEY,
+  #   scanned   MONGODB_URI, JWT_SECRET, GEMINI_API_KEY, SMTP_PASS,
   #             WHATSAPP_ACCESS_TOKEN, WHATSAPP_APP_SECRET,
   #             WHATSAPP_VERIFY_TOKEN, PUSHER_SECRET,
   #             WHATSAPP_PHONE_NUMBER_ID, WHATSAPP_BUSINESS_ACCOUNT_ID
@@ -43,14 +43,13 @@
   #                               secret it pairs with is PUSHER_SECRET, which
   #                               stays scanned. Seven digits cannot help but
   #                               collide with content hashes.
-  #   NEXT_PUBLIC_EMAILJS_*       EmailJS runs in the browser: the enquiry form
-  #                               posts from the visitor, so all three values
-  #                               are compiled into the client bundle by design
-  #                               and would fail every build otherwise. EmailJS
-  #                               itself calls the third one a "public key". The
-  #                               control is the origin allow-list in the
-  #                               EmailJS dashboard, not secrecy.
-  #   TRUSTED_IP_HEADER           The NAME of an HTTP header, not a value — and
+  #   SMTP_HOST, SMTP_PORT,       Settings, and each would fail every build:
+  #   SMTP_USER, MAIL_TO          nodemailer's own table of mail hosts lists
+  #                               smtp.gmail.com, 465 collides with content
+  #                               hashes, and MAIL_TO is normally site.email,
+  #                               which is on every page. The credential is
+  #                               SMTP_PASS, which stays scanned.
+  #   TRUSTED_IP_HEADER          The NAME of an HTTP header, not a value — and
   #                               a plausible one like "x-forwarded-for" appears
   #                               throughout any server bundle. On Netlify it
   #                               can stay unset (Netlify's own header is the
@@ -64,7 +63,7 @@
   # Before adding anything to this list, confirm the variable is genuinely not
   # a credential. If a future build flags one that is NOT listed here, treat it
   # as a real finding and investigate rather than extending the list.
-  SECRETS_SCAN_OMIT_KEYS = "LOG_LEVEL,NODE_ENV,GEMINI_MODEL,WHATSAPP_API_VERSION,WHATSAPP_TEMPLATE_LOCALE,WHATSAPP_DRY_RUN,WHATSAPP_LEAD_TEMPLATE,TRUSTED_IP_HEADER,NEXT_PUBLIC_PUSHER_KEY,NEXT_PUBLIC_PUSHER_CLUSTER,PUSHER_APP_ID,NEXT_PUBLIC_EMAILJS_SERVICE_ID,NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,NEXT_PUBLIC_EMAILJS_PUBLIC_KEY"
+  SECRETS_SCAN_OMIT_KEYS = "LOG_LEVEL,NODE_ENV,GEMINI_MODEL,WHATSAPP_API_VERSION,WHATSAPP_TEMPLATE_LOCALE,WHATSAPP_DRY_RUN,WHATSAPP_LEAD_TEMPLATE,TRUSTED_IP_HEADER,NEXT_PUBLIC_PUSHER_KEY,NEXT_PUBLIC_PUSHER_CLUSTER,PUSHER_APP_ID,SMTP_HOST,SMTP_PORT,SMTP_USER,MAIL_TO"
 
   # The build cache is restored and saved between builds but is never deployed,
   # so scanning it reports on bytes no visitor can reach. It produced the

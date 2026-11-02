@@ -29,10 +29,17 @@ const nextConfig: NextConfig = {
     // rewritten.
     root: path.join(__dirname),
   },
-  /* The API is this project's own: /api/chat/*, /api/pusher/auth, /api/agent/*
-     and the WhatsApp webhook are all implemented in app/api, over this site's
-     Mongo, Gemini, Pusher and Meta credentials. Nothing is rewritten to
-     another host, which is also what keeps the rate limiter honest. A
+  /* Whether the enquiry forms can send, for lib/leads.ts. Compiled into the
+     bundle as a yes or no: the password itself is only ever read on the server.
+     A client component cannot read SMTP_PASS, and most pages are prerendered, so
+     a build is where this has to be decided. */
+  env: {
+    NEXT_PUBLIC_LEADS_READY: process.env.SMTP_USER && process.env.SMTP_PASS ? "true" : "false",
+  },
+  /* The API is this project's own: /api/chat/*, /api/leads, /api/pusher/auth,
+     /api/agent/* and the WhatsApp webhook are all implemented in app/api, over
+     this site's Mongo, Gemini, Pusher, Meta and SMTP credentials. Nothing is
+     rewritten to another host, which is also what keeps the rate limiter honest. A
      server-side rewrite would present every visitor to the upstream as one
      IP, so a per-IP limit ("20 chat sessions per 5 minutes") would apply to
      the whole site at once. Requests arrive directly instead, and clientIp()

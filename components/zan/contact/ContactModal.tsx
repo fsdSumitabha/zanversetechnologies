@@ -9,7 +9,7 @@ import { Eyebrow } from "@/components/zan/ui/Eyebrow";
 import { focusables, usePreloaded } from "@/components/zan/shell/shellStore";
 import { getLenis } from "@/hooks/useLenis";
 import { trackPopupView } from "@/lib/analytics";
-import { emailjsReady } from "@/lib/emailjs";
+import { leadsReady } from "@/lib/leads";
 import { cn } from "@/lib/utils";
 import { EnquiryForm } from "./EnquiryForm";
 
@@ -29,9 +29,8 @@ import { EnquiryForm } from "./EnquiryForm";
                          while the form is on screen anywhere else: the
                          homepage carries it at its foot, and covering a form
                          with a copy of itself is how this feature goes wrong.
-     Never with no       Without EmailJS credentials the form renders the
-     way to send.        address instead, so there is nothing to interrupt
-                         anyone for.
+     Never with no       Without a mail account the form renders the address
+     way to send.        instead, so there is nothing to interrupt anyone for.
      Never over the      The delay is counted from the moment the preloader
      preloader.          leaves, not from load, or most of it is spent behind
                          a screen the visitor cannot read past.
@@ -83,7 +82,7 @@ export function ContactModal() {
   // The timer. Showing it is what records the visit, so a visitor who closes
   // it and one who reloads the page mid-enquiry are both asked exactly once.
   useEffect(() => {
-    if (!revealed || suppressed || !emailjsReady) return;
+    if (!revealed || suppressed || !leadsReady) return;
     try {
       if (sessionStorage.getItem(SEEN_KEY) === "1") return;
     } catch {
@@ -176,7 +175,7 @@ export function ContactModal() {
     };
   }, [open, close]);
 
-  if (suppressed || !emailjsReady) return null;
+  if (suppressed || !leadsReady) return null;
 
   return (
     <AnimatePresence>

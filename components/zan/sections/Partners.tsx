@@ -11,7 +11,7 @@ import { clients, ctas, partnersIntro, type Client } from "@/constants/zan";
    desktop and a hover stops. Reduced motion: one static, centred row.
    ─────────────────────────────────────────────────────────────────────────── */
 
-function Plate({ client, echo = false }: { client: Client; echo?: boolean }) {
+export function Plate({ client, echo = false }: { client: Client; echo?: boolean }) {
   return (
     <figure className="group/plate flex w-48 flex-col items-center sm:w-56 lg:w-64">
       <div className="relative h-32 w-full overflow-hidden rounded-2xl border border-line bg-bg shadow-lift transition-[translate,box-shadow] duration-500 ease-out-expo group-hover/plate:-translate-y-1.5 group-hover/plate:shadow-float sm:h-36 lg:h-44">
