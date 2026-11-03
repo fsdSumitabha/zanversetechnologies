@@ -18,9 +18,7 @@ import { pageMetadata } from "@/lib/metadata";
 
    NOINDEX, PERMANENTLY. A thank-you page has nothing to offer a search
    result, and one that is indexed gets landed on cold, which reports a
-   conversion for a visitor who never enquired. The layout's pre-launch
-   noindex is a separate thing with its own deletion note; this one stays
-   after cutover.
+   conversion for a visitor who never enquired.
    ─────────────────────────────────────────────────────────────────────────── */
 
 export const metadata: Metadata = {

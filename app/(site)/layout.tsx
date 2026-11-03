@@ -87,27 +87,7 @@ export const metadata: Metadata = {
     images: [OG_IMAGE],
   },
   robots: {
-    /* ── WHAT TO DELETE AT CUTOVER ────────────────────────────────────────
-       `index: false, follow: false` — here and, for the same reason, in the
-       googleBot block below.
-
-       This is the new zanversetechnologies.com build. While zanservices.com/ae
-       still serves the same pages, letting this one be indexed would put two
-       copies of that content into search and split its rankings between them.
-       Delete these two noindex pairs the day this build goes live on
-       zanversetechnologies.com and zanservices.com/ae is retired or redirected
-       here; everything else in this block is what the live site should be
-       serving and stays.
-
-       The googleBot block has to repeat them because a googlebot-specific
-       meta tag OVERRIDES the generic robots tag for Google. Leaving index
-       and follow out of it would hand Google max-image-preview:large and
-       permission to index the pre-launch build. */
-    index: false,
-    follow: false,
     googleBot: {
-      index: false,
-      follow: false,
       // Full-size image thumbnails and untruncated snippets in results.
       "max-image-preview": "large",
       "max-snippet": -1,

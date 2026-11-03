@@ -8,7 +8,7 @@ It serves the UAE only: one brand, one office, one market. The site was carried 
 
 ## Status
 
-- **Pre-launch, hidden from search engines.** `app/(site)/layout.tsx` sets `index: false, follow: false`, in the generic `robots` block and again in its `googleBot` block, which overrides it for Google. zanservices.com/ae still serves the same pages, and two indexed copies would split their rankings. Delete both pairs at cutover, once zanversetechnologies.com serves this build and zanservices.com/ae is retired or redirected here. The comment on that block marks exactly what to remove.
+- **The company's main site.** zanversetechnologies.com serves this build, open to search engines, and zanservices.com/ae redirects here with the path and query kept.
 - **Old /ae addresses still work.** `next.config.ts` redirects `/ae` to `/` and `/ae/<path>` to `/<path>`, so a link shared from the old pages lands on the same page here.
 - **Every line of copy and every figure** comes from `constants/`: the previous build's UAE pages first, the production Zan site's data (`zan_webdevelopment/src/data`) second. Nothing is invented. The deliberate deviations are documented in comments there.
 
@@ -104,10 +104,10 @@ Limits: 5 leads per IP in 10 minutes, 40 per hour across the site, and 3 confirm
 - **Conversions** count on the same `/thank-you`. That page sits under the site's root layout, so reaching it is a full page load; the form marks the preloader and the timed modal as seen first, so a new lead sees neither.
 - **The form:** name, UAE phone, email and "What do you need?" are required ("What do you need?" starts on "Not sure yet"); project details are optional. One component everywhere: hero, closing section and popup, on every page.
 - **Phone numbers** are UAE only, with `+971` fixed in the field (`lib/uaePhone.ts`).
-- **Tags:** `GTM-WKT2N6FF`, through the same `Analytics` as the rest of this build, on the production host and after consent. It holds Google Ads `AW-17890514943`, with a conversion on `generate_lead` (reaching `/thank-you`) and one on `phone Icon click` (any `tel:` link).
+- **Tags:** the same `Analytics` as the rest of this build, on the production host and after consent: Meta and LinkedIn, and no GTM container. `GTM-WKT2N6FF` holds Google Ads `AW-17890514943`, with a conversion on `generate_lead` (reaching `/thank-you`) and one on `phone Icon click` (any `tel:` link), but it stays off the UAE (decided 23 Oct 2026). These pages report no Google Ads conversion until a container is chosen for them and added in `components/zan/analytics/TagLoader.tsx`, which today loads `GTM-PGGNMWGN` on `/services/web-development` only.
 - **Keywords and metadata** are per page in `seo` in `constants/landing.ts`. Google Ads scores the words on the page, not the keywords meta tag, so the service and the city are in the h1, the subhead, the hero's service list (`serviceTerms`), the section headings and leads, and the package descriptions. Keep a page's keywords to what it actually sells, and keep them in text a visitor can read.
 - **No prices or currency figures** appear anywhere on these pages, by design. Case-study results quoted in money are filtered out in `landingProjects`.
-- **Not indexed.** They carry `noindex, follow` and stay out of the sitemap, so they cannot compete with `/services/*`. This is permanent, unlike the site's pre-launch noindex. To change it, see `app/(landing)/layout.tsx`.
+- **Not indexed.** They carry `noindex, follow` and stay out of the sitemap, so they cannot compete with `/services/*`. This is permanent. To change it, see `app/(landing)/layout.tsx`.
 
 ## Palette
 
