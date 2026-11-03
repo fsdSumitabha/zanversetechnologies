@@ -58,7 +58,7 @@ const WHATSAPP_HREF = waLink(site.whatsapp, site.name);
 
 /** The office card's two buttons: one size, one outline, side by side. */
 const OFFICE_ACTION =
-  "flex h-12 items-center justify-center gap-2 rounded-full border border-line-strong bg-bg text-small font-semibold text-ink transition-[border-color,scale] duration-300 ease-out-expo hover:border-ink active:scale-[0.98]";
+  "flex h-12 items-center justify-center gap-2 rounded-full border border-border-strong bg-surface text-small font-semibold text-foreground transition-[border-color,scale] duration-300 ease-out-expo hover:border-foreground active:scale-[0.98]";
 
 /**
  * Full-screen menu below 1280px: its own bar (logo + the close toggle, in the
@@ -173,7 +173,7 @@ export function MobileMenu({
           animate="visible"
           exit="exit"
           data-lenis-prevent
-          className="fixed inset-0 z-60 flex h-dvh flex-col overflow-y-auto overscroll-contain bg-bg outline-none xl:hidden"
+          className="fixed inset-0 z-60 flex h-dvh flex-col overflow-y-auto overscroll-contain bg-surface-raised outline-none xl:hidden"
         >
           <div className="container-zan flex h-nav shrink-0 items-center justify-between">
             <SiteLink
@@ -191,22 +191,22 @@ export function MobileMenu({
 
           <div className="container-zan flex flex-1 flex-col pt-4 pb-[max(2rem,env(safe-area-inset-bottom))]">
             <nav aria-label="Menu">
-              <ul className="border-t border-line">
+              <ul className="border-t border-border">
                 {mainNav.map((item, i) => {
                   const hasSections = Boolean(item.sections?.length);
                   const itemHref = href(item.href);
                   return (
-                    <motion.li key={item.label} variants={row} className="border-b border-line">
+                    <motion.li key={item.label} variants={row} className="border-b border-border">
                       <div className="flex items-center gap-2">
                         <SiteLink
                           href={item.href}
                           onClick={(e) => go(e, itemHref)}
-                          className="group flex min-h-16 flex-1 items-baseline gap-4 py-4 text-ink"
+                          className="group flex min-h-16 flex-1 items-baseline gap-4 py-4 text-foreground"
                         >
-                          <span className="w-6 shrink-0 font-mono text-eyebrow text-muted">
+                          <span className="w-6 shrink-0 font-mono text-eyebrow text-subtle">
                             {String(i + 1).padStart(2, "0")}
                           </span>
-                          <span className="font-sans text-[clamp(1.75rem,1.3rem+2vw,2.5rem)] leading-none font-bold tracking-[-0.035em] uppercase transition-colors duration-300 group-active:text-brand-ink">
+                          <span className="font-sans text-[clamp(1.75rem,1.3rem+2vw,2.5rem)] leading-none font-bold tracking-[-0.035em] uppercase transition-colors duration-300 group-active:text-accent-ink">
                             {item.label}
                           </span>
                         </SiteLink>
@@ -217,7 +217,7 @@ export function MobileMenu({
                             aria-expanded={servicesOpen}
                             aria-controls={`${id}-services`}
                             aria-label={`${servicesOpen ? "Hide" : "Show"} ${item.label.toLowerCase()}`}
-                            className="grid size-11 shrink-0 place-items-center rounded-full border border-line text-ink-2 transition-colors duration-300 hover:bg-surface"
+                            className="grid size-11 shrink-0 place-items-center rounded-full border border-border text-muted transition-colors duration-300 hover:bg-surface-muted"
                           >
                             <ChevronDown
                               aria-hidden="true"
@@ -251,10 +251,10 @@ export function MobileMenu({
                                         onClick={(e) => go(e, sectionHref)}
                                         className="flex items-baseline gap-2.5 py-1.5"
                                       >
-                                        <span className="font-mono text-eyebrow text-brand-ink">
+                                        <span className="font-mono text-eyebrow text-accent-ink">
                                           {practices[s]?.index}
                                         </span>
-                                        <span className="font-display text-h3 font-semibold text-ink">
+                                        <span className="font-display text-h3 font-semibold text-foreground">
                                           {section.title}
                                         </span>
                                       </SiteLink>
@@ -266,7 +266,7 @@ export function MobileMenu({
                                               <SiteLink
                                                 href={leaf.href}
                                                 onClick={(e) => go(e, leafHref)}
-                                                className="block py-2 text-body text-ink-2 transition-colors duration-300 hover:text-ink active:text-brand-ink"
+                                                className="block py-2 text-body text-muted transition-colors duration-300 hover:text-foreground active:text-accent-ink"
                                               >
                                                 {leaf.label}
                                               </SiteLink>
@@ -302,24 +302,24 @@ export function MobileMenu({
             {/* The office as a card of its own: where it is, its number set
                 large, and the two ways to use that number (the same line
                 takes calls and WhatsApp). Outline pills, so "Start a Project"
-                above stays the one gold action on the sheet. */}
+                above stays the one filled action on the sheet. */}
             <motion.section
               variants={row}
               aria-labelledby={`${id}-office`}
-              className="mt-6 rounded-3xl border border-line bg-surface p-5 sm:p-6"
+              className="mt-6 rounded-3xl border border-border bg-surface-muted p-5 sm:p-6"
             >
               {/* Plain text after the dot, so on the narrowest phones it wraps
                   rather than cutting the country short. */}
               <h2
                 id={`${id}-office`}
-                className="flex items-center gap-2.5 font-mono text-eyebrow text-muted uppercase"
+                className="flex items-center gap-2.5 font-mono text-eyebrow text-subtle uppercase"
               >
-                <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-brand" />
+                <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-accent" />
                 <span>
                   {office.city}, {office.country}
                 </span>
               </h2>
-              <p className="mt-3 font-display text-h2 text-ink tabular-nums">{office.phoneDisplay}</p>
+              <p className="mt-3 font-display text-h2 text-foreground tabular-nums">{office.phoneDisplay}</p>
               <div className="mt-5 grid grid-cols-2 gap-2.5">
                 <a
                   href={`tel:${office.phoneTel}`}
@@ -327,7 +327,7 @@ export function MobileMenu({
                   data-analytics-label={office.phoneDisplay}
                   className={OFFICE_ACTION}
                 >
-                  <Phone aria-hidden="true" className="size-4 shrink-0 text-brand-ink" />
+                  <Phone aria-hidden="true" className="size-4 shrink-0 text-accent-ink" />
                   Call
                 </a>
                 <a
@@ -337,7 +337,7 @@ export function MobileMenu({
                   onClick={() => trackWhatsAppClick("Mobile Menu WhatsApp")}
                   className={OFFICE_ACTION}
                 >
-                  <SocialIcon name="WhatsApp" className="size-4 shrink-0 text-whatsapp" />
+                  <SocialIcon name="WhatsApp" className="size-4 shrink-0 text-whatsapp-ink" />
                   WhatsApp
                   <span className="sr-only"> (opens in a new tab)</span>
                 </a>

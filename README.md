@@ -111,17 +111,29 @@ Limits: 5 leads per IP in 10 minutes, 40 per hour across the site, and 3 confirm
 
 ## Palette
 
-One palette, gold, defined once in `app/globals.css`'s `@theme`:
+The logo's navy (`#172554`) and cyan (`#44d9f8`) over Tailwind's slate, defined once in `app/globals.css`: the `navy-*` and `cyan-*` scales, then semantic tokens that components use.
 
-| Token | Value | Use |
-|---|---|---|
-| `brand` | `#ffc400` | The fill. Never text. |
-| `brand-ink` | `#8b6904` | Accent text on light grounds: 5.10:1 on white |
-| `on-brand` | `#17130a` | Anything on a gold fill. Near-black: 11.59:1 on the gold, where white fails |
-| `brand-soft` | `#fff4cc` | Pale tint |
-| Neutrals | `bg` `#ffffff`, `surface` `#fbf9f3`, `ink` `#17130a`, `ink-2` `#6c6552`, `line` `#ece6d5` | Warm, to sit under the gold |
+| Token | Light | Dark | Use |
+|---|---|---|---|
+| `canvas` | `#f8fafc` | `#07142f` | The page |
+| `surface` | `#ffffff` | `#102142` | Cards, panels, inputs |
+| `surface-raised` | `#ffffff` | `#14294c` | Bars, menus, modals |
+| `surface-muted` | `#f1f5f9` | `#172b4d` | Alternate bands, chips, hover fills |
+| `surface-tint` | `#eff4ff` | `#16305a` | A band with the brand in it |
+| `foreground`, `muted`, `subtle` | `#0f172a`, `#475569`, `#64748b` | `#f1f5f9`, `#b6c4d8`, `#9bafcb` | Text |
+| `border`, `border-strong`, `border-field` | `#e2e8f0`, `#cbd5e1`, `#64748b` | `#263a5c`, `#3a5178`, `#6f87ab` | Lines. `border-field` is for input outlines |
+| `action`, `action-foreground` | `#172554`, `#ffffff` | `#44d9f8`, `#08204a` | The main action |
+| `accent`, `accent-foreground` | `#44d9f8`, `#08204a` | the same | The cyan fill. Never text on a light ground |
+| `accent-ink` | `#11677d` | `#78e5fb` | Cyan for text: 6.44:1 on white |
+| `accent-soft` | `#ecfcff` | `#0b3445` | Pale tint |
+| `focus` | `#0891b2` | `#67e8f9` | Keyboard focus |
+| `inverse`, `plate`, `scrim`, `shadow` | | | A fixed dark plate, a fixed white plate for logos, the modal backdrop, shadows |
+| `ai` | violet-600 | violet-400 | AI and blockchain only |
+| `success`, `warning`, `danger` | emerald, amber, rose 600 | 400 | Fills and icons. Text takes the matching `-ink` token |
 
-Components use the tokens (`bg-brand`, `text-brand-ink`, `text-on-brand` …), never hex. WebGL, canvas and three.js cannot read a CSS variable, so `lib/brand.ts` holds the same values as hex. The two change together.
+Components use the tokens (`bg-action`, `text-accent-ink`, `text-muted` …), never hex. WebGL, canvas and three.js cannot read a CSS variable, so `lib/brand.ts` holds the same light values as hex. The two change together.
+
+The dark values sit in `.dark` in `app/globals.css`. Adding the class `dark` to `<html>` turns the theme on. There is no switch in the UI, and light is the default.
 
 ## Motion and accessibility
 
@@ -142,7 +154,7 @@ The artwork was supplied as raster images (`assets-src/brand/zanverse-logo.jpeg`
 | `app/manifest.ts`, `public/images/brand/icon-*.png` | Home-screen name and icons, including a maskable one |
 | `public/og-default.png` | The share card. Bump the `?v=` in `OG_IMAGE` (`lib/metadata.ts`) whenever it changes |
 
-The logo's colours (navy and the cyan-to-blue gradient) belong to the logo only; the site's palette stays gold. Images under `public/` are served as immutable for a year, so a changed image gets a new file name or version query rather than being overwritten in place.
+The two `-on-dark.svg` files in `public/images/brand` are the lockup and the mark with the navy turned slate-100, for the dark theme only: `.dark .zan-logo` and `.dark .zan-mark` swap them in. Images under `public/` are served as immutable for a year, so a changed image gets a new file name or version query rather than being overwritten in place.
 
 ## Third-party notices
 

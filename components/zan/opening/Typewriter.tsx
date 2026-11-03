@@ -77,7 +77,7 @@ export function Typewriter({ words }: { words: readonly string[] }) {
       data-phase={running ? state.phase : "rest"}
       className="zan-hero-typed block whitespace-nowrap"
     >
-      <span className="text-brand-gradient">{text}</span>
+      <span className="text-accent-gradient">{text}</span>
       <span className="zan-hero-caret" />
     </span>
   );

@@ -14,7 +14,7 @@ import "./about.css";
    the zoom brings it back to 1:1, so it is composed as a page, not a card.
    The city is set huge, with the country under it, the address and the
    number at the foot, and the office's own clock beside it: a station-clock
-   face whose minute hand jumps on the minute and whose gold seconds hand
+   face whose minute hand jumps on the minute and whose cyan seconds hand
    sweeps round, trailing a wedge of light. The same time is in figures, in a
    <time> element, which is what assistive tech reads; the face is decorative.
 
@@ -64,7 +64,7 @@ function Dial({ time }: { time: string }) {
   return (
     <div ref={root} aria-hidden="true" className="zan-clock" data-ready={ready || undefined}>
       <svg viewBox="0 0 200 200" className="absolute inset-0 size-full overflow-visible">
-        <circle cx="100" cy="100" r="99" className="fill-bg stroke-line-strong" strokeWidth="1" />
+        <circle cx="100" cy="100" r="99" className="fill-surface stroke-border-strong" strokeWidth="1" />
         {TICKS.map((i) => {
           const hour = i % 5 === 0;
           return (
@@ -75,7 +75,7 @@ function Dial({ time }: { time: string }) {
               x2="100"
               y2={hour ? 24 : 14}
               transform={`rotate(${i * 6} 100 100)`}
-              className={hour ? "stroke-ink" : "stroke-line-strong"}
+              className={hour ? "stroke-foreground" : "stroke-border-strong"}
               strokeWidth={hour ? 3 : 1.25}
             />
           );
@@ -97,7 +97,7 @@ function Dial({ time }: { time: string }) {
   );
 }
 
-const label = "font-mono text-eyebrow text-muted uppercase";
+const label = "font-mono text-eyebrow text-subtle uppercase";
 
 /**
  * The Dubai office as a full-screen page, for the About collage's centre
@@ -109,16 +109,16 @@ export function OfficesPortal() {
 
   return (
     <div className="@container h-full">
-      <div className="zan-office h-full bg-brand-wash px-[5.5cqw] pt-[var(--zan-portal-top,2.25rem)] pb-[5svh]">
+      <div className="zan-office h-full bg-accent-wash px-[5.5cqw] pt-[var(--zan-portal-top,2.25rem)] pb-[5svh]">
         <div className="[grid-area:eyebrow]">
           <Eyebrow>{about.principles[1].label}</Eyebrow>
         </div>
 
         <div className="[grid-area:city]">
-          <h3 className="font-display text-[min(24cqw,17svh)] leading-[0.86] font-semibold tracking-[-0.045em] text-ink @3xl:text-[min(18cqw,28svh)]">
+          <h3 className="font-display text-[min(24cqw,17svh)] leading-[0.86] font-semibold tracking-[-0.045em] text-foreground @3xl:text-[min(18cqw,28svh)]">
             {office.city}
           </h3>
-          <p className="mt-[1.8svh] text-[clamp(1rem,4.6cqw,1.5rem)] tracking-[-0.01em] text-ink-2 @3xl:text-[clamp(1.125rem,2cqw,1.875rem)]">
+          <p className="mt-[1.8svh] text-[clamp(1rem,4.6cqw,1.5rem)] tracking-[-0.01em] text-muted @3xl:text-[clamp(1.125rem,2cqw,1.875rem)]">
             {office.country}
           </p>
         </div>
@@ -131,7 +131,7 @@ export function OfficesPortal() {
           <p className={label}>Local time</p>
           <time
             dateTime={iso}
-            className="mt-[1.4svh] block font-mono text-[min(11cqw,6.4svh)] leading-none font-medium tracking-[-0.04em] text-ink tabular-nums @3xl:text-[min(4.8cqw,8svh)]"
+            className="mt-[1.4svh] block font-mono text-[min(11cqw,6.4svh)] leading-none font-medium tracking-[-0.04em] text-foreground tabular-nums @3xl:text-[min(4.8cqw,8svh)]"
           >
             {time}
           </time>
@@ -141,7 +141,7 @@ export function OfficesPortal() {
 
         <div className="zan-office-fact [grid-area:address]">
           <p className={label}>Address</p>
-          <address className="mt-[1.4svh] text-small text-ink-2 not-italic @3xl:text-[clamp(0.9375rem,1.25cqw,1.125rem)] @3xl:leading-relaxed">
+          <address className="mt-[1.4svh] text-small text-muted not-italic @3xl:text-[clamp(0.9375rem,1.25cqw,1.125rem)] @3xl:leading-relaxed">
             {office.addressLines.map((line) => (
               <span key={line} className="block">
                 {/* Words never break inside, so a narrow column wraps at a
@@ -161,7 +161,7 @@ export function OfficesPortal() {
           <p className={label}>Phone</p>
           <a
             href={`tel:${office.phoneTel}`}
-            className="mt-[1.4svh] inline-block text-small font-medium text-ink tabular-nums underline-offset-4 hover:underline @3xl:text-[clamp(0.9375rem,1.25cqw,1.125rem)]"
+            className="mt-[1.4svh] inline-block text-small font-medium text-foreground tabular-nums underline-offset-4 hover:underline @3xl:text-[clamp(0.9375rem,1.25cqw,1.125rem)]"
           >
             {office.phoneDisplay}
           </a>

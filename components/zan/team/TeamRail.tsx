@@ -201,8 +201,8 @@ export function TeamRail({
       </ul>
 
       <div className="zan-team-controls container-zan mt-1 flex items-center gap-6">
-        <span aria-hidden="true" className="h-[3px] grow overflow-hidden rounded-full bg-line">
-          <span ref={barRef} className="block h-full rounded-full bg-brand" style={{ width: "30%" }} />
+        <span aria-hidden="true" className="h-[3px] grow overflow-hidden rounded-full bg-border">
+          <span ref={barRef} className="block h-full rounded-full bg-action" style={{ width: "30%" }} />
         </span>
 
         <div className="flex shrink-0 items-center gap-2.5">
@@ -211,7 +211,7 @@ export function TeamRail({
             onClick={() => go(-1)}
             disabled={at.start}
             aria-label="Previous team member"
-            className="grid size-11 place-items-center rounded-full border border-line bg-bg text-ink shadow-lift transition-[color,border-color,transform] duration-300 ease-out-expo hover:-translate-y-0.5 hover:border-brand hover:text-brand-ink disabled:pointer-events-none disabled:border-line disabled:opacity-35 disabled:shadow-none"
+            className="grid size-11 place-items-center rounded-full border border-border bg-surface text-foreground shadow-lift transition-[color,border-color,transform] duration-300 ease-out-expo hover:-translate-y-0.5 hover:border-accent hover:text-accent-ink disabled:pointer-events-none disabled:border-border disabled:opacity-35 disabled:shadow-none"
           >
             <ChevronLeft aria-hidden="true" className="size-5" />
           </button>
@@ -220,7 +220,7 @@ export function TeamRail({
             onClick={() => go(1)}
             disabled={at.end}
             aria-label="Next team member"
-            className="grid size-11 place-items-center rounded-full border border-line bg-bg text-ink shadow-lift transition-[color,border-color,transform] duration-300 ease-out-expo hover:-translate-y-0.5 hover:border-brand hover:text-brand-ink disabled:pointer-events-none disabled:border-line disabled:opacity-35 disabled:shadow-none"
+            className="grid size-11 place-items-center rounded-full border border-border bg-surface text-foreground shadow-lift transition-[color,border-color,transform] duration-300 ease-out-expo hover:-translate-y-0.5 hover:border-accent hover:text-accent-ink disabled:pointer-events-none disabled:border-border disabled:opacity-35 disabled:shadow-none"
           >
             <ChevronRight aria-hidden="true" className="size-5" />
           </button>

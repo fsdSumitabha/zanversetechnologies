@@ -38,8 +38,8 @@ export const MenuToggle = forwardRef<
       aria-expanded={open}
       aria-controls={controls}
       className={cn(
-        "relative grid size-11 shrink-0 place-items-center rounded-full border border-line bg-bg text-ink",
-        "transition-colors duration-300 hover:border-line-strong hover:bg-surface",
+        "relative grid size-11 shrink-0 place-items-center rounded-full border border-border bg-surface text-foreground",
+        "transition-colors duration-300 hover:border-border-strong hover:bg-surface-muted",
         className,
       )}
     >

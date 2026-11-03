@@ -74,7 +74,7 @@ export default function AboutPage() {
 
       <Section id="how-we-engage" eyebrow={metricsIntro.eyebrow} title="How we work with you">
         <Reveal>
-          <p className="max-w-[62ch] text-lead text-ink-2">{about.body[1]}</p>
+          <p className="max-w-[62ch] text-lead text-muted">{about.body[1]}</p>
         </Reveal>
         <MetricRow items={metrics} className="mt-10" />
       </Section>
@@ -97,11 +97,11 @@ export default function AboutPage() {
           {credentials.map((c, i) => (
             <li key={c.id} className="min-w-0">
               <Reveal delay={Math.min(i, 3) * 0.05} className="h-full">
-                <article className="flex h-full flex-col gap-5 rounded-3xl border border-line bg-bg p-6 sm:p-7 lg:flex-row lg:gap-7">
+                <article className="flex h-full flex-col gap-5 rounded-3xl border border-border bg-surface p-6 sm:p-7 lg:flex-row lg:gap-7">
                   <div
                     className={cn(
                       "grid h-20 shrink-0 place-items-center rounded-2xl px-5 lg:h-auto lg:w-36 lg:px-0",
-                      c.onDark ? "bg-ink" : "bg-surface",
+                      c.onDark ? "bg-inverse" : "bg-surface-muted dark:bg-plate",
                     )}
                   >
                     <Image
@@ -118,15 +118,15 @@ export default function AboutPage() {
                     />
                   </div>
                   <div className="flex min-w-0 flex-1 flex-col">
-                    <h3 className="font-display text-h3 font-semibold text-ink">{c.name}</h3>
-                    <p className="mt-2 text-small text-ink-2">{c.body}</p>
+                    <h3 className="font-display text-h3 font-semibold text-foreground">{c.name}</h3>
+                    <p className="mt-2 text-small text-muted">{c.body}</p>
                     {/* mt-auto lines the two reference rows up along one
                         baseline; the padding keeps a gap above the rule on
                         the card whose copy runs longest. */}
                     <div className="mt-auto pt-5 md:pt-6">
-                      <dl className="flex flex-wrap items-baseline gap-x-2 gap-y-1 border-t border-line pt-5 md:pt-6">
-                        <dt className="font-mono text-eyebrow text-muted uppercase">{c.refLabel}</dt>
-                        <dd className="font-mono text-small font-medium text-brand-ink tabular-nums">{c.ref}</dd>
+                      <dl className="flex flex-wrap items-baseline gap-x-2 gap-y-1 border-t border-border pt-5 md:pt-6">
+                        <dt className="font-mono text-eyebrow text-subtle uppercase">{c.refLabel}</dt>
+                        <dd className="font-mono text-small font-medium text-accent-ink tabular-nums">{c.ref}</dd>
                       </dl>
                     </div>
                   </div>

@@ -28,8 +28,8 @@ export const metadata: Metadata = {
 export default function AgentLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body className="bg-bg text-ink antialiased">
-        <div className="min-h-svh bg-surface">{children}</div>
+      <body className="bg-canvas text-foreground antialiased">
+        <div className="min-h-svh bg-surface-muted">{children}</div>
       </body>
     </html>
   );

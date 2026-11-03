@@ -5,7 +5,7 @@
 .zan-contact-veil {
   background-image: linear-gradient(
     180deg,
-    color-mix(in oklab, var(--color-brand-soft) 80%, transparent) 0%,
+    color-mix(in oklab, var(--color-accent-soft) 80%, transparent) 0%,
     transparent 55%
   );
 }

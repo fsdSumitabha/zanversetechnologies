@@ -3,7 +3,7 @@
    row of the real logos, echoes hidden. */
 
 .zan-partners-loop {
-  mask-image: linear-gradient(90deg, transparent, var(--color-ink) 6%, var(--color-ink) 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, var(--color-foreground) 6%, var(--color-foreground) 94%, transparent);
 }
 
 @media (prefers-reduced-motion: reduce) {

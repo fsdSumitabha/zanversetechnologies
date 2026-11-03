@@ -12,8 +12,8 @@ import { Reveal } from "./Reveal";
    motion is the Reveal wrapper each list item opts into. */
 
 const cardBase =
-  "group/card relative flex h-full flex-col rounded-3xl border border-line bg-bg p-6 transition-[border-color,box-shadow,transform] duration-500 ease-out-expo sm:p-7";
-const cardHover = "hover:-translate-y-0.5 hover:border-line-strong hover:shadow-lift";
+  "group/card relative flex h-full flex-col rounded-3xl border border-border bg-surface p-6 transition-[border-color,box-shadow,transform] duration-500 ease-out-expo sm:p-7";
+const cardHover = "hover:-translate-y-0.5 hover:border-border-strong hover:shadow-lift";
 
 /** A square glyph plate: the fallback for a subject with no photograph yet. */
 export function IconPlate({ name, className }: { name: IconKey; className?: string }) {
@@ -21,7 +21,7 @@ export function IconPlate({ name, className }: { name: IconKey; className?: stri
     <span
       aria-hidden="true"
       className={cn(
-        "grid size-11 shrink-0 place-items-center rounded-2xl bg-brand-soft text-brand-ink transition-colors duration-500",
+        "grid size-11 shrink-0 place-items-center rounded-2xl bg-accent-soft text-accent-ink transition-colors duration-500",
         className,
       )}
     >
@@ -55,13 +55,13 @@ export function CardPhoto({ art, sizes, className }: { art: CardArt; sizes?: str
  */
 function CardBanner({ art, index }: { art: CardArt; index?: string }) {
   return (
-    <span className="relative -mx-6 -mt-6 mb-6 block overflow-hidden rounded-t-[1.4375rem] border-b border-line bg-surface sm:-mx-7 sm:-mt-7">
+    <span className="relative -mx-6 -mt-6 mb-6 block overflow-hidden rounded-t-[1.4375rem] border-b border-border bg-surface-muted sm:-mx-7 sm:-mt-7">
       <CardPhoto
         art={art}
         className="aspect-[16/9] transition-transform duration-700 ease-out-expo group-hover/card:scale-[1.03] motion-reduce:transform-none"
       />
       {index && (
-        <span className="absolute top-3 right-3 rounded-full bg-bg/90 px-2.5 py-1 font-mono text-eyebrow text-ink">
+        <span className="absolute top-3 right-3 rounded-full bg-surface/90 px-2.5 py-1 font-mono text-eyebrow text-foreground">
           {index}
         </span>
       )}
@@ -106,20 +106,20 @@ export function ServiceCard({
         ) : (
           <div className="flex items-start justify-between gap-4">
             {icon ? <IconPlate name={icon} /> : null}
-            {index && <span className="font-mono text-eyebrow text-muted">{index}</span>}
+            {index && <span className="font-mono text-eyebrow text-subtle">{index}</span>}
           </div>
         )}
 
-        <h3 className={cn("font-display text-h3 font-semibold text-ink", !art && (icon || index) ? "mt-5" : "")}>{title}</h3>
-        {tagline && <p className="mt-1.5 font-mono text-eyebrow text-brand-ink uppercase">{tagline}</p>}
-        {description && <p className="mt-4 text-body text-ink-2">{description}</p>}
+        <h3 className={cn("font-display text-h3 font-semibold text-foreground", !art && (icon || index) ? "mt-5" : "")}>{title}</h3>
+        {tagline && <p className="mt-1.5 font-mono text-eyebrow text-accent-ink uppercase">{tagline}</p>}
+        {description && <p className="mt-4 text-body text-muted">{description}</p>}
 
         {capabilities && capabilities.length > 0 && (
           <ul className="mt-5 flex flex-wrap gap-2">
             {capabilities.map((c) => (
               <li
                 key={c}
-                className="rounded-full border border-line bg-surface px-3 py-1.5 text-[0.8125rem] leading-none text-ink-2"
+                className="rounded-full border border-border bg-surface-muted px-3 py-1.5 text-[0.8125rem] leading-none text-muted"
               >
                 {c}
               </li>
@@ -129,11 +129,11 @@ export function ServiceCard({
 
         {/* mt-auto, so the row of cards lines its "Read more" up along one
             baseline however long each description runs. */}
-        <span className="mt-auto flex items-center gap-1.5 pt-6 text-small font-medium text-ink">
+        <span className="mt-auto flex items-center gap-1.5 pt-6 text-small font-medium text-foreground">
           Read more
           <ArrowUpRight
             aria-hidden="true"
-            className="size-4 text-brand-ink transition-transform duration-300 ease-out-expo group-hover/card:translate-x-0.5 group-hover/card:-translate-y-0.5"
+            className="size-4 text-accent-ink transition-transform duration-300 ease-out-expo group-hover/card:translate-x-0.5 group-hover/card:-translate-y-0.5"
           />
         </span>
       </SiteLink>
@@ -170,12 +170,12 @@ export function FactCard({
         ) : (
           <div className="flex items-start justify-between gap-4">
             {icon ? <IconPlate name={icon} /> : null}
-            {index && <span className="font-mono text-eyebrow text-muted">{index}</span>}
+            {index && <span className="font-mono text-eyebrow text-subtle">{index}</span>}
           </div>
         )}
-        <h3 className={cn("font-display text-h3 font-semibold text-ink", !art && (icon || index) ? "mt-5" : "")}>{title}</h3>
-        {tagline && <p className="mt-1.5 font-mono text-eyebrow text-brand-ink uppercase">{tagline}</p>}
-        {description && <p className="mt-4 text-body text-ink-2">{description}</p>}
+        <h3 className={cn("font-display text-h3 font-semibold text-foreground", !art && (icon || index) ? "mt-5" : "")}>{title}</h3>
+        {tagline && <p className="mt-1.5 font-mono text-eyebrow text-accent-ink uppercase">{tagline}</p>}
+        {description && <p className="mt-4 text-body text-muted">{description}</p>}
         {children}
       </article>
     </Reveal>
@@ -197,15 +197,15 @@ export function FactList({
   className?: string;
 }) {
   return (
-    <dl className={cn("grid gap-px overflow-hidden rounded-3xl border border-line bg-line sm:grid-cols-2", className)}>
+    <dl className={cn("grid gap-px overflow-hidden rounded-3xl border border-border bg-border sm:grid-cols-2", className)}>
       {items.map((item) => (
-        <div key={item.label} className="min-w-0 bg-bg px-6 py-6">
-          <dt className="font-mono text-eyebrow text-muted uppercase">{item.label}</dt>
-          <dd className="mt-2 text-lead font-medium wrap-break-word text-ink">
+        <div key={item.label} className="min-w-0 bg-surface px-6 py-6">
+          <dt className="font-mono text-eyebrow text-subtle uppercase">{item.label}</dt>
+          <dd className="mt-2 text-lead font-medium wrap-break-word text-foreground">
             {item.href ? (
               <a
                 href={item.href}
-                className="underline decoration-line-strong underline-offset-4 transition-colors duration-300 hover:text-brand-ink hover:decoration-current"
+                className="underline decoration-border-strong underline-offset-4 transition-colors duration-300 hover:text-accent-ink hover:decoration-current"
               >
                 {item.value}
               </a>
@@ -232,12 +232,12 @@ export function MetricRow({
       {items.map((m, i) => (
         <li key={m.id}>
           <Reveal delay={Math.min(i, 4) * 0.05} className="h-full">
-            <div className="h-full rounded-3xl border border-line bg-bg px-6 py-7">
-              <p className="font-sans text-[clamp(2rem,1.4rem+2.2vw,3rem)] leading-none font-bold tracking-[-0.03em] text-ink tabular-nums">
+            <div className="h-full rounded-3xl border border-border bg-surface px-6 py-7">
+              <p className="font-sans text-[clamp(2rem,1.4rem+2.2vw,3rem)] leading-none font-bold tracking-[-0.03em] text-foreground tabular-nums">
                 {m.value}
               </p>
-              <p className="mt-4 text-body font-medium text-ink">{m.label}</p>
-              <p className="mt-1 text-small text-muted">{m.detail}</p>
+              <p className="mt-4 text-body font-medium text-foreground">{m.label}</p>
+              <p className="mt-1 text-small text-subtle">{m.detail}</p>
             </div>
           </Reveal>
         </li>
@@ -265,19 +265,19 @@ export function StepCard({
   const art = getProcessArt(index);
   return (
     <Reveal delay={delay} className="h-full">
-      <article className="group/card flex h-full flex-col rounded-3xl border border-line bg-bg p-6 sm:p-7">
+      <article className="group/card flex h-full flex-col rounded-3xl border border-border bg-surface p-6 sm:p-7">
         {art ? (
           <CardBanner art={art} index={index} />
         ) : (
-          <span className="mb-4 font-mono text-eyebrow text-brand-ink">{index}</span>
+          <span className="mb-4 font-mono text-eyebrow text-accent-ink">{index}</span>
         )}
-        <h3 className="font-display text-h3 font-semibold text-ink">{title}</h3>
-        <p className="mt-3 text-body text-ink-2">{description}</p>
+        <h3 className="font-display text-h3 font-semibold text-foreground">{title}</h3>
+        <p className="mt-3 text-body text-muted">{description}</p>
         {deliverables.length > 0 && (
-          <ul className="mt-5 space-y-2 border-t border-line pt-5">
+          <ul className="mt-5 space-y-2 border-t border-border pt-5">
             {deliverables.map((d) => (
-              <li key={d} className="flex items-start gap-2.5 text-small text-ink-2">
-                <span aria-hidden="true" className="mt-2 size-1.5 shrink-0 rounded-full bg-brand" />
+              <li key={d} className="flex items-start gap-2.5 text-small text-muted">
+                <span aria-hidden="true" className="mt-2 size-1.5 shrink-0 rounded-full bg-accent" />
                 {d}
               </li>
             ))}

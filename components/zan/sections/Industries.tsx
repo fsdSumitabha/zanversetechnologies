@@ -62,7 +62,7 @@ const ITEMS: CarouselItem[] = SLOTS.flatMap((slot): CarouselItem[] => {
  */
 export function Industries() {
   return (
-    <section id="industries" className="relative overflow-x-clip bg-bg pb-[clamp(5rem,4rem+5vw,9rem)]">
+    <section id="industries" className="relative overflow-x-clip bg-canvas pb-[clamp(5rem,4rem+5vw,9rem)]">
       <Starfield />
       <IndustriesIntro />
       <div className="relative z-[1] px-5">

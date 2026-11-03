@@ -36,7 +36,7 @@ const tick = (color: string) =>
   `linear-gradient(90deg, transparent calc(50% - 0.5px), ${color} calc(50% - 0.5px), ${color} calc(50% + 0.5px), transparent calc(50% + 0.5px))`;
 /* Minor ticks in the strong hairline, major ticks a step darker so the scale
    reads as a scale even on a small screen. */
-const TICKS = `${tick("var(--color-line-strong)")}, ${tick("var(--color-muted)")}`;
+const TICKS = `${tick("var(--color-border-strong)")}, ${tick("var(--color-subtle)")}`;
 
 /** A band of tick marks: a minor tick every 12px, a major one every 60px, centred on the middle. */
 export function RulerLines({ side, className }: { side: "top" | "bottom"; className?: string }) {
@@ -52,14 +52,14 @@ export function RulerLines({ side, className }: { side: "top" | "bottom"; classN
       aria-hidden="true"
       data-ruler-ticks=""
       className={cn(
-        "relative h-6 w-full border-line-strong sm:h-8",
+        "relative h-6 w-full border-border-strong sm:h-8",
         side === "top" ? "border-t" : "border-b",
         className,
       )}
       style={style}
     >
       <span
-        className={cn("absolute left-1/2 h-full w-0.5 -translate-x-1/2 bg-brand", side === "top" ? "top-0" : "bottom-0")}
+        className={cn("absolute left-1/2 h-full w-0.5 -translate-x-1/2 bg-accent-ink", side === "top" ? "top-0" : "bottom-0")}
       />
     </div>
   );
@@ -153,7 +153,7 @@ export function RulerStrip({
               aria-controls={controlsOf?.(i)}
               aria-current={i === active ? "true" : undefined}
               onClick={() => onPick(i)}
-              className={`flex min-h-11 shrink-0 cursor-pointer items-center leading-[1] tracking-[-0.035em] whitespace-nowrap transition-colors duration-300 ${wordClassName} ${i === active ? "text-ink" : "text-muted hover:text-ink-2"}`}
+              className={`flex min-h-11 shrink-0 cursor-pointer items-center leading-[1] tracking-[-0.035em] whitespace-nowrap transition-colors duration-300 ${wordClassName} ${i === active ? "text-foreground" : "text-subtle hover:text-muted"}`}
             >
               <span
                 data-ruler-label=""

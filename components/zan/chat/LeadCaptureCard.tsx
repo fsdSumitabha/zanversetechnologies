@@ -66,20 +66,20 @@ export function LeadCaptureCard({
   };
 
   const field =
-    "w-full rounded-lg border border-line bg-bg px-3 py-2.5 text-[1rem] text-ink outline-none " +
-    "transition-colors placeholder:text-muted focus:border-brand-ink";
+    "w-full rounded-lg border border-border-field bg-surface px-3 py-2.5 text-[1rem] text-foreground outline-none " +
+    "transition-colors placeholder:text-subtle focus:border-accent-ink";
 
   return (
     <div className="mb-2 flex justify-start">
       <form
         onSubmit={submit}
-        className="relative w-[92%] rounded-lg rounded-tl-none border border-line bg-bg p-4 shadow-sm"
+        className="relative w-[92%] rounded-lg rounded-tl-none border border-border bg-surface p-4 shadow-sm"
       >
         <div className="flex items-center gap-2">
-          <Phone aria-hidden="true" className="size-4 shrink-0 text-brand-ink" />
-          <p className="text-small font-semibold text-ink">Where should we call you?</p>
+          <Phone aria-hidden="true" className="size-4 shrink-0 text-accent-ink" />
+          <p className="text-small font-semibold text-foreground">Where should we call you?</p>
         </div>
-        <p className="mt-1.5 text-small leading-relaxed text-ink-2">
+        <p className="mt-1.5 text-small leading-relaxed text-muted">
           Our team will reach out on WhatsApp or by phone.
         </p>
 
@@ -113,7 +113,7 @@ export function LeadCaptureCard({
         </div>
 
         {error && (
-          <p role="alert" className="mt-3 text-small text-danger">
+          <p role="alert" className="mt-3 text-small text-danger-ink">
             {error}
           </p>
         )}
@@ -124,8 +124,8 @@ export function LeadCaptureCard({
             disabled={busy}
             className={cn(
               "inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-full",
-              "bg-brand text-small font-medium text-on-brand transition-colors duration-300",
-              "hover:bg-brand-dark disabled:opacity-60",
+              "bg-action text-small font-medium text-action-foreground transition-colors duration-300",
+              "hover:bg-action-hover disabled:opacity-60",
             )}
           >
             {busy && <LoaderCircle aria-hidden="true" className="size-4 animate-spin" />}
@@ -135,13 +135,13 @@ export function LeadCaptureCard({
             type="button"
             onClick={onCancel}
             disabled={busy}
-            className="h-11 shrink-0 rounded-full px-4 text-small text-ink-2 transition-colors duration-300 hover:text-ink disabled:opacity-60"
+            className="h-11 shrink-0 rounded-full px-4 text-small text-muted transition-colors duration-300 hover:text-foreground disabled:opacity-60"
           >
             Not now
           </button>
         </div>
 
-        <p className="mt-3 flex items-start gap-1.5 text-eyebrow leading-relaxed tracking-normal text-ink-2">
+        <p className="mt-3 flex items-start gap-1.5 text-eyebrow leading-relaxed tracking-normal text-muted">
           <ShieldCheck aria-hidden="true" className="mt-px size-3 shrink-0" />
           Used only to contact you about this enquiry.
         </p>

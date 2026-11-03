@@ -7,10 +7,10 @@ import type { ReactNode } from "react";
 function Check({ x, y }: { x: number; y: number }) {
   return (
     <g>
-      <circle cx={x} cy={y} r="7" className="fill-brand" />
+      <circle cx={x} cy={y} r="7" className="fill-accent" />
       <path
         d={`M${x - 3} ${y} l2.2 2.4 l4-4.6`}
-        className="stroke-on-brand"
+        className="stroke-accent-foreground"
         strokeWidth="1.8"
         fill="none"
         strokeLinecap="round"
@@ -23,15 +23,15 @@ function Check({ x, y }: { x: number; y: number }) {
 const ILLOS: Record<string, ReactNode> = {
   discovery: (
     <>
-      <line x1="24" y1="28" x2="216" y2="28" className="stroke-line-strong" strokeWidth="2" />
-      <line x1="24" y1="28" x2="88" y2="28" className="stroke-brand" strokeWidth="2" />
+      <line x1="24" y1="28" x2="216" y2="28" className="stroke-border-strong" strokeWidth="2" />
+      <line x1="24" y1="28" x2="88" y2="28" className="stroke-accent" strokeWidth="2" />
       {[24, 88, 152, 216].map((x, i) => (
         <circle
           key={x}
           cx={x}
           cy="28"
           r="7"
-          className={i === 0 ? "fill-brand" : i === 1 ? "fill-bg stroke-brand" : "fill-bg stroke-line-strong"}
+          className={i === 0 ? "fill-accent" : i === 1 ? "fill-surface stroke-accent" : "fill-surface stroke-border-strong"}
           strokeWidth="2"
         />
       ))}
@@ -40,21 +40,21 @@ const ILLOS: Record<string, ReactNode> = {
           {i < 2 ? (
             <Check x={31} y={y} />
           ) : (
-            <rect x="24" y={y - 7} width="14" height="14" rx="4" className="fill-bg stroke-line-strong" strokeWidth="1.5" />
+            <rect x="24" y={y - 7} width="14" height="14" rx="4" className="fill-surface stroke-border-strong" strokeWidth="1.5" />
           )}
-          <rect x="48" y={y - 3} width={[128, 100, 116][i]} height="6" rx="3" className="fill-line-strong" />
+          <rect x="48" y={y - 3} width={[128, 100, 116][i]} height="6" rx="3" className="fill-border-strong" />
         </g>
       ))}
     </>
   ),
   design: (
     <>
-      <rect x="20" y="8" width="200" height="104" rx="10" className="fill-bg stroke-line-strong" strokeWidth="1.5" />
-      <rect x="30" y="18" width="180" height="10" rx="5" className="fill-line" />
-      <rect x="30" y="36" width="112" height="34" rx="6" className="fill-brand-soft" />
-      <rect x="38" y="45" width="64" height="6" rx="3" className="fill-brand" />
-      <rect x="38" y="56" width="44" height="5" rx="2.5" className="fill-line-strong" />
-      <rect x="150" y="36" width="60" height="34" rx="6" className="fill-none stroke-brand-ink" strokeWidth="1.2" strokeDasharray="4 3" />
+      <rect x="20" y="8" width="200" height="104" rx="10" className="fill-surface stroke-border-strong" strokeWidth="1.5" />
+      <rect x="30" y="18" width="180" height="10" rx="5" className="fill-border" />
+      <rect x="30" y="36" width="112" height="34" rx="6" className="fill-accent-soft" />
+      <rect x="38" y="45" width="64" height="6" rx="3" className="fill-accent" />
+      <rect x="38" y="56" width="44" height="5" rx="2.5" className="fill-border-strong" />
+      <rect x="150" y="36" width="60" height="34" rx="6" className="fill-none stroke-accent-ink" strokeWidth="1.2" strokeDasharray="4 3" />
       {[30, 92, 154].map((x, i) => (
         <rect
           key={x}
@@ -63,7 +63,7 @@ const ILLOS: Record<string, ReactNode> = {
           width="56"
           height="26"
           rx="5"
-          className={i === 1 ? "fill-bg stroke-brand" : "fill-bg stroke-line-strong"}
+          className={i === 1 ? "fill-surface stroke-accent" : "fill-surface stroke-border-strong"}
           strokeWidth={i === 1 ? 2 : 1.2}
         />
       ))}
@@ -71,7 +71,7 @@ const ILLOS: Record<string, ReactNode> = {
   ),
   build: (
     <>
-      <rect x="20" y="8" width="130" height="104" rx="10" className="fill-ink" />
+      <rect x="20" y="8" width="130" height="104" rx="10" className="fill-foreground" />
       {[
         [34, 40],
         [44, 62],
@@ -80,36 +80,36 @@ const ILLOS: Record<string, ReactNode> = {
         [44, 36],
         [34, 26],
       ].map(([x, w], i) => (
-        <rect key={i} x={x} y={22 + i * 14} width={w} height="5" rx="2.5" className={i % 3 === 1 ? "fill-brand-glow" : "fill-line-strong"} opacity={i % 3 === 1 ? 1 : 0.55} />
+        <rect key={i} x={x} y={22 + i * 14} width={w} height="5" rx="2.5" className={i % 3 === 1 ? "fill-accent" : "fill-border-strong"} opacity={i % 3 === 1 ? 1 : 0.55} />
       ))}
-      <rect x="160" y="8" width="60" height="104" rx="10" className="fill-bg stroke-line-strong" strokeWidth="1.5" />
+      <rect x="160" y="8" width="60" height="104" rx="10" className="fill-surface stroke-border-strong" strokeWidth="1.5" />
       {[30, 56, 82].map((y) => (
         <g key={y}>
           <Check x={176} y={y} />
-          <rect x="188" y={y - 2.5} width="22" height="5" rx="2.5" className="fill-line-strong" />
+          <rect x="188" y={y - 2.5} width="22" height="5" rx="2.5" className="fill-border-strong" />
         </g>
       ))}
     </>
   ),
   launch: (
     <>
-      <rect x="20" y="8" width="200" height="104" rx="10" className="fill-bg stroke-line-strong" strokeWidth="1.5" />
+      <rect x="20" y="8" width="200" height="104" rx="10" className="fill-surface stroke-border-strong" strokeWidth="1.5" />
       {[40, 64, 88].map((y) => (
-        <line key={y} x1="32" y1={y} x2="208" y2={y} className="stroke-line" strokeWidth="1" />
+        <line key={y} x1="32" y1={y} x2="208" y2={y} className="stroke-border" strokeWidth="1" />
       ))}
-      <path d="M32 94 L60 86 L88 88 L116 70 L144 66 L172 48 L208 36 L208 100 L32 100 Z" className="fill-brand-soft" />
+      <path d="M32 94 L60 86 L88 88 L116 70 L144 66 L172 48 L208 36 L208 100 L32 100 Z" className="fill-accent-soft" />
       <path
         d="M32 94 L60 86 L88 88 L116 70 L144 66 L172 48 L208 36"
-        className="stroke-brand"
+        className="stroke-accent"
         strokeWidth="2.5"
         fill="none"
         strokeLinejoin="round"
         strokeLinecap="round"
       />
-      <circle cx="208" cy="36" r="4.5" className="fill-brand" />
-      <rect x="164" y="15" width="44" height="14" rx="7" className="fill-brand-soft" />
-      <circle cx="173" cy="22" r="3" className="fill-brand" />
-      <rect x="180" y="19.5" width="20" height="5" rx="2.5" className="fill-brand-ink" />
+      <circle cx="208" cy="36" r="4.5" className="fill-accent" />
+      <rect x="164" y="15" width="44" height="14" rx="7" className="fill-accent-soft" />
+      <circle cx="173" cy="22" r="3" className="fill-accent" />
+      <rect x="180" y="19.5" width="20" height="5" rx="2.5" className="fill-accent-ink" />
     </>
   ),
 };

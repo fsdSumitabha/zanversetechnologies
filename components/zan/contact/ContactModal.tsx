@@ -190,7 +190,7 @@ export function ContactModal() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="absolute inset-0 bg-ink/45 backdrop-blur-sm"
+            className="absolute inset-0 bg-scrim/45 backdrop-blur-sm"
           />
 
           <motion.div
@@ -209,39 +209,39 @@ export function ContactModal() {
               // Taller than the window on a phone, so it scrolls inside itself
               // rather than running off the bottom.
               "max-h-[calc(100dvh-2rem)] overflow-y-auto overscroll-contain",
-              "rounded-3xl border border-line bg-bg px-5 py-5 shadow-float sm:px-8 sm:py-7",
+              "rounded-3xl border border-border bg-surface-raised px-5 py-5 shadow-float sm:px-8 sm:py-7",
             )}
           >
             <button
               type="button"
               onClick={close}
               aria-label="Close"
-              className="absolute top-4 right-4 grid size-10 place-items-center rounded-full text-ink-2 transition-colors duration-300 hover:bg-surface hover:text-ink sm:top-5 sm:right-5"
+              className="absolute top-4 right-4 grid size-10 place-items-center rounded-full text-muted transition-colors duration-300 hover:bg-surface-muted hover:text-foreground sm:top-5 sm:right-5"
             >
               <X aria-hidden="true" className="size-4" />
             </button>
 
             {/* Hidden on a phone, where it costs a line the form needs. */}
             <Eyebrow className="hidden sm:inline-flex">Free consultation</Eyebrow>
-            <h2 id={titleId} className="max-w-[18ch] pr-12 text-h3 text-ink sm:mt-4 sm:text-h2">
+            <h2 id={titleId} className="max-w-[18ch] pr-12 text-h3 text-foreground sm:mt-4 sm:text-h2">
               What are you building?
             </h2>
             {/* Desktop only, for the same reason: on a phone this is three
                 lines between the heading and the first field, and it says what
                 the note under the submit button already says. */}
-            <p className="mt-3 hidden max-w-[48ch] text-body text-ink-2 sm:block">
+            <p className="mt-3 hidden max-w-[48ch] text-body text-muted sm:block">
               A short brief is enough to start. We come back within 24 hours with a view on scope,
               timeline and cost.
             </p>
 
             <EnquiryForm compact className="mt-5 sm:mt-7" />
 
-            <p className="mt-5 text-small text-ink-2">
+            <p className="mt-5 text-small text-muted">
               Prefer to talk?{" "}
               <a
                 href={`tel:${office.phoneTel}`}
                 data-analytics-label="Contact Modal"
-                className="inline-flex items-center gap-1.5 font-medium text-brand-ink underline decoration-current/40 underline-offset-4 hover:decoration-current"
+                className="inline-flex items-center gap-1.5 font-medium text-accent-ink underline decoration-current/40 underline-offset-4 hover:decoration-current"
               >
                 <Phone aria-hidden="true" className="size-3.5 shrink-0" strokeWidth={2} />
                 <span className="tabular-nums">{office.phoneDisplay}</span>

@@ -36,8 +36,8 @@ export function Starfield() {
             width: s.size,
             height: s.size,
             background: s.brand
-              ? "color-mix(in oklab, var(--color-brand) 55%, transparent)"
-              : "color-mix(in oklab, var(--color-brand-ink) 35%, transparent)",
+              ? "color-mix(in oklab, var(--color-accent) 55%, transparent)"
+              : "color-mix(in oklab, var(--color-accent-ink) 35%, transparent)",
             animationDelay: s.delay,
             animationDuration: s.duration,
           }}

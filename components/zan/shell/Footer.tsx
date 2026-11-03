@@ -71,7 +71,7 @@ function WordmarkLetter({
       // child is painted on a layer of its own, which a parent's
       // background-clip: text does not reach, so a gradient on the line
       // would leave the letters invisible.
-      className="inline-block origin-bottom bg-linear-to-b from-ink/[0.085] to-ink/[0.025] bg-clip-text pt-[0.02em] pb-[0.1em] text-transparent"
+      className="inline-block origin-bottom bg-linear-to-b from-foreground/[0.085] to-foreground/[0.025] bg-clip-text pt-[0.02em] pb-[0.1em] text-transparent"
       // Reduced motion: explicitly at rest. Without JavaScript the server's
       // starting position would hold, so data-reveal lets layout.tsx's
       // noscript rule set the letters down.
@@ -121,37 +121,37 @@ function OfficeClock({ timeZone, still }: { timeZone: string; still: boolean }) 
     <p className="mt-6 flex items-center gap-3.5">
       <span
         aria-hidden="true"
-        className="relative block size-10 shrink-0 rounded-full border border-line-strong bg-bg shadow-lift"
+        className="relative block size-10 shrink-0 rounded-full border border-border-strong bg-surface shadow-lift"
       >
         {TICKS.map((i) => (
           <span key={i} className="absolute inset-0" style={{ transform: `rotate(${i * 30}deg)` }}>
             <span
               className={cn(
                 "absolute top-[3px] left-1/2 w-px -translate-x-1/2 rounded-full",
-                i % 3 === 0 ? "h-1.5 bg-muted" : "h-1 bg-line-strong",
+                i % 3 === 0 ? "h-1.5 bg-subtle" : "h-1 bg-border-strong",
               )}
             />
           </span>
         ))}
         <motion.span
-          className="absolute bottom-1/2 left-1/2 -ml-px h-[28%] w-0.5 origin-bottom rounded-full bg-ink"
+          className="absolute bottom-1/2 left-1/2 -ml-px h-[28%] w-0.5 origin-bottom rounded-full bg-foreground"
           style={{ rotate: hour }}
         />
         <motion.span
-          className="absolute bottom-1/2 left-1/2 -ml-[0.75px] h-[38%] w-[1.5px] origin-bottom rounded-full bg-brand-ink"
+          className="absolute bottom-1/2 left-1/2 -ml-[0.75px] h-[38%] w-[1.5px] origin-bottom rounded-full bg-accent-ink"
           style={{ rotate: minute }}
         />
-        <span className="absolute top-1/2 left-1/2 size-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-ink" />
+        <span className="absolute top-1/2 left-1/2 size-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-foreground" />
       </span>
       <span className="flex flex-col">
-        <span className="font-mono text-[0.6875rem] tracking-[0.14em] text-muted uppercase">
+        <span className="font-mono text-[0.6875rem] tracking-[0.14em] text-subtle uppercase">
           Local time in {office.city}
         </span>
         <span className="mt-1 flex items-baseline gap-2">
-          <time dateTime={iso} className="font-mono text-h3 text-ink tabular-nums">
+          <time dateTime={iso} className="font-mono text-h3 text-foreground tabular-nums">
             {time}
           </time>
-          {offset && <span className="font-mono text-[0.6875rem] tracking-[0.06em] text-muted">{offset}</span>}
+          {offset && <span className="font-mono text-[0.6875rem] tracking-[0.06em] text-subtle">{offset}</span>}
         </span>
       </span>
     </p>
@@ -167,11 +167,11 @@ const rise: Variants = {
   visible: { y: "0%", transition: { duration: 1.1, ease: EASE } },
 };
 
-/** Contact rows in the office band: a round glyph that fills with gold on hover, then the value. */
+/** Contact rows in the office band: a round glyph that fills with cyan on hover, then the value. */
 const contactRow =
-  "group/contact inline-flex min-h-11 items-center gap-3 text-body text-ink md:min-h-0 transition-colors duration-300 hover:text-brand-ink";
+  "group/contact inline-flex min-h-11 items-center gap-3 text-body text-foreground md:min-h-0 transition-colors duration-300 hover:text-accent-ink";
 const contactGlyph =
-  "grid size-9 shrink-0 place-items-center rounded-full border border-line bg-surface transition-colors duration-300 group-hover/contact:border-brand group-hover/contact:bg-brand group-hover/contact:text-on-brand";
+  "grid size-9 shrink-0 place-items-center rounded-full border border-border bg-surface-muted transition-colors duration-300 group-hover/contact:border-accent group-hover/contact:bg-accent group-hover/contact:text-accent-foreground";
 
 /**
  * The page's close: a CTA strip; the brand column (logo, tagline, socials and
@@ -218,14 +218,14 @@ export function Footer() {
   }, [reduce, progress]);
 
   return (
-    <footer className="relative isolate overflow-hidden border-t border-line bg-surface-2 text-ink">
+    <footer className="relative isolate overflow-hidden border-t border-border bg-surface-muted text-foreground">
       {/* ── CTA strip ─────────────────────────────────────────────────── */}
       <div className="container-zan pt-16 sm:pt-20">
-        <div className="flex flex-col gap-8 rounded-3xl border border-line bg-bg px-6 py-8 shadow-lift sm:px-10 sm:py-10 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex flex-col gap-8 rounded-3xl border border-border bg-surface px-6 py-8 shadow-lift sm:px-10 sm:py-10 lg:flex-row lg:items-center lg:justify-between">
           <div className="max-w-2xl">
             <Eyebrow>{contactIntro.eyebrow}</Eyebrow>
-            <p className="mt-4 font-display text-h2 text-ink">{CTA_LINE}</p>
-            {CTA_REST.length > 0 && <p className="mt-3 text-body text-ink-2">{CTA_REST.join(" ")}</p>}
+            <p className="mt-4 font-display text-h2 text-foreground">{CTA_LINE}</p>
+            {CTA_REST.length > 0 && <p className="mt-3 text-body text-muted">{CTA_REST.join(" ")}</p>}
           </div>
           <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap lg:shrink-0">
             <ButtonLink href={href(ctas.project.href)} size="lg">
@@ -236,7 +236,7 @@ export function Footer() {
               variant="secondary"
               size="lg"
               arrow={false}
-              icon={<Mail aria-hidden="true" className="size-4 shrink-0 text-brand-ink" />}
+              icon={<Mail aria-hidden="true" className="size-4 shrink-0 text-accent-ink" />}
             >
               {site.email}
             </ButtonLink>
@@ -250,7 +250,7 @@ export function Footer() {
           <SiteLink href="#main" aria-label={`${site.name} home`} className="inline-flex rounded-lg">
             <ZanLogo className="h-9" />
           </SiteLink>
-          <p className="mt-5 max-w-sm text-lead text-ink-2">{site.tagline}</p>
+          <p className="mt-5 max-w-sm text-lead text-muted">{site.tagline}</p>
           <ul className="mt-7 flex flex-wrap gap-2.5">
             {socialLinks.map((s) => (
               <li key={s.label}>
@@ -258,9 +258,9 @@ export function Footer() {
                   href={s.href}
                   target="_blank"
                   rel="noopener"
-                  className="group/social inline-flex h-11 items-center md:h-10 gap-2 rounded-full border border-line bg-bg pr-4 pl-1.5 text-small font-medium text-ink-2 transition-[color,border-color,translate] duration-300 ease-out-expo hover:-translate-y-0.5 hover:border-line-strong hover:text-ink"
+                  className="group/social inline-flex h-11 items-center md:h-10 gap-2 rounded-full border border-border bg-surface pr-4 pl-1.5 text-small font-medium text-muted transition-[color,border-color,translate] duration-300 ease-out-expo hover:-translate-y-0.5 hover:border-border-strong hover:text-foreground"
                 >
-                  <span className="grid size-7 place-items-center rounded-full bg-surface text-ink transition-colors duration-300 group-hover/social:bg-brand group-hover/social:text-on-brand">
+                  <span className="grid size-7 place-items-center rounded-full bg-surface-muted text-foreground transition-colors duration-300 group-hover/social:bg-accent group-hover/social:text-accent-foreground">
                     <SocialIcon name={s.label} className="size-3.5" />
                   </span>
                   {s.label}
@@ -276,9 +276,9 @@ export function Footer() {
               <li key={c.id}>
                 <SiteLink
                   href="/about-us#credentials"
-                  className="inline-flex h-11 items-center gap-2 rounded-full border border-dashed border-line-strong pr-4 pl-3 font-mono text-[0.6875rem] font-medium tracking-[0.06em] text-ink-2 md:h-9 transition-colors duration-300 hover:border-solid hover:border-ink hover:text-ink"
+                  className="inline-flex h-11 items-center gap-2 rounded-full border border-dashed border-border-strong pr-4 pl-3 font-mono text-[0.6875rem] font-medium tracking-[0.06em] text-muted md:h-9 transition-colors duration-300 hover:border-solid hover:border-foreground hover:text-foreground"
                 >
-                  <ShieldCheck aria-hidden="true" className="size-4 shrink-0 text-brand-ink" strokeWidth={1.8} />
+                  <ShieldCheck aria-hidden="true" className="size-4 shrink-0 text-accent-ink" strokeWidth={1.8} />
                   {c.name}
                 </SiteLink>
               </li>
@@ -295,15 +295,15 @@ export function Footer() {
         >
           {footerColumns.map((col, i) => (
             <div key={col.title} className={cn(i === footerColumns.length - 1 && "col-span-2 sm:col-span-1")}>
-              <h2 className="font-mono text-eyebrow text-muted uppercase">{col.title}</h2>
+              <h2 className="font-mono text-eyebrow text-subtle uppercase">{col.title}</h2>
               <ul className="mt-4 md:mt-5 md:space-y-3">
                 {col.links.map((link) => (
                   <li key={link.label}>
                     <SiteLink
                       href={link.href}
-                      className="group/link inline-flex min-h-11 items-center gap-2 text-body text-ink-2 md:min-h-0 transition-colors duration-300 hover:text-ink"
+                      className="group/link inline-flex min-h-11 items-center gap-2 text-body text-muted md:min-h-0 transition-colors duration-300 hover:text-foreground"
                     >
-                      <span className="h-px w-0 shrink-0 bg-brand-ink transition-[width] duration-500 ease-out-expo group-hover/link:w-3" />
+                      <span className="h-px w-0 shrink-0 bg-accent-ink transition-[width] duration-500 ease-out-expo group-hover/link:w-3" />
                       {link.label}
                     </SiteLink>
                   </li>
@@ -321,12 +321,12 @@ export function Footer() {
       <div className="container-zan pb-14">
         <section
           aria-labelledby={officeId}
-          className="relative isolate overflow-hidden rounded-3xl border border-line bg-bg px-6 py-8 shadow-lift sm:px-10 sm:py-10"
+          className="relative isolate overflow-hidden rounded-3xl border border-border bg-surface px-6 py-8 shadow-lift sm:px-10 sm:py-10"
         >
-          {/* A warm bloom behind the city name. Decorative. */}
+          {/* A soft bloom behind the city name. Decorative. */}
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute -top-48 -left-32 -z-10 size-[30rem] rounded-full bg-brand/15 blur-3xl"
+            className="pointer-events-none absolute -top-48 -left-32 -z-10 size-[30rem] rounded-full bg-accent/15 blur-3xl"
           />
           {/* Four and eight columns from 1024px; inside the eight, the
               contact column takes a little more than half, so neither the
@@ -335,15 +335,15 @@ export function Footer() {
               1024px. */}
           <div className="grid gap-y-10 lg:grid-cols-12 lg:gap-x-8">
             <div className="lg:col-span-4">
-              <h2 id={officeId} className="flex items-center gap-2.5 font-mono text-eyebrow text-muted uppercase">
-                <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-brand" />
+              <h2 id={officeId} className="flex items-center gap-2.5 font-mono text-eyebrow text-subtle uppercase">
+                <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-accent" />
                 Office
               </h2>
               <motion.h3
                 initial="hidden"
                 whileInView="visible"
                 viewport={VIEWPORT}
-                className="mt-4 font-display text-h1 text-ink"
+                className="mt-4 font-display text-h1 text-foreground"
               >
                 <span className="-mb-[0.1em] block overflow-hidden pb-[0.1em]">
                   <motion.span data-reveal className="block" variants={rise}>
@@ -351,14 +351,14 @@ export function Footer() {
                   </motion.span>
                 </span>
               </motion.h3>
-              <p className="mt-2 font-mono text-eyebrow text-muted uppercase">{office.country}</p>
+              <p className="mt-2 font-mono text-eyebrow text-subtle uppercase">{office.country}</p>
               <OfficeClock timeZone={office.timeZone} still={reduce} />
             </div>
 
             <address className="grid gap-x-8 gap-y-8 not-italic sm:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:col-span-8 lg:pt-1">
               <div>
-                <p className="font-mono text-eyebrow text-muted uppercase">Address</p>
-                <p className="mt-4 text-body text-ink-2">
+                <p className="font-mono text-eyebrow text-subtle uppercase">Address</p>
+                <p className="mt-4 text-body text-muted">
                   {office.addressLines.map((line) => (
                     <span key={line} className="block">
                       {line}
@@ -367,11 +367,11 @@ export function Footer() {
                 </p>
               </div>
               <div>
-                <p className="font-mono text-eyebrow text-muted uppercase">Contact</p>
+                <p className="font-mono text-eyebrow text-subtle uppercase">Contact</p>
                 <ul className="mt-3 md:mt-4 md:space-y-2.5">
                   <li>
                     <a href={`tel:${office.phoneTel}`} className={cn(contactRow, "font-medium tabular-nums")}>
-                      <span aria-hidden="true" className={cn(contactGlyph, "text-brand-ink")}>
+                      <span aria-hidden="true" className={cn(contactGlyph, "text-accent-ink")}>
                         <Phone className="size-4" />
                       </span>
                       {office.phoneDisplay}
@@ -385,7 +385,7 @@ export function Footer() {
                       onClick={() => trackWhatsAppClick("Footer WhatsApp")}
                       className={contactRow}
                     >
-                      <span aria-hidden="true" className={cn(contactGlyph, "text-whatsapp")}>
+                      <span aria-hidden="true" className={cn(contactGlyph, "text-whatsapp-ink")}>
                         <SocialIcon name="WhatsApp" className="size-4" />
                       </span>
                       WhatsApp
@@ -394,7 +394,7 @@ export function Footer() {
                   </li>
                   <li>
                     <a href={`mailto:${site.email}`} className={cn(contactRow, "break-all")}>
-                      <span aria-hidden="true" className={cn(contactGlyph, "text-brand-ink")}>
+                      <span aria-hidden="true" className={cn(contactGlyph, "text-accent-ink")}>
                         <Mail className="size-4" />
                       </span>
                       {site.email}
@@ -411,14 +411,14 @@ export function Footer() {
           Right padding on wider screens keeps the credit and "Back to top"
           clear of the floating buttons. */}
       <div className="container-zan">
-        <div className="flex flex-col gap-4 border-t border-line py-6 pr-16 text-[0.8125rem] leading-relaxed text-muted sm:pr-20 lg:flex-row lg:items-start lg:justify-between lg:gap-8 min-[1400px]:pr-0">
+        <div className="flex flex-col gap-4 border-t border-border py-6 pr-16 text-[0.8125rem] leading-relaxed text-subtle sm:pr-20 lg:flex-row lg:items-start lg:justify-between lg:gap-8 min-[1400px]:pr-0">
           <p>
             © <span suppressHydrationWarning>{YEAR}</span> {site.name}. All rights reserved.
           </p>
           <ul className="flex flex-wrap gap-x-5 md:gap-y-2 lg:max-w-md">
             {legalLinks.map((l) => (
               <li key={l.label}>
-                <SiteLink href={l.href} className="inline-flex min-h-11 items-center md:min-h-0 transition-colors duration-300 hover:text-ink">
+                <SiteLink href={l.href} className="inline-flex min-h-11 items-center md:min-h-0 transition-colors duration-300 hover:text-foreground">
                   {l.label}
                 </SiteLink>
               </li>
@@ -429,7 +429,7 @@ export function Footer() {
               <button
                 type="button"
                 onClick={openConsentSettings}
-                className="inline-flex min-h-11 items-center md:min-h-0 transition-colors duration-300 hover:text-ink"
+                className="inline-flex min-h-11 items-center md:min-h-0 transition-colors duration-300 hover:text-foreground"
               >
                 Cookie settings
               </button>
@@ -438,7 +438,7 @@ export function Footer() {
           <div className="flex flex-col gap-2 lg:items-end lg:text-right">
             <SiteLink
               href="#main"
-              className="inline-flex min-h-11 items-center gap-1.5 font-medium text-ink-2 md:min-h-0 transition-colors duration-300 hover:text-ink"
+              className="inline-flex min-h-11 items-center gap-1.5 font-medium text-muted md:min-h-0 transition-colors duration-300 hover:text-foreground"
             >
               <ArrowUp aria-hidden="true" className="size-3.5" />
               Back to top

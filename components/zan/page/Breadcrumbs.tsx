@@ -42,12 +42,12 @@ export function Breadcrumbs({ trail, className }: { trail: readonly Crumb[]; cla
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLd(breadcrumbList) }}
       />
-      <ol className="flex flex-wrap items-center gap-x-1.5 gap-y-1 font-mono text-eyebrow text-muted uppercase">
+      <ol className="flex flex-wrap items-center gap-x-1.5 gap-y-1 font-mono text-eyebrow text-subtle uppercase">
         {trail.map((crumb, i) => (
           <li key={crumb.href} className="flex items-center gap-1.5">
-            {i > 0 && <ChevronRight aria-hidden="true" className="size-3 shrink-0 text-line-strong" />}
+            {i > 0 && <ChevronRight aria-hidden="true" className="size-3 shrink-0 text-border-strong" />}
             {i === last ? (
-              <span aria-current="page" className="text-ink-2">
+              <span aria-current="page" className="text-muted">
                 {crumb.label}
               </span>
             ) : (
@@ -55,7 +55,7 @@ export function Breadcrumbs({ trail, className }: { trail: readonly Crumb[]; cla
                 href={crumb.href}
                 // The padding only grows the tap area on phones; the negative
                 // margin keeps the trail's line height as it was.
-                className="-my-4 inline-block rounded py-4 transition-colors duration-300 hover:text-brand-ink md:my-0 md:py-0"
+                className="-my-4 inline-block rounded py-4 transition-colors duration-300 hover:text-accent-ink md:my-0 md:py-0"
               >
                 {crumb.label}
               </SiteLink>

@@ -8,14 +8,14 @@
 
      0.20s  words rise out of their masks, 0.28s apart
      0 → 1.35s  brand hairline fills
-     1.35s  five gold slats rise over the stage, left to right, 45ms apart;
+     1.35s  five navy slats rise over the stage, left to right, 45ms apart;
             the first is up at 1.75s, the last at 1.93s
      1.93s  stage fades out behind them; 1.96s it stops taking input
      1.97 → 2.53s  the slats carry on up and away, in the same order
 
    The slats share one gradient (PreloaderStage sizes and offsets each one's
    background to its own slice of it), so while they are all up they read as
-   a single gold panel; only their movement shows the cuts.
+   a single navy panel; only their movement shows the cuts.
 
    Failsafe: with no [data-play] (JavaScript never arrived) the stage hides
    itself after 8s. A separate animation name, so switching to the real

@@ -46,7 +46,7 @@ export default function ScrollFloat({
             data-reveal
             className={cn(
               "scroll-float-glyph",
-              gradient && "text-brand-gradient scroll-float-gradient",
+              gradient && "text-accent-gradient scroll-float-gradient",
               glyphClassName,
             )}
             style={

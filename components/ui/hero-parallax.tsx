@@ -310,7 +310,7 @@ export function HeroParallax({
       aria-labelledby={labelledBy}
       data-looping={looping ? "" : undefined}
       className={cn(
-        "zan-workwall relative flex flex-col overflow-clip bg-bg [perspective:1000px] [transform-style:preserve-3d]",
+        "zan-workwall relative flex flex-col overflow-clip bg-canvas [perspective:1000px] [transform-style:preserve-3d]",
         className,
       )}
     >

@@ -16,7 +16,7 @@ function Ticks({ status }: { status: ChatMessage["status"] }) {
     case "delivered":
       return <CheckCheck aria-label="Delivered" className={cn(base, "opacity-70")} />;
     case "read":
-      return <CheckCheck aria-label="Read" className={cn(base, "text-brand-ink")} />;
+      return <CheckCheck aria-label="Read" className={cn(base, "text-accent-ink")} />;
     case "failed":
       return <CircleAlert aria-label="Not delivered" className={cn(base, "text-danger")} />;
     default:
@@ -33,7 +33,7 @@ function Tail({ side }: { side: "left" | "right" }) {
       viewBox="0 0 8 13"
       className={cn(
         "absolute top-0 size-[13px]",
-        side === "left" ? "-left-[7px] text-bg" : "-right-[7px] text-brand-soft",
+        side === "left" ? "-left-[7px] text-surface" : "-right-[7px] text-accent-soft",
       )}
     >
       <path d={side === "left" ? "M8 0 L8 13 L0 0 Z" : "M0 0 L0 13 L8 0 Z"} fill="currentColor" />
@@ -65,7 +65,7 @@ export function MessageBubble({ message, agentName, firstOfGroup, lastOfGroup }:
   if (message.senderType === "system") {
     return (
       <div className="my-2 flex justify-center">
-        <p className="rounded-lg border border-line bg-bg/90 px-3 py-1.5 text-center text-eyebrow tracking-normal text-ink-2">
+        <p className="rounded-lg border border-border bg-surface/90 px-3 py-1.5 text-center text-eyebrow tracking-normal text-muted">
           {message.message}
         </p>
       </div>
@@ -86,7 +86,7 @@ export function MessageBubble({ message, agentName, firstOfGroup, lastOfGroup }:
       <div
         className={cn(
           "relative max-w-[85%] rounded-lg px-2.5 pt-1.5 pb-1 shadow-sm",
-          isClient ? "bg-brand-soft" : "border border-line bg-bg",
+          isClient ? "bg-accent-soft" : "border border-border bg-surface",
           // Square off the tailed corner so the pointer reads as part of it.
           firstOfGroup && (isClient ? "rounded-tr-none" : "rounded-tl-none"),
         )}
@@ -96,7 +96,7 @@ export function MessageBubble({ message, agentName, firstOfGroup, lastOfGroup }:
         {/* Only a human gets a name label — the assistant's identity is in the
             header, and repeating it above every bubble is noise. */}
         {isAgent && firstOfGroup && agentName && (
-          <p className="mb-0.5 text-[0.75rem] font-semibold text-brand-ink">{agentName}</p>
+          <p className="mb-0.5 text-[0.75rem] font-semibold text-accent-ink">{agentName}</p>
         )}
 
         {/*
@@ -104,12 +104,12 @@ export function MessageBubble({ message, agentName, firstOfGroup, lastOfGroup }:
           the bubble's bottom-right. It is why a short message sits on one line
           with the time beside it instead of pushing it onto a line of its own.
         */}
-        <p className="text-small leading-[1.45] whitespace-pre-wrap text-ink">
+        <p className="text-small leading-[1.45] whitespace-pre-wrap text-foreground">
           {message.message}
           <span className="inline-block w-[4.5rem] select-none" aria-hidden="true" />
         </p>
 
-        <span className="absolute right-2.5 bottom-1 flex items-center gap-1 text-[0.6875rem] tabular-nums text-ink-2">
+        <span className="absolute right-2.5 bottom-1 flex items-center gap-1 text-[0.6875rem] tabular-nums text-muted">
           {time}
           {isClient && <Ticks status={message.status} />}
         </span>

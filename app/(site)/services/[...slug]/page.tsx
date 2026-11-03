@@ -204,14 +204,14 @@ export default async function ServiceDetailPage({ params }: RouteParams) {
           <div className="grid gap-5 md:grid-cols-2">
             {domains.map((domain, i) => (
               <Reveal key={domain.id} delay={Math.min(i, 3) * 0.05} className="h-full">
-                <div className="h-full rounded-3xl border border-line bg-bg p-6 sm:p-7">
-                  <h3 className="font-display text-h3 font-semibold text-ink">{domain.label}</h3>
-                  <p className="mt-3 text-body text-ink-2">{domain.blurb}</p>
+                <div className="h-full rounded-3xl border border-border bg-surface p-6 sm:p-7">
+                  <h3 className="font-display text-h3 font-semibold text-foreground">{domain.label}</h3>
+                  <p className="mt-3 text-body text-muted">{domain.blurb}</p>
                   <ul className="mt-5 flex flex-wrap gap-2">
                     {domain.stack.map((tool) => (
                       <li
                         key={tool}
-                        className="rounded-full border border-line bg-surface px-3 py-1.5 text-[0.8125rem] leading-none text-ink-2"
+                        className="rounded-full border border-border bg-surface-muted px-3 py-1.5 text-[0.8125rem] leading-none text-muted"
                       >
                         {tool}
                       </li>

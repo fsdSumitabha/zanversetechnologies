@@ -21,10 +21,10 @@ export type Tone = "soft" | "paper" | "surface" | "brand";
 const tileBandSizes = "(min-width: 768px) 22.5rem, (min-width: 26rem) 21.5rem, 84vw";
 
 const TONES: Record<Tone, string> = {
-  soft: "bg-brand-soft text-ink",
-  paper: "bg-paper text-ink",
-  surface: "bg-surface text-ink ring-1 ring-inset ring-line",
-  brand: "bg-brand-gradient text-on-brand",
+  soft: "bg-accent-soft text-foreground",
+  paper: "bg-surface-tint text-foreground",
+  surface: "bg-surface-muted text-foreground ring-1 ring-inset ring-border",
+  brand: "bg-action-gradient text-action-foreground",
 };
 
 export function IndustryTile({ industry, index, tone }: { industry: Industry; index: string; tone: Tone }) {
@@ -40,23 +40,23 @@ export function IndustryTile({ industry, index, tone }: { industry: Industry; in
           strokeWidth={1}
           className={cn(
             "pointer-events-none absolute -right-10 -bottom-10 size-48",
-            onBrand ? "text-on-brand opacity-[0.14]" : "text-brand-ink opacity-[0.07]",
+            onBrand ? "text-action-foreground opacity-[0.14]" : "text-accent-ink opacity-[0.07]",
           )}
         />
       )}
       {art ? (
         <span className="relative -mx-6 -mt-6 block overflow-hidden">
           <CardPhoto art={art} sizes={tileBandSizes} className="aspect-[3/2]" />
-          <span className="absolute top-3 right-3 rounded-full bg-bg/90 px-2.5 py-1 font-mono text-eyebrow text-ink">
+          <span className="absolute top-3 right-3 rounded-full bg-surface/90 px-2.5 py-1 font-mono text-eyebrow text-foreground">
             {index}
           </span>
         </span>
       ) : (
         <div className="relative flex items-start justify-between gap-3">
-          <span className="grid size-13 place-items-center rounded-2xl bg-bg shadow-lift">
-            <ZanIcon name={industry.icon} className="size-7 text-brand-ink" />
+          <span className="grid size-13 place-items-center rounded-2xl bg-surface shadow-lift">
+            <ZanIcon name={industry.icon} className="size-7 text-accent-ink" />
           </span>
-          <span className={cn("font-mono text-eyebrow uppercase", onBrand ? "text-on-brand" : "text-muted")}>
+          <span className={cn("font-mono text-eyebrow uppercase", onBrand ? "text-action-foreground" : "text-subtle")}>
             {index}
           </span>
         </div>
@@ -65,7 +65,7 @@ export function IndustryTile({ industry, index, tone }: { industry: Industry; in
         <h3 className="font-display text-[clamp(1.375rem,1.2rem+0.5vw,1.625rem)] leading-[1.12] font-semibold text-balance">
           {industry.label}
         </h3>
-        <p className={cn("mt-2.5 text-small", onBrand ? "text-on-brand" : "text-ink-2")}>{industry.description}</p>
+        <p className={cn("mt-2.5 text-small", onBrand ? "text-action-foreground" : "text-muted")}>{industry.description}</p>
       </div>
     </article>
   );
@@ -89,16 +89,16 @@ export function CaseCaption({ project }: { project: Project }) {
       href="#case-studies"
       className="group absolute inset-0 z-[2] flex flex-col justify-end p-3 outline-offset-[-4px] sm:p-4"
     >
-      <span className="block rounded-2xl bg-bg p-4 shadow-lift sm:p-5">
+      <span className="block rounded-2xl bg-surface p-4 shadow-lift sm:p-5">
         <span className="flex items-center justify-between gap-3">
-          <span className="font-mono text-eyebrow uppercase text-brand-ink">{project.industry}</span>
+          <span className="font-mono text-eyebrow uppercase text-accent-ink">{project.industry}</span>
           <ArrowUpRight
             aria-hidden="true"
-            className="size-4 shrink-0 text-ink transition-transform duration-300 ease-out-expo group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+            className="size-4 shrink-0 text-foreground transition-transform duration-300 ease-out-expo group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
           />
         </span>
-        <span className="mt-2 block text-h3 text-ink">{project.name}</span>
-        <span className="mt-1 block text-small text-muted">{project.discipline}</span>
+        <span className="mt-2 block text-h3 text-foreground">{project.name}</span>
+        <span className="mt-1 block text-small text-subtle">{project.discipline}</span>
       </span>
     </a>
   );

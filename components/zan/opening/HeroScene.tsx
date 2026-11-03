@@ -97,7 +97,7 @@ export function HeroScene({ children }: { children: ReactNode }) {
       ref={root}
       id="hero"
       aria-labelledby="hero-title"
-      className="relative isolate flex min-h-svh flex-col overflow-hidden bg-bg"
+      className="relative isolate flex min-h-svh flex-col overflow-hidden bg-canvas"
     >
       {/* Sky: three depths of fine dots, masked to fade out at the bottom. */}
       <div
@@ -159,7 +159,7 @@ export function HeroScene({ children }: { children: ReactNode }) {
       >
         <div
           data-reveal
-          className="zan-hero-in flex flex-col items-center gap-2 font-mono text-[0.6875rem] tracking-[0.2em] text-muted uppercase"
+          className="zan-hero-in flex flex-col items-center gap-2 font-mono text-[0.6875rem] tracking-[0.2em] text-subtle uppercase"
           style={{ "--zan-d": 6 } as CSSProperties}
         >
           <span>Scroll</span>

@@ -30,7 +30,7 @@ export function FaqAccordion({
   const base = useId();
 
   return (
-    <ul className="border-t border-line">
+    <ul className="border-t border-border">
       {items.map((item, i) => {
         const isOpen = open === i;
         const qId = `${base}-q-${i}`;
@@ -39,7 +39,7 @@ export function FaqAccordion({
           <motion.li
             key={item.question}
             data-reveal
-            className="border-b border-line"
+            className="border-b border-border"
             initial={{ opacity: 0, y: 18 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "0px 0px -8% 0px" }}
@@ -57,12 +57,12 @@ export function FaqAccordion({
                 <span
                   className={cn(
                     "mt-1.5 w-7 shrink-0 font-mono text-eyebrow uppercase transition-colors duration-300",
-                    isOpen ? "text-brand-ink" : "text-muted",
+                    isOpen ? "text-accent-ink" : "text-subtle",
                   )}
                 >
                   {String(i + numberFrom).padStart(2, "0")}
                 </span>
-                <span className="flex-1 text-h3 text-ink transition-colors duration-300 group-hover:text-brand-ink">
+                <span className="flex-1 text-h3 text-foreground transition-colors duration-300 group-hover:text-accent-ink">
                   {item.question}
                 </span>
                 <span
@@ -70,8 +70,8 @@ export function FaqAccordion({
                   className={cn(
                     "grid size-10 shrink-0 place-items-center rounded-full border transition-[background-color,border-color,color,transform] duration-500 ease-out-expo",
                     isOpen
-                      ? "rotate-45 border-transparent bg-brand text-on-brand"
-                      : "border-line-strong bg-bg text-ink group-hover:border-ink",
+                      ? "rotate-45 border-transparent bg-accent text-accent-foreground"
+                      : "border-border-strong bg-surface text-foreground group-hover:border-foreground",
                   )}
                 >
                   <Plus className="size-4" strokeWidth={2} />
@@ -89,7 +89,7 @@ export function FaqAccordion({
               <div className="overflow-hidden">
                 <p
                   className={cn(
-                    "max-w-[64ch] pb-7 pl-11 text-body text-ink-2 transition-[opacity,translate] duration-500 ease-out-expo sm:pr-16 sm:pl-13",
+                    "max-w-[64ch] pb-7 pl-11 text-body text-muted transition-[opacity,translate] duration-500 ease-out-expo sm:pr-16 sm:pl-13",
                     isOpen ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0",
                   )}
                 >

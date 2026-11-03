@@ -46,11 +46,11 @@ function formatValue(p: Parsed, n: number) {
 type Tone = "paper" | "surface" | "brand" | "soft" | "plain";
 
 const TONE: Record<Tone, string> = {
-  paper: "bg-paper text-ink",
-  surface: "bg-surface text-ink",
-  brand: "bg-brand-gradient text-on-brand border-transparent",
-  soft: "bg-brand-soft text-ink border-transparent",
-  plain: "bg-bg text-ink border-line-strong",
+  paper: "bg-surface-tint text-foreground",
+  surface: "bg-surface-muted text-foreground",
+  brand: "bg-action-gradient text-action-foreground border-transparent",
+  soft: "bg-accent-soft text-foreground border-transparent",
+  plain: "bg-surface text-foreground border-border-strong",
 };
 
 /** How each figure is set: its column, ground and any extra visual. */
@@ -73,9 +73,9 @@ function Stars({ value }: { value: string }) {
   );
   return (
     <span aria-hidden="true" className="relative mt-6 inline-flex">
-      {row("fill-line stroke-line-strong")}
+      {row("fill-border stroke-border-strong")}
       <span data-stars className="absolute inset-y-0 left-0 overflow-hidden" style={{ width: `${share * 100}%` }}>
-        {row("fill-brand stroke-brand")}
+        {row("fill-accent stroke-accent-ink")}
       </span>
     </span>
   );
@@ -84,8 +84,8 @@ function Stars({ value }: { value: string }) {
 function Bar({ value }: { value: string }) {
   const share = Math.min(1, Math.max(0, Number.parseFloat(value) / 100));
   return (
-    <span aria-hidden="true" className="mt-6 block h-2 w-full overflow-hidden rounded-full bg-bg">
-      <span data-bar className="block h-full rounded-full bg-brand" style={{ width: `${share * 100}%` }} />
+    <span aria-hidden="true" className="mt-6 block h-2 w-full overflow-hidden rounded-full bg-surface">
+      <span data-bar className="block h-full rounded-full bg-action" style={{ width: `${share * 100}%` }} />
     </span>
   );
 }
@@ -100,7 +100,7 @@ function Tile({ m, index }: { m: Metric; index: number }) {
   return (
     <div
       className={cn(
-        "relative isolate flex flex-col overflow-hidden rounded-3xl border border-line p-7 sm:p-9 lg:p-10",
+        "relative isolate flex flex-col overflow-hidden rounded-3xl border border-border p-7 sm:p-9 lg:p-10",
         TONE[layout.tone],
         layout.tall ? "min-h-[20rem] lg:min-h-[32rem] lg:flex-1" : "min-h-[13rem] lg:min-h-[15rem]",
       )}
@@ -112,14 +112,14 @@ function Tile({ m, index }: { m: Metric; index: number }) {
           style={
             {
               backgroundImage:
-                "radial-gradient(color-mix(in oklab, var(--color-brand) 30%, transparent) 1.3px, transparent 1.6px)",
+                "radial-gradient(color-mix(in oklab, var(--color-accent) 30%, transparent) 1.3px, transparent 1.6px)",
               backgroundSize: "18px 18px",
-              maskImage: "linear-gradient(180deg, var(--color-ink) 0%, transparent 62%)",
+              maskImage: "linear-gradient(180deg, var(--color-foreground) 0%, transparent 62%)",
             } as CSSProperties
           }
         />
       )}
-      <span className={cn("font-mono text-eyebrow", onBrand ? "text-on-brand/80" : "text-muted")}>
+      <span className={cn("font-mono text-eyebrow", onBrand ? "text-action-foreground/80" : "text-subtle")}>
         {String(index + 1).padStart(2, "0")}
       </span>
 
@@ -135,7 +135,7 @@ function Tile({ m, index }: { m: Metric; index: number }) {
         </span>
       </p>
       <h3 className="mt-4 text-h3 font-semibold">{m.label}</h3>
-      <p className={cn("mt-1 text-body", onBrand ? "text-on-brand/85" : "text-ink-2")}>{m.detail}</p>
+      <p className={cn("mt-1 text-body", onBrand ? "text-action-foreground/85" : "text-muted")}>{m.detail}</p>
       {extra}
     </div>
   );
@@ -215,7 +215,7 @@ export function Metrics() {
   );
 
   return (
-    <section ref={root} id="metrics" className="relative overflow-clip bg-bg py-section">
+    <section ref={root} id="metrics" className="relative overflow-clip bg-canvas py-section">
       <div className="container-zan">
         <SectionHeading eyebrow={site.name} title={[metricsIntro.eyebrow]} lead={site.tagline} align="center" />
 

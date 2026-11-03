@@ -22,7 +22,7 @@ const ACCENTABLE = 15;
  *
  *   1. The heading is ink. A whole headline filled with the brand colour is a
  *      large area of saturated colour, which this site reserves for buttons and
- *      small accents — and gold on white is about 1.7:1, so a filled headline
+ *      small accents — and cyan on white is about 1.8:1, so a filled headline
  *      is not even legible. Only a heading of more than one line takes the
  *      accent, and only on its last line.
  *   2. The band is a two-column grid at lg and up. The right column carries
@@ -35,7 +35,7 @@ const ACCENTABLE = 15;
  * heading, the lead and the buttons are all above it at every width and none
  * of them is ever read off a picture.
  *
- * `pt-nav` clears the fixed navbar. The ground is the warm brand wash, and the
+ * `pt-nav` clears the fixed navbar. The ground is the brand wash, and the
  * section that follows draws the hairline between them.
  */
 export function PageHero({
@@ -65,7 +65,7 @@ export function PageHero({
 }) {
   const split = Boolean(aside || media);
   return (
-    <section className={cn("relative isolate bg-brand-wash pt-nav", className)}>
+    <section className={cn("relative isolate bg-accent-wash pt-nav", className)}>
       <div className="container-zan pt-10 pb-12 sm:pt-14 sm:pb-14 lg:pt-16 lg:pb-18">
         {trail && <Breadcrumbs trail={trail} className="mb-6" />}
         {/* The rows are placed rather than flowed: the copy and the panel share
@@ -112,7 +112,7 @@ export function PageHero({
  */
 export function PageHeroPhoto({ photo }: { photo: ServiceHero }) {
   return (
-    <figure className="relative aspect-[3/2] overflow-hidden rounded-3xl border border-line bg-surface shadow-lift sm:aspect-[16/9] lg:aspect-[12/5]">
+    <figure className="relative aspect-[3/2] overflow-hidden rounded-3xl border border-border bg-surface-muted shadow-lift sm:aspect-[16/9] lg:aspect-[12/5]">
       <Image
         src={photo.src}
         alt={photo.alt}

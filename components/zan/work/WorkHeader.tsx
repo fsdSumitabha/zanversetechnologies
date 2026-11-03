@@ -32,11 +32,11 @@ export function WorkHeader({ headingId }: { headingId: string }) {
         viewport={{ once: true, margin: "0px 0px -8% 0px" }}
         transition={{ duration: 0.8, ease: EASE, delay: 0.2 }}
       >
-        <div aria-hidden="true" className="mt-9 h-px w-20 bg-brand" />
-        <p className="mt-8 max-w-[56ch] text-lead text-ink-2">{workIntro.lead}</p>
-        <p className="mt-9 flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-eyebrow uppercase text-muted">
-          <span className="text-ink">{projects.length} case studies</span>
-          <span aria-hidden="true" className="size-1 rounded-full bg-brand" />
+        <div aria-hidden="true" className="mt-9 h-px w-20 bg-accent" />
+        <p className="mt-8 max-w-[56ch] text-lead text-muted">{workIntro.lead}</p>
+        <p className="mt-9 flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-eyebrow uppercase text-subtle">
+          <span className="text-foreground">{projects.length} case studies</span>
+          <span aria-hidden="true" className="size-1 rounded-full bg-accent" />
           <span>{disciplines.join(" · ")}</span>
         </p>
       </motion.div>

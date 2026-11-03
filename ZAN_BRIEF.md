@@ -50,24 +50,27 @@ The client has asked for bolder motion than the previous build had, so new scene
    - Do not import from, or copy assets out of, anything that was deleted, and do not use remote images.
    - Do not use Spline, `unsplash`, `aceternity.com` assets or CDNs. Every asset lives in `/public`.
    - If a file you own still contains personal data (Rohith, KodaiRateIQ, ProofStack, Design_img paths and so on), remove it.
-3. **Light theme, tokens only.** No hex colours in components, with two narrow exceptions:
-   - neutral pure white or black shadows written as `rgb(… / a)`;
+3. **Tokens only, in both themes.** No hex colours in components, with two narrow exceptions:
+   - black or white in a CSS mask, where only the alpha counts;
    - the hex values in `@/lib/brand`, for WebGL and canvas only (see 4).
 
    The tokens, as Tailwind classes:
 
    | Class | Use |
    |---|---|
-   | `bg-bg`, `bg-surface`, `bg-surface-2`, `bg-paper` (#f5f0e8, warm paper, not accent) | Grounds |
-   | `text-ink`, `text-ink-2`, `text-muted` | Text |
-   | `border-line`, `border-line-strong` | Hairlines |
-   | `bg-brand` | Brand fill: the gold |
-   | `text-brand-ink` | Accent text on light grounds. **Never `text-brand` for text.** |
-   | `bg-brand-soft` | Pale tint |
-   | `text-on-brand` | Anything placed on a brand fill: near-black on the gold. **Never hard-code white on a brand fill**; it fails contrast. |
+   | `bg-canvas`, `bg-surface`, `bg-surface-raised`, `bg-surface-muted`, `bg-surface-tint` | Grounds: the page, cards, what floats, alternate bands, a navy-tinted band |
+   | `text-foreground`, `text-muted`, `text-subtle` | Text |
+   | `border-border`, `border-border-strong`, `border-border-field` | Hairlines. `border-field` is for input outlines |
+   | `bg-action`, `text-action-foreground`, `hover:bg-action-hover` | The main action: navy in light, cyan in dark. **Never hard-code white on it**; it fails contrast in dark. |
+   | `bg-accent`, `text-accent-foreground` | The cyan fill, with the navy text it takes. |
+   | `text-accent-ink` | Accent text. **Never `text-accent` for text on a light ground.** |
+   | `bg-accent-soft` | Pale tint |
+   | `bg-plate`, `bg-inverse`, `bg-scrim`, `--color-shadow` | Constant in both themes: a white plate for logos, a dark plate, the modal backdrop, shadows |
+   | `text-ai` | AI and blockchain accents only |
+   | `text-danger-ink`, `text-success-ink`, `text-warning-ink` | Status text. `danger`, `success` and `warning` alone are for fills and icons |
 
-   Utilities: `bg-brand-gradient`, `text-brand-gradient`, `bg-brand-wash`, `bg-brand-veil` and `border-brand-gradient-t`.
-   - For translucency use `bg-brand/15` or `color-mix(in oklab, var(--color-brand) 15%, transparent)`.
+   Utilities: `bg-action-gradient` (takes text), `bg-accent-gradient` (thin rules and bars, no text), `text-accent-gradient`, `bg-accent-wash`, `bg-accent-veil` and `border-accent-gradient-t`.
+   - For translucency use `bg-accent/15` or `color-mix(in oklab, var(--color-accent) 15%, transparent)`.
    - Never concatenate `${hex}55`.
 4. **One brand, one office.**
    - The brand is Zan Verse Technologies. A component takes it from `site.name` rather than typing it. "Zan" alone is fine as a short form ("Why businesses choose Zan"). The lockup is `ZanLogo`.

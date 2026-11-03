@@ -22,9 +22,9 @@
    ─────────────────────────────────────────────────────────────────────────── */
 
 .zan-deck-panel {
-  /* What a plate's gold tint is mixed into, so each plate is a shade of the
-     panel it sits on rather than the same flat yellow on all five. */
-  --deck-plate-ground: var(--color-bg);
+  /* What a plate's cyan tint is mixed into, so each plate is a shade of the
+     panel it sits on rather than the same flat cyan on all five. */
+  --deck-plate-ground: var(--color-surface);
   /* The navbar is fixed and 4.5rem tall. The panel's first line always clears
      it, at every height. */
   padding-top: calc(var(--spacing-nav) + clamp(0.75rem, 3.2svh, 2.25rem));
@@ -32,16 +32,16 @@
 }
 
 .zan-deck-panel[data-tone="soft"] {
-  --deck-plate-ground: var(--color-brand-soft);
+  --deck-plate-ground: var(--color-accent-soft);
 }
 .zan-deck-panel[data-tone="surface"] {
-  --deck-plate-ground: var(--color-surface);
+  --deck-plate-ground: var(--color-surface-muted);
 }
 .zan-deck-panel[data-tone="surface2"] {
-  --deck-plate-ground: var(--color-surface-2);
+  --deck-plate-ground: var(--color-surface-muted);
 }
 .zan-deck-panel[data-tone="paper"] {
-  --deck-plate-ground: var(--color-paper);
+  --deck-plate-ground: var(--color-surface-tint);
 }
 
 .zan-deck-rule {
@@ -178,12 +178,12 @@
   /* Keep the drawing's blend inside the plate: without this it would multiply
      against the panel behind it. */
   isolation: isolate;
-  background-color: color-mix(in oklab, var(--color-brand) 20%, var(--deck-plate-ground));
-  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-brand) 30%, transparent);
+  background-color: color-mix(in oklab, var(--color-accent) 20%, var(--deck-plate-ground));
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-accent) 30%, transparent);
 }
 
 /* The drawings ship as ink and neutral greys on transparent. Multiplying them
-   over the plate's gold-tinted ground is what gives them the brand's colour —
+   over the plate's cyan-tinted ground is what gives them the brand's colour —
    an <img> cannot read a CSS variable, so nothing is baked into the file, and
    a change to the palette tokens in globals.css recolours every plate with
    no new artwork. */
@@ -193,6 +193,12 @@
   height: 100%;
   object-fit: contain;
   mix-blend-mode: multiply;
+}
+/* Multiply loses dark ink on a dark plate. Inverted and screened, the ink turns
+   light and the drawing's white turns into the plate. */
+.dark .zan-deck-plate-img {
+  mix-blend-mode: screen;
+  filter: invert(1) hue-rotate(180deg);
 }
 
 /* ── Card text ───────────────────────────────────────────────────────────── */
@@ -251,7 +257,7 @@
 .zan-deck-caps li + li::before {
   content: "\00a0· ";
   margin-left: 0.2em;
-  color: var(--color-line-strong);
+  color: var(--color-border-strong);
 }
 
 /* ── The deck's closing calls to action ──────────────────────────────────── */

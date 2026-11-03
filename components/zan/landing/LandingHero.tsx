@@ -44,7 +44,7 @@ export function LandingHero({ page }: { page: LandingPage }) {
     <section
       id="enquiry"
       aria-labelledby="lp-hero-title"
-      className="relative isolate scroll-mt-nav overflow-hidden bg-bg"
+      className="relative isolate scroll-mt-nav overflow-hidden bg-canvas"
     >
       <div
         aria-hidden="true"
@@ -89,7 +89,7 @@ export function LandingHero({ page }: { page: LandingPage }) {
                "Marketing Judged On", 10.2em wide: 100 / 10.2 is 9.8, taken down
                for margin. A new page with a longer line needs this looking at. */
             style={{ fontSize: "min(5rem, 9.6cqi)" }}
-            className="leading-[1] font-extrabold tracking-[-0.042em] text-ink [font-stretch:92%]"
+            className="leading-[1] font-extrabold tracking-[-0.042em] text-foreground [font-stretch:92%]"
           >
             {/* Part of the h1, not a label above it: what someone searched for and
                 the city is the first thing this page says, to them and to the
@@ -97,10 +97,10 @@ export function LandingHero({ page }: { page: LandingPage }) {
                 A flex box of its own, so the h1's large line height stays out of it. */}
             <span
               data-reveal
-              className="zan-hero-in mb-5 flex w-fit max-w-full items-center gap-2 rounded-full border border-line bg-bg/80 px-3.5 py-1.5 text-[0.8125rem] leading-snug font-medium tracking-normal text-ink-2 shadow-lift [font-stretch:100%] sm:mb-6 sm:px-4 sm:text-small"
+              className="zan-hero-in mb-5 flex w-fit max-w-full items-center gap-2 rounded-full border border-border bg-surface/80 px-3.5 py-1.5 text-[0.8125rem] leading-snug font-medium tracking-normal text-muted shadow-lift [font-stretch:100%] sm:mb-6 sm:px-4 sm:text-small"
               style={delay(0)}
             >
-              <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-brand" />
+              <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-accent" />
               <span>
                 {page.eyebrow}
                 <span className="sr-only">: </span>
@@ -110,11 +110,11 @@ export function LandingHero({ page }: { page: LandingPage }) {
               <Words text={page.headline.lead} from={0} />
             </span>
             <span className="block">
-              <Words text={page.headline.accent} from={leadWords} className="text-brand-gradient" />
+              <Words text={page.headline.accent} from={leadWords} className="text-accent-gradient" />
             </span>
           </h1>
 
-          <p className="zan-lp-rise mt-5 max-w-[38rem] text-[1.0625rem] leading-relaxed text-pretty text-ink-2 sm:mt-6 sm:text-[1.1875rem]">
+          <p className="zan-lp-rise mt-5 max-w-[38rem] text-[1.0625rem] leading-relaxed text-pretty text-muted sm:mt-6 sm:text-[1.1875rem]">
             {page.subhead}
           </p>
         </div>
@@ -126,21 +126,21 @@ export function LandingHero({ page }: { page: LandingPage }) {
           className="zan-hero-in min-w-0 lg:col-span-5 lg:col-start-8 lg:row-span-2 lg:row-start-1 lg:self-center"
           style={delay(2)}
         >
-          <div data-lp-form="" className="relative rounded-3xl border border-line bg-bg p-5 shadow-float sm:p-7">
-            <span aria-hidden="true" className="absolute inset-x-8 top-0 h-px bg-brand-gradient" />
-            <h2 className="font-display text-[1.625rem] leading-tight font-semibold tracking-[-0.012em] text-ink">
+          <div data-lp-form="" className="relative rounded-3xl border border-border bg-surface p-5 shadow-float sm:p-7">
+            <span aria-hidden="true" className="absolute inset-x-8 top-0 h-px bg-accent-gradient" />
+            <h2 className="font-display text-[1.625rem] leading-tight font-semibold tracking-[-0.012em] text-foreground">
               {heroForm.title}
             </h2>
-            <p className="mt-1.5 text-small text-ink-2">{heroForm.lead}</p>
+            <p className="mt-1.5 text-small text-muted">{heroForm.lead}</p>
 
             <LandingForm location="hero" className="mt-5" />
 
-            <ul className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 border-t border-line pt-4">
+            <ul className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 border-t border-border pt-4">
               {heroForm.reassurances.map((text, i) => {
                 const Icon = REASSURANCE_ICONS[i];
                 return (
-                  <li key={text} className="inline-flex items-center gap-1.5 text-[0.75rem] font-medium text-ink-2">
-                    <Icon aria-hidden="true" className="size-3.5 shrink-0 text-brand-ink" strokeWidth={2} />
+                  <li key={text} className="inline-flex items-center gap-1.5 text-[0.75rem] font-medium text-muted">
+                    <Icon aria-hidden="true" className="size-3.5 shrink-0 text-accent-ink" strokeWidth={2} />
                     {text}
                   </li>
                 );
@@ -154,14 +154,14 @@ export function LandingHero({ page }: { page: LandingPage }) {
             figures, and the rating beside real client marks. */}
         <div data-reveal className="zan-hero-in min-w-0 lg:col-span-7 lg:self-start" style={delay(3)}>
           <div className="mb-5 max-w-2xl">
-            <p id="lp-hero-services" className="font-mono text-eyebrow text-brand-ink uppercase">
+            <p id="lp-hero-services" className="font-mono text-eyebrow text-accent-ink uppercase">
               {servicesLabel}
             </p>
             <ul aria-labelledby="lp-hero-services" className="mt-2.5 flex flex-wrap gap-1.5">
               {page.serviceTerms.map((term) => (
                 <li
                   key={term}
-                  className="rounded-full border border-line bg-bg/80 px-2.5 py-1 text-[0.8125rem] leading-snug text-ink-2"
+                  className="rounded-full border border-border bg-surface/80 px-2.5 py-1 text-[0.8125rem] leading-snug text-muted"
                 >
                   {term}
                 </li>
@@ -169,17 +169,17 @@ export function LandingHero({ page }: { page: LandingPage }) {
             </ul>
           </div>
 
-          <dl className="grid max-w-2xl grid-cols-3 border-t border-line pt-5">
+          <dl className="grid max-w-2xl grid-cols-3 border-t border-border pt-5">
             {page.outcomes.map((o, i) => (
               <div
                 key={o.label}
                 className={cn(
                   "flex flex-col-reverse justify-end gap-1.5 pr-2",
-                  i > 0 && "border-l border-line pl-3 sm:pl-5",
+                  i > 0 && "border-l border-border pl-3 sm:pl-5",
                 )}
               >
-                <dt className="text-[0.75rem] leading-snug text-muted">{o.label}</dt>
-                <dd className="font-hero text-[1.375rem] leading-none font-bold tracking-[-0.03em] text-ink tabular-nums [font-stretch:92%] sm:text-[1.875rem]">
+                <dt className="text-[0.75rem] leading-snug text-subtle">{o.label}</dt>
+                <dd className="font-hero text-[1.375rem] leading-none font-bold tracking-[-0.03em] text-foreground tabular-nums [font-stretch:92%] sm:text-[1.875rem]">
                   {o.value}
                 </dd>
               </div>
@@ -191,7 +191,7 @@ export function LandingHero({ page }: { page: LandingPage }) {
               {ratingClients.map((client) => (
                 <li
                   key={client.name}
-                  className="relative size-10 overflow-hidden rounded-full border-2 border-bg bg-bg shadow-lift ring-1 ring-line"
+                  className="relative size-10 overflow-hidden rounded-full border-2 border-surface bg-plate shadow-lift ring-1 ring-border"
                 >
                   <Image
                     src={client.src}
@@ -207,13 +207,13 @@ export function LandingHero({ page }: { page: LandingPage }) {
               <p className="flex items-center gap-1.5">
                 <span className="flex" aria-hidden="true">
                   {Array.from({ length: 5 }, (_, i) => (
-                    <Star key={i} className="size-4 fill-brand text-brand" strokeWidth={1.5} />
+                    <Star key={i} className="size-4 fill-accent text-accent-ink" strokeWidth={1.5} />
                   ))}
                 </span>
-                <span className="text-small font-semibold text-ink">{rating.value}</span>
+                <span className="text-small font-semibold text-foreground">{rating.value}</span>
               </p>
-              <p className="mt-0.5 text-small text-ink-2">
-                {rating.trusted} <span className="font-semibold text-ink">{rating.clients}</span>
+              <p className="mt-0.5 text-small text-muted">
+                {rating.trusted} <span className="font-semibold text-foreground">{rating.clients}</span>
               </p>
             </div>
           </div>

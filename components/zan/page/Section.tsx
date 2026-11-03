@@ -4,9 +4,9 @@ import { cn } from "@/lib/utils";
 import { Reveal } from "./Reveal";
 
 const GROUNDS = {
-  bg: "bg-bg",
-  surface: "bg-surface",
-  surface2: "bg-surface-2",
+  bg: "bg-canvas",
+  surface: "bg-surface-muted",
+  surface2: "bg-surface-muted",
 } as const;
 
 /**
@@ -45,7 +45,7 @@ export function Section({
          the homepage's `py-section`: these bands are read in sequence rather
          than pinned one screen at a time. */
       className={cn(
-        "scroll-mt-nav border-t border-line py-[clamp(3.5rem,2.6rem+3.8vw,6rem)]",
+        "scroll-mt-nav border-t border-border py-[clamp(3.5rem,2.6rem+3.8vw,6rem)]",
         GROUNDS[tone],
         className,
       )}
@@ -56,11 +56,11 @@ export function Section({
             <div className="max-w-3xl">
               {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
               {title && (
-                <h2 id={headingId} className={cn("font-display text-h1 text-balance text-ink", eyebrow && "mt-4")}>
+                <h2 id={headingId} className={cn("font-display text-h1 text-balance text-foreground", eyebrow && "mt-4")}>
                   {title}
                 </h2>
               )}
-              {lead && <p className="mt-5 max-w-[58ch] text-lead text-ink-2">{lead}</p>}
+              {lead && <p className="mt-5 max-w-[58ch] text-lead text-muted">{lead}</p>}
             </div>
             {aside && <div className="shrink-0">{aside}</div>}
           </Reveal>

@@ -20,11 +20,11 @@ import { cn } from "@/lib/utils";
    director's card carry exactly what we were given for him and stop there. */
 
 const card =
-  "zan-person flex h-full flex-col rounded-3xl border border-line bg-bg p-6 transition-[border-color,box-shadow,transform] duration-500 ease-out-expo hover:-translate-y-0.5 hover:border-line-strong hover:shadow-lift sm:p-7";
+  "zan-person flex h-full flex-col rounded-3xl border border-border bg-surface p-6 transition-[border-color,box-shadow,transform] duration-500 ease-out-expo hover:-translate-y-0.5 hover:border-border-strong hover:shadow-lift sm:p-7";
 
 /** A labelled link out, sized to a 44px tap target. */
 const pill =
-  "inline-flex min-h-11 items-center gap-2 rounded-full border border-line bg-surface px-4 text-small font-medium text-ink-2 transition-[color,background-color,border-color,transform] duration-300 ease-out-expo hover:-translate-y-0.5 hover:border-brand hover:bg-brand-soft hover:text-brand-ink";
+  "inline-flex min-h-11 items-center gap-2 rounded-full border border-border bg-surface-muted px-4 text-small font-medium text-muted transition-[color,background-color,border-color,transform] duration-300 ease-out-expo hover:-translate-y-0.5 hover:border-accent hover:bg-accent-soft hover:text-accent-ink";
 
 /**
  * One colleague, under their practice's heading.
@@ -45,10 +45,10 @@ export function TeamPersonCard({ person }: { person: Person }) {
           monogramClassName="text-h2"
         />
         <div className="min-w-0">
-          <h3 className="font-display text-h3 font-semibold text-ink">{person.name}</h3>
-          <p className="mt-1.5 text-small font-medium text-brand-ink">{person.role}</p>
+          <h3 className="font-display text-h3 font-semibold text-foreground">{person.name}</h3>
+          <p className="mt-1.5 text-small font-medium text-accent-ink">{person.role}</p>
           {person.description && (
-            <p className="mt-4 max-w-[58ch] text-body text-ink-2">{person.description}</p>
+            <p className="mt-4 max-w-[58ch] text-body text-muted">{person.description}</p>
           )}
         </div>
       </div>
@@ -63,11 +63,11 @@ export function TeamPersonCard({ person }: { person: Person }) {
           footer is the same height on all of them and the row's hairlines
           line up. */}
       {footer && (
-        <div className="mt-7 border-t border-line pt-5">
+        <div className="mt-7 border-t border-border pt-5">
           {person.experience && (
             <dl className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-              <dt className="font-mono text-eyebrow text-muted uppercase">Experience</dt>
-              <dd className="font-mono text-small font-medium text-brand-ink tabular-nums">
+              <dt className="font-mono text-eyebrow text-subtle uppercase">Experience</dt>
+              <dd className="font-mono text-small font-medium text-accent-ink tabular-nums">
                 {person.experience}
               </dd>
             </dl>
@@ -145,11 +145,11 @@ export function TeamLeadCard({ person }: { person: Person }) {
         {/* The panel is narrower between 1024 and 1280 than it is above it,
             where "Nadim Ali" at h2 wraps onto a second line. h2 only once the
             column is wide enough to hold a name on one. */}
-        <h3 className="font-display text-h3 font-semibold text-balance text-ink xl:text-h2">
+        <h3 className="font-display text-h3 font-semibold text-balance text-foreground xl:text-h2">
           {person.name}
         </h3>
-        <p className="mt-1.5 text-small font-medium text-brand-ink">{person.role}</p>
-        {person.description && <p className="mt-3 max-w-[46ch] text-small text-ink-2">{person.description}</p>}
+        <p className="mt-1.5 text-small font-medium text-accent-ink">{person.role}</p>
+        {person.description && <p className="mt-3 max-w-[46ch] text-small text-muted">{person.description}</p>}
         <PersonLinks person={person} className="mt-4" />
       </div>
     </div>

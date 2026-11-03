@@ -145,7 +145,7 @@ export function ProjectShowcase({ projects }: { projects: readonly Project[] }) 
     >
       <div
         className={cn(
-          "relative h-52 w-80 overflow-hidden rounded-2xl border border-line bg-surface shadow-float",
+          "relative h-52 w-80 overflow-hidden rounded-2xl border border-border bg-surface-muted shadow-float",
           "transition-[opacity,scale] duration-300 ease-out-expo",
           hovered === null ? "scale-90 opacity-0" : "scale-100 opacity-100",
         )}
@@ -169,7 +169,7 @@ export function ProjectShowcase({ projects }: { projects: readonly Project[] }) 
     <>
       <ol
         ref={listRef}
-        className="border-t border-line"
+        className="border-t border-border"
         onPointerEnter={onListEnter}
         onPointerMove={onListMove}
         onPointerLeave={onListLeave}
@@ -179,7 +179,7 @@ export function ProjectShowcase({ projects }: { projects: readonly Project[] }) 
           const btnId = `${baseId}-btn-${i}`;
           const panelId = `${baseId}-panel-${i}`;
           return (
-            <li key={p.id} id={`case-${p.id}`} className="scroll-mt-[calc(var(--spacing-nav)+1.5rem)] border-b border-line">
+            <li key={p.id} id={`case-${p.id}`} className="scroll-mt-[calc(var(--spacing-nav)+1.5rem)] border-b border-border">
               <h3>
                 <button
                   id={btnId}
@@ -197,28 +197,28 @@ export function ProjectShowcase({ projects }: { projects: readonly Project[] }) 
                   <span
                     aria-hidden="true"
                     className={cn(
-                      "absolute inset-x-[-1rem] inset-y-2 -z-10 rounded-2xl bg-surface opacity-0 transition-opacity duration-300 ease-out-expo group-hover/row:opacity-100 lg:inset-x-[-1.5rem]",
+                      "absolute inset-x-[-1rem] inset-y-2 -z-10 rounded-2xl bg-surface-muted opacity-0 transition-opacity duration-300 ease-out-expo group-hover/row:opacity-100 lg:inset-x-[-1.5rem]",
                       isOpen && "opacity-100",
                     )}
                   />
-                  <span className="self-start pt-[0.45em] font-mono text-eyebrow text-muted">{p.index}</span>
+                  <span className="self-start pt-[0.45em] font-mono text-eyebrow text-subtle">{p.index}</span>
                   <span className="min-w-0">
-                    <span className="block text-balance font-sans text-[clamp(1.375rem,0.95rem+2vw,2.75rem)] font-semibold leading-[1.06] tracking-[-0.03em] text-ink transition-colors duration-300 group-hover/row:text-brand-ink">
+                    <span className="block text-balance font-sans text-[clamp(1.375rem,0.95rem+2vw,2.75rem)] font-semibold leading-[1.06] tracking-[-0.03em] text-foreground transition-colors duration-300 group-hover/row:text-accent-ink">
                       {p.name}
                     </span>
-                    <span className="mt-2 block text-small text-ink-2">
+                    <span className="mt-2 block text-small text-muted">
                       {p.discipline} · {p.industry}
                       <span className="lg:hidden"> · {p.timeline}</span>
                     </span>
                   </span>
-                  <span className="hidden font-mono text-eyebrow uppercase text-muted lg:block">{p.timeline}</span>
+                  <span className="hidden font-mono text-eyebrow uppercase text-subtle lg:block">{p.timeline}</span>
                   <span
                     aria-hidden="true"
                     className={cn(
                       "grid size-10 place-items-center rounded-full border transition-[background-color,border-color,color] duration-300 lg:size-12",
                       isOpen
-                        ? "border-transparent bg-brand-gradient text-on-brand"
-                        : "border-line-strong bg-bg text-ink group-hover/row:border-ink",
+                        ? "border-transparent bg-action-gradient text-action-foreground"
+                        : "border-border-strong bg-surface text-foreground group-hover/row:border-foreground",
                     )}
                   >
                     <Plus
@@ -241,26 +241,26 @@ export function ProjectShowcase({ projects }: { projects: readonly Project[] }) 
               >
                 <div className="min-h-0 overflow-hidden">
                   <div className="grid gap-8 pb-10 sm:pl-[calc(3rem+0.75rem)] lg:grid-cols-12 lg:gap-x-14 lg:pb-14 lg:pl-[calc(4rem+2rem)]">
-                    <div className="zan-case-inline-media relative aspect-[16/9] overflow-hidden rounded-2xl border border-line bg-surface lg:col-span-12">
+                    <div className="zan-case-inline-media relative aspect-[16/9] overflow-hidden rounded-2xl border border-border bg-surface-muted lg:col-span-12">
                       <ProjectMedia project={p} sizes="(min-width: 1024px) 60rem, 100vw" />
                     </div>
 
                     <div className="space-y-7 lg:col-span-6">
                       <div>
-                        <p className="font-mono text-eyebrow uppercase text-brand-ink">Challenge</p>
-                        <p className="mt-3 text-body text-ink-2">{p.challenge}</p>
+                        <p className="font-mono text-eyebrow uppercase text-accent-ink">Challenge</p>
+                        <p className="mt-3 text-body text-muted">{p.challenge}</p>
                       </div>
                       <div>
-                        <p className="font-mono text-eyebrow uppercase text-brand-ink">Solution</p>
-                        <p className="mt-3 text-body text-ink-2">{p.solution}</p>
+                        <p className="font-mono text-eyebrow uppercase text-accent-ink">Solution</p>
+                        <p className="mt-3 text-body text-muted">{p.solution}</p>
                       </div>
                     </div>
 
                     <dl className="grid grid-cols-2 gap-x-6 gap-y-7 self-start lg:col-span-6">
                       {p.results.map((r) => (
-                        <div key={r.metric} className="flex flex-col-reverse border-t border-line pt-4">
-                          <dt className="mt-2 text-small leading-snug text-ink-2">{r.metric}</dt>
-                          <dd className="font-sans text-[clamp(2rem,1.3rem+2.4vw,3.25rem)] font-bold leading-[0.95] tracking-[-0.04em] text-brand-ink">
+                        <div key={r.metric} className="flex flex-col-reverse border-t border-border pt-4">
+                          <dt className="mt-2 text-small leading-snug text-muted">{r.metric}</dt>
+                          <dd className="font-sans text-[clamp(2rem,1.3rem+2.4vw,3.25rem)] font-bold leading-[0.95] tracking-[-0.04em] text-accent-ink">
                             {r.value}
                           </dd>
                         </div>
@@ -268,10 +268,10 @@ export function ProjectShowcase({ projects }: { projects: readonly Project[] }) 
                     </dl>
 
                     <div className="lg:col-span-12">
-                      <p className="font-mono text-eyebrow uppercase text-muted">Stack</p>
+                      <p className="font-mono text-eyebrow uppercase text-subtle">Stack</p>
                       <ul className="mt-3 flex flex-wrap gap-2">
                         {p.techStack.map((t) => (
-                          <li key={t} className="rounded-full border border-line bg-surface px-3 py-1.5 text-small text-ink">
+                          <li key={t} className="rounded-full border border-border bg-surface-muted px-3 py-1.5 text-small text-foreground">
                             {t}
                           </li>
                         ))}

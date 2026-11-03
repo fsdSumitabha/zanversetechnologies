@@ -79,17 +79,17 @@ export default function ServicesPage() {
         <div className="space-y-14 sm:space-y-16">
           {groups.map((group) => (
             <div key={group.key} id={group.key} className="scroll-mt-nav">
-              <Reveal className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 border-b border-line pb-5">
-                <h3 className="font-display text-h2 text-ink">{group.title}</h3>
+              <Reveal className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 border-b border-border pb-5">
+                <h3 className="font-display text-h2 text-foreground">{group.title}</h3>
                 {group.parent && (
                   <SiteLink
                     href={group.parent.href}
-                    className="group/all inline-flex min-h-11 items-center gap-1.5 text-small font-medium text-ink transition-colors duration-300 hover:text-brand-ink"
+                    className="group/all inline-flex min-h-11 items-center gap-1.5 text-small font-medium text-foreground transition-colors duration-300 hover:text-accent-ink"
                   >
                     {group.parent.title} overview
                     <ArrowUpRight
                       aria-hidden="true"
-                      className="size-4 text-brand-ink transition-transform duration-300 ease-out-expo group-hover/all:translate-x-0.5 group-hover/all:-translate-y-0.5"
+                      className="size-4 text-accent-ink transition-transform duration-300 ease-out-expo group-hover/all:translate-x-0.5 group-hover/all:-translate-y-0.5"
                     />
                   </SiteLink>
                 )}

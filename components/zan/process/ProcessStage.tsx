@@ -121,19 +121,19 @@ function PinnedStage() {
 
         <div
           aria-hidden="true"
-          className="absolute bottom-6 left-1/2 flex -translate-x-1/2 items-center gap-3 rounded-full border border-line bg-bg px-4 py-2.5 shadow-lift"
+          className="absolute bottom-6 left-1/2 flex -translate-x-1/2 items-center gap-3 rounded-full border border-border bg-surface px-4 py-2.5 shadow-lift"
         >
-          <span className="font-mono text-eyebrow text-brand-ink">{processSteps[active].index}</span>
+          <span className="font-mono text-eyebrow text-accent-ink">{processSteps[active].index}</span>
           {processSteps.map((s, i) => (
             <span
               key={s.id}
               className={cn(
                 "h-1.5 rounded-full transition-[width,background-color] duration-500 ease-out-expo",
-                i === active ? "w-6 bg-brand" : i < active ? "w-1.5 bg-brand/50" : "w-1.5 bg-line-strong",
+                i === active ? "w-6 bg-action" : i < active ? "w-1.5 bg-action/50" : "w-1.5 bg-border-strong",
               )}
             />
           ))}
-          <span className="font-mono text-eyebrow text-muted">{String(STEPS).padStart(2, "0")}</span>
+          <span className="font-mono text-eyebrow text-subtle">{String(STEPS).padStart(2, "0")}</span>
         </div>
       </div>
     </div>
@@ -157,11 +157,11 @@ function Timeline() {
         >
           <span
             aria-hidden="true"
-            className={cn("absolute left-4 top-0 w-px bg-line-strong lg:hidden", i < STEPS - 1 ? "-bottom-5" : "h-10")}
+            className={cn("absolute left-4 top-0 w-px bg-border-strong lg:hidden", i < STEPS - 1 ? "-bottom-5" : "h-10")}
           />
           <span
             aria-hidden="true"
-            className="absolute left-0 top-6 grid size-8 place-items-center rounded-full border border-line-strong bg-bg font-mono text-[0.6875rem] text-brand-ink lg:hidden"
+            className="absolute left-0 top-6 grid size-8 place-items-center rounded-full border border-border-strong bg-surface font-mono text-[0.6875rem] text-accent-ink lg:hidden"
           >
             {s.index}
           </span>

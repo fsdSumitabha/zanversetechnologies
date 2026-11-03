@@ -38,7 +38,7 @@ const CATEGORIES: readonly { key: ConsentCategory; label: string; detail: string
 ];
 
 const linkClass =
-  "font-medium text-ink underline decoration-line-strong underline-offset-4 transition-colors duration-300 hover:text-brand-ink";
+  "font-medium text-foreground underline decoration-border-strong underline-offset-4 transition-colors duration-300 hover:text-accent-ink";
 
 /* Kept small so the banner stays low: 40px on a phone, 36px from md, where
    there is a pointer. */
@@ -73,11 +73,11 @@ function Switch({
       />
       <span
         aria-hidden="true"
-        className="h-7 w-12 rounded-full border border-muted bg-bg transition-colors duration-300 peer-checked:border-brand-ink peer-checked:bg-brand-ink"
+        className="h-7 w-12 rounded-full border border-subtle bg-surface transition-colors duration-300 peer-checked:border-action peer-checked:bg-action"
       />
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute top-1 left-1 size-5 rounded-full bg-muted transition-[translate,background-color] duration-300 ease-out-expo peer-checked:translate-x-5 peer-checked:bg-bg"
+        className="pointer-events-none absolute top-1 left-1 size-5 rounded-full bg-subtle transition-[translate,background-color] duration-300 ease-out-expo peer-checked:translate-x-5 peer-checked:bg-action-foreground"
       />
     </span>
   );
@@ -189,7 +189,7 @@ export function ConsentBanner() {
             // Never taller than the space under the navbar; the panel scrolls
             // inside itself on a landscape phone.
             "max-h-[calc(100dvh-6rem)] overflow-y-auto overscroll-contain",
-            "rounded-2xl border border-line bg-bg p-2 shadow-float md:px-6 md:py-3",
+            "rounded-2xl border border-border bg-surface-raised p-2 shadow-float md:px-6 md:py-3",
           )}
         >
           <div className="relative">
@@ -204,25 +204,25 @@ export function ConsentBanner() {
                   type="button"
                   onClick={closeSettings}
                   aria-label="Close cookie settings"
-                  className="absolute -top-2 -right-2 grid size-11 place-items-center rounded-full text-ink-2 transition-colors duration-300 hover:bg-surface hover:text-ink md:-top-3 md:-right-3 md:size-9"
+                  className="absolute -top-2 -right-2 grid size-11 place-items-center rounded-full text-muted transition-colors duration-300 hover:bg-surface-muted hover:text-foreground md:-top-3 md:-right-3 md:size-9"
                 >
                   <X aria-hidden="true" className="size-4" />
                 </button>
-                <p className="mt-2 text-small text-ink-2 md:mt-1.5 md:max-w-3xl">
+                <p className="mt-2 text-small text-muted md:mt-1.5 md:max-w-3xl">
                   Choose what this site may use. You can change it again at any time from Cookie settings in
                   the footer.
                 </p>
 
                 {/* One column on a phone; three side by side once there is room. */}
-                <ul className="mt-3 divide-y divide-line border-y border-line md:mt-2 lg:grid lg:grid-cols-3 lg:divide-x lg:divide-y-0">
+                <ul className="mt-3 divide-y divide-border border-y border-border md:mt-2 lg:grid lg:grid-cols-3 lg:divide-x lg:divide-y-0">
                   <li className="flex items-start justify-between gap-4 py-3 lg:px-6 lg:py-2.5 lg:first:pl-0 lg:last:pr-0">
                     <div className="min-w-0">
-                      <p className="text-small font-medium text-ink">Strictly necessary</p>
-                      <p className="mt-0.5 text-[0.8125rem] leading-normal text-ink-2">
+                      <p className="text-small font-medium text-foreground">Strictly necessary</p>
+                      <p className="mt-0.5 text-[0.8125rem] leading-normal text-muted">
                         Needed for the site to work, and to remember the choice you make here.
                       </p>
                     </div>
-                    <span className="shrink-0 rounded-full bg-brand-soft px-2.5 py-1.5 font-mono text-[0.625rem] leading-none tracking-[0.16em] whitespace-nowrap text-brand-ink uppercase">
+                    <span className="shrink-0 rounded-full bg-accent-soft px-2.5 py-1.5 font-mono text-[0.625rem] leading-none tracking-[0.16em] whitespace-nowrap text-accent-ink uppercase">
                       Always on
                     </span>
                   </li>
@@ -234,10 +234,10 @@ export function ConsentBanner() {
                         className="flex items-start justify-between gap-4 py-3 lg:px-6 lg:py-2.5 lg:first:pl-0 lg:last:pr-0"
                       >
                         <div className="min-w-0">
-                          <label htmlFor={id} className="block text-small font-medium text-ink">
+                          <label htmlFor={id} className="block text-small font-medium text-foreground">
                             {label}
                           </label>
-                          <p id={`${id}-detail`} className="mt-0.5 text-[0.8125rem] leading-normal text-ink-2">
+                          <p id={`${id}-detail`} className="mt-0.5 text-[0.8125rem] leading-normal text-muted">
                             {detail}
                           </p>
                         </div>
@@ -265,7 +265,7 @@ export function ConsentBanner() {
               // One sentence, its two links inline, then the two answers:
               // stacked on a phone, one row from md.
               <div className="md:flex md:items-center md:gap-6">
-                <div className="min-w-0 text-[0.8125rem] leading-[1.6] text-ink-2 md:flex-1">
+                <div className="min-w-0 text-[0.8125rem] leading-[1.6] text-muted md:flex-1">
                   {/* The label runs in with the sentence rather than taking a
                       line of its own. */}
                   <h2 id={titleId} ref={headingRef} tabIndex={-1} className="mr-2 inline outline-none">
@@ -281,7 +281,7 @@ export function ConsentBanner() {
                       <button type="button" onClick={openSettings} className={linkClass}>
                         Cookie settings
                       </button>
-                      <span aria-hidden="true" className="ml-1.5 text-muted">
+                      <span aria-hidden="true" className="ml-1.5 text-subtle">
                         ·
                       </span>
                     </span>{" "}

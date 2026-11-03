@@ -4,9 +4,9 @@ import { cn } from "@/lib/utils";
 /**
  * Mono caps label with an accent dot — the page's section marker.
  *
- * tone="brand"   brand-ink text on the page ground (default)
+ * tone="brand"   accent-ink text on the page ground (default)
  * tone="current" inherits the colour around it; use on brand fills, where the
- *                surrounding text is already text-on-brand
+ *                surrounding text is already text-action-foreground
  */
 export function Eyebrow({
   children,
@@ -23,13 +23,13 @@ export function Eyebrow({
     <Tag
       className={cn(
         "inline-flex items-center gap-2.5 font-mono text-eyebrow uppercase",
-        tone === "brand" ? "text-brand-ink" : "text-current",
+        tone === "brand" ? "text-accent-ink" : "text-current",
         className,
       )}
     >
       <span
         aria-hidden="true"
-        className={cn("size-1.5 shrink-0 rounded-full", tone === "brand" ? "bg-brand" : "bg-current")}
+        className={cn("size-1.5 shrink-0 rounded-full", tone === "brand" ? "bg-accent" : "bg-current")}
       />
       {children}
     </Tag>

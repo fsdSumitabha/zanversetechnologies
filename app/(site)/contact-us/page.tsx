@@ -48,7 +48,7 @@ export default async function ContactPage({ searchParams }: PageProps<"/contact-
         aside={
           <HeroPanel title="Talk to us directly">
             <ContactDirect className="flex-col items-stretch justify-start gap-3" />
-            <p className="mt-6 border-t border-line pt-5 text-small text-muted">
+            <p className="mt-6 border-t border-border pt-5 text-small text-subtle">
               The Dubai office answers this number on calls and on WhatsApp. Every enquiry is answered within 24 hours.
             </p>
           </HeroPanel>
@@ -76,11 +76,11 @@ export default async function ContactPage({ searchParams }: PageProps<"/contact-
       <Section id="faq" tone="surface" eyebrow={faqIntro.eyebrow} title={faqIntro.title.join(" ")}>
         <div className="grid gap-10 lg:grid-cols-12 lg:gap-16">
           <div className="lg:col-span-4">
-            <p className="text-lead text-ink-2">
+            <p className="text-lead text-muted">
               Still unsure what you need? Write to{" "}
               <a
                 href={`mailto:${site.email}`}
-                className="font-medium text-ink underline decoration-line-strong underline-offset-4 transition-colors duration-300 hover:text-brand-ink hover:decoration-current"
+                className="font-medium text-foreground underline decoration-border-strong underline-offset-4 transition-colors duration-300 hover:text-accent-ink hover:decoration-current"
               >
                 {site.email}
               </a>{" "}

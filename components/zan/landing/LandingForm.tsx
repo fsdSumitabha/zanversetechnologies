@@ -90,9 +90,9 @@ function messageFor(el: Control): string | undefined {
 }
 
 const control =
-  "w-full rounded-xl border border-line-strong bg-bg px-4 text-body text-ink placeholder:text-muted " +
-  "transition-[border-color,box-shadow] duration-200 hover:border-ink/40 " +
-  "focus-visible:border-brand-ink focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand/20 " +
+  "w-full rounded-xl border border-border-field bg-surface px-4 text-body text-foreground placeholder:text-subtle " +
+  "transition-[border-color,box-shadow] duration-200 hover:border-foreground/40 " +
+  "focus-visible:border-focus focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-focus/25 " +
   "aria-invalid:border-danger aria-invalid:focus-visible:ring-danger/15 " +
   "disabled:cursor-not-allowed disabled:opacity-60";
 
@@ -116,13 +116,13 @@ function FieldShell({
 }) {
   return (
     <div className={cn("flex min-w-0 flex-col gap-1.5", className)}>
-      <label htmlFor={id} className="flex items-baseline justify-between gap-3 text-small font-medium text-ink">
+      <label htmlFor={id} className="flex items-baseline justify-between gap-3 text-small font-medium text-foreground">
         {label}
         {optional && (
-          <span className="font-mono text-[0.6875rem] tracking-[0.12em] text-muted uppercase">Optional</span>
+          <span className="font-mono text-[0.6875rem] tracking-[0.12em] text-subtle uppercase">Optional</span>
         )}
         {confirmed && (
-          <span className="inline-flex items-center gap-1 font-mono text-[0.6875rem] tracking-[0.06em] text-success uppercase">
+          <span className="inline-flex items-center gap-1 font-mono text-[0.6875rem] tracking-[0.06em] text-success-ink uppercase">
             <Check aria-hidden="true" className="size-3 shrink-0" strokeWidth={3} />
             {confirmed}
           </span>
@@ -130,7 +130,7 @@ function FieldShell({
       </label>
       {children}
       {error && (
-        <p id={`${id}-error`} className="text-small text-danger">
+        <p id={`${id}-error`} className="text-small text-danger-ink">
           {error}
         </p>
       )}
@@ -311,10 +311,10 @@ export function LandingForm({
   if (!leadsReady) {
     return (
       <div className={className}>
-        <p className="text-body text-ink-2">Tell us what you are building and we will come back within 24 hours.</p>
+        <p className="text-body text-muted">Tell us what you are building and we will come back within 24 hours.</p>
         <a
           href={`mailto:${site.email}`}
-          className="mt-4 inline-block text-lead font-medium text-brand-ink underline decoration-current/40 underline-offset-4 hover:decoration-current"
+          className="mt-4 inline-block text-lead font-medium text-accent-ink underline decoration-current/40 underline-offset-4 hover:decoration-current"
         >
           {site.email}
         </a>
@@ -367,20 +367,20 @@ export function LandingForm({
               the input hands its border to the group so the two read as one. */}
             <div
               className={cn(
-                "flex h-12 items-stretch overflow-hidden rounded-xl border border-line-strong bg-bg",
-                "transition-[border-color,box-shadow] duration-200 hover:border-ink/40",
-                "focus-within:border-brand-ink focus-within:ring-4 focus-within:ring-brand/20",
+                "flex h-12 items-stretch overflow-hidden rounded-xl border border-border-field bg-surface",
+                "transition-[border-color,box-shadow] duration-200 hover:border-foreground/40",
+                "focus-within:border-focus focus-within:ring-4 focus-within:ring-focus/25",
                 errors.phone && "border-danger focus-within:border-danger focus-within:ring-danger/15",
                 busy && "opacity-60",
               )}
             >
-              <span className="flex shrink-0 items-center gap-1.5 border-r border-line bg-surface pr-2 pl-2.5 text-small font-medium text-ink tabular-nums">
+              <span className="flex shrink-0 items-center gap-1.5 border-r border-border bg-surface-muted pr-2 pl-2.5 text-small font-medium text-foreground tabular-nums">
                 <Image
                   src="/images/landing/flag-ae.svg"
                   alt=""
                   width={16}
                   height={11}
-                  className="h-[0.6875rem] w-4 rounded-[2px] ring-1 ring-ink/10"
+                  className="h-[0.6875rem] w-4 rounded-[2px] ring-1 ring-foreground/10"
                 />
                 <span>
                   <span className="sr-only">United Arab Emirates </span>
@@ -397,7 +397,7 @@ export function LandingForm({
                 disabled={busy}
                 placeholder={PHONE_HINT}
                 onInput={onPhoneInput}
-                className="min-w-0 flex-1 bg-transparent px-2.5 text-body text-ink tabular-nums outline-none placeholder:text-muted disabled:cursor-not-allowed"
+                className="min-w-0 flex-1 bg-transparent px-2.5 text-body text-foreground tabular-nums outline-none placeholder:text-subtle disabled:cursor-not-allowed"
                 {...invalid("phone")}
               />
             </div>
@@ -447,7 +447,7 @@ export function LandingForm({
               </select>
               <ChevronDown
                 aria-hidden="true"
-                className="pointer-events-none absolute top-1/2 right-3.5 size-4 -translate-y-1/2 text-muted"
+                className="pointer-events-none absolute top-1/2 right-3.5 size-4 -translate-y-1/2 text-subtle"
                 strokeWidth={2}
               />
             </div>
@@ -485,18 +485,18 @@ export function LandingForm({
         {busy ? "Sending" : submitLabel}
       </Button>
 
-      <p className="mt-3 text-center text-[0.8125rem] leading-snug text-muted">{landingCopy.formNote}</p>
+      <p className="mt-3 text-center text-[0.8125rem] leading-snug text-subtle">{landingCopy.formNote}</p>
 
       <div ref={alertRef} role="alert" className="empty:hidden">
         {state === "error" && (
-          <div className="mt-4 rounded-2xl border border-danger/30 bg-danger/5 px-4 py-3 text-small text-ink-2">
+          <div className="mt-4 rounded-2xl border border-danger/30 bg-danger/5 px-4 py-3 text-small text-muted">
             <p className="flex items-start gap-2.5">
               <TriangleAlert aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-danger" strokeWidth={2} />
               <span>
                 That did not send. Please try again, or email us at{" "}
                 <a
                   href={`mailto:${site.email}`}
-                  className="font-medium text-brand-ink underline decoration-current/40 underline-offset-4 hover:decoration-current"
+                  className="font-medium text-accent-ink underline decoration-current/40 underline-offset-4 hover:decoration-current"
                 >
                   {site.email}
                 </a>
@@ -509,7 +509,7 @@ export function LandingForm({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => trackWhatsAppClick("Landing Form Fallback")}
-                className="mt-2.5 ml-6.5 inline-flex items-center gap-1.5 font-medium text-whatsapp underline decoration-current/40 underline-offset-4 hover:decoration-current"
+                className="mt-2.5 ml-6.5 inline-flex items-center gap-1.5 font-medium text-whatsapp-ink underline decoration-current/40 underline-offset-4 hover:decoration-current"
               >
                 <MessageCircle aria-hidden="true" className="size-4 shrink-0" strokeWidth={2} />
                 Send this on WhatsApp instead

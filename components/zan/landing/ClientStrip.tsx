@@ -8,9 +8,9 @@ export function ClientStrip() {
   return (
     <section
       aria-label={landingCopy.clients.label}
-      className="relative overflow-clip border-brand-gradient-t bg-brand-veil py-[clamp(3rem,2.2rem+3vw,5rem)]"
+      className="relative overflow-clip border-accent-gradient-t bg-accent-veil py-[clamp(3rem,2.2rem+3vw,5rem)]"
     >
-      <p className="container-zan text-center font-mono text-eyebrow text-brand-ink uppercase">
+      <p className="container-zan text-center font-mono text-eyebrow text-accent-ink uppercase">
         {landingCopy.clients.label}
       </p>
       <LogoLoop

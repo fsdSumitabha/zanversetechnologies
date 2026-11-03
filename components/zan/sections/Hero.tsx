@@ -42,7 +42,7 @@ const SUBTITLE = hero.subtitle.map((part) => {
   if (accent) accents += 1;
   return {
     text: part.text,
-    className: accent && accents === 1 ? "font-semibold text-brand-ink" : undefined,
+    className: accent && accents === 1 ? "font-semibold text-accent-ink" : undefined,
   };
 });
 
@@ -62,17 +62,17 @@ export function Hero() {
     <HeroScene>
       <p
         data-reveal
-        className="zan-hero-in inline-flex max-w-full items-center gap-2 rounded-full border border-line bg-bg/80 px-3.5 py-1.5 text-[0.8125rem] leading-snug font-medium text-ink-2 shadow-lift sm:px-4 sm:text-small"
+        className="zan-hero-in inline-flex max-w-full items-center gap-2 rounded-full border border-border bg-surface/80 px-3.5 py-1.5 text-[0.8125rem] leading-snug font-medium text-muted shadow-lift sm:px-4 sm:text-small"
         style={delay(0)}
       >
-        <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-brand" />
+        <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-accent" />
         <span className="hidden sm:inline">{hero.badge}</span>
         <span className="sm:hidden">{hero.badgeShort}</span>
       </p>
 
       <h1
         id="hero-title"
-        className="mt-6  text-[clamp(2.25rem,0.8rem+5.4vw,5.25rem)] leading-[0.95] font-extrabold tracking-[-0.042em] text-ink [font-stretch:92%] sm:mt-7"
+        className="mt-6  text-[clamp(2.25rem,0.8rem+5.4vw,5.25rem)] leading-[0.95] font-extrabold tracking-[-0.042em] text-foreground [font-stretch:92%] sm:mt-7"
       >
         <span className="block">
           {lead.map((word, i) => (
@@ -92,7 +92,7 @@ export function Hero() {
 
       <p
         data-reveal
-        className="zan-hero-in mx-auto mt-6 max-w-[36rem] text-[1.0625rem] leading-relaxed text-pretty text-ink-2 sm:mt-7 sm:text-[1.1875rem] lg:mx-0"
+        className="zan-hero-in mx-auto mt-6 max-w-[36rem] text-[1.0625rem] leading-relaxed text-pretty text-muted sm:mt-7 sm:text-[1.1875rem] lg:mx-0"
         style={delay(1)}
       >
         {site.heroOwner}
@@ -106,9 +106,9 @@ export function Hero() {
       <div data-reveal className="zan-hero-in mt-7 flex justify-center sm:mt-8 lg:justify-start" style={delay(2)}>
         <a
           href={`tel:${office.phoneTel}`}
-          className="group inline-flex h-11 items-center gap-2.5 rounded-full border border-line pr-4 pl-1.5 text-[0.9375rem] font-semibold text-ink tabular-nums transition-colors duration-300 ease-out-expo hover:border-line-strong sm:h-12 sm:pr-5 sm:text-base"
+          className="group inline-flex h-11 items-center gap-2.5 rounded-full border border-border pr-4 pl-1.5 text-[0.9375rem] font-semibold text-foreground tabular-nums transition-colors duration-300 ease-out-expo hover:border-border-strong sm:h-12 sm:pr-5 sm:text-base"
         >
-          <span className="grid size-8 place-items-center rounded-full bg-brand-soft text-brand-ink sm:size-9">
+          <span className="grid size-8 place-items-center rounded-full bg-accent-soft text-accent-ink sm:size-9">
             <Phone aria-hidden="true" className="size-3.5 sm:size-4" strokeWidth={2.25} />
           </span>
           <span className="sr-only">Call </span>
@@ -127,7 +127,7 @@ export function Hero() {
       {/* The company in three figures, under a hairline. */}
       <dl
         data-reveal
-        className="zan-hero-in mx-auto mt-9 grid max-w-[27rem] grid-cols-3 border-t border-line pt-5 sm:mt-10 lg:mx-0 lg:max-w-full"
+        className="zan-hero-in mx-auto mt-9 grid max-w-[27rem] grid-cols-3 border-t border-border pt-5 sm:mt-10 lg:mx-0 lg:max-w-full"
         style={delay(4)}
       >
         {STATS.map((m, i) => (
@@ -135,13 +135,13 @@ export function Hero() {
             key={m.id}
             className={
               "flex flex-col-reverse items-center justify-end gap-1 px-2 lg:items-start " +
-              (i > 0 ? "border-l border-line lg:pl-5" : "lg:pl-0")
+              (i > 0 ? "border-l border-border lg:pl-5" : "lg:pl-0")
             }
           >
-            <dt className="text-center text-[0.75rem] leading-snug text-muted lg:text-left">
+            <dt className="text-center text-[0.75rem] leading-snug text-subtle lg:text-left">
               {STAT_LABEL[m.id] ?? m.label}
             </dt>
-            <dd className="font-hero text-[1.625rem] leading-none font-bold tracking-[-0.03em] text-ink tabular-nums [font-stretch:92%] sm:text-[1.875rem]">
+            <dd className="font-hero text-[1.625rem] leading-none font-bold tracking-[-0.03em] text-foreground tabular-nums [font-stretch:92%] sm:text-[1.875rem]">
               {m.value}
             </dd>
           </div>

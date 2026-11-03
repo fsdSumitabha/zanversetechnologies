@@ -493,9 +493,9 @@ export function IndustryCarousel({ items, label }: { items: readonly CarouselIte
           <ChevronRight aria-hidden="true" className="size-5" />
         </button>
 
-        <p className="hidden font-mono text-eyebrow uppercase tabular-nums text-muted sm:block">
-          <span className="text-brand-ink">{String(active + 1).padStart(2, "0")}</span>
-          <span className="px-1.5 text-line-strong">/</span>
+        <p className="hidden font-mono text-eyebrow uppercase tabular-nums text-subtle sm:block">
+          <span className="text-accent-ink">{String(active + 1).padStart(2, "0")}</span>
+          <span className="px-1.5 text-border-strong">/</span>
           {String(total).padStart(2, "0")}
         </p>
       </div>

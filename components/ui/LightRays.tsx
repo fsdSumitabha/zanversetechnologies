@@ -33,7 +33,7 @@ export type RaysOrigin =
   | "bottom-right";
 
 export interface LightRaysProps {
-  /** Hex colour of the dense light, e.g. brandPalette.brand from @/lib/brand. */
+  /** Hex colour of the dense light, e.g. brandPalette.accent from @/lib/brand. */
   color: string;
   /** Hex colour of the faint fringe. Defaults to `color`. */
   glow?: string;

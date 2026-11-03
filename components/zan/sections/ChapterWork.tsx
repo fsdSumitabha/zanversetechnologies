@@ -15,7 +15,7 @@ export function ChapterWork() {
       label={
         <div className="flex flex-col items-center gap-6 text-center">
           <Eyebrow>{c.eyebrow}</Eyebrow>
-          <p className="font-sans text-giant font-bold uppercase text-ink">
+          <p className="font-sans text-giant font-bold uppercase text-foreground">
             {c.label.map((line) => (
               <span key={line} className="block">
                 {line}

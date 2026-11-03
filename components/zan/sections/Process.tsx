@@ -11,11 +11,11 @@ import { ProcessStage } from "@/components/zan/process/ProcessStage";
 export function Process() {
   const c = chapters.process;
   return (
-    <section id="process" aria-labelledby="process-heading" className="relative bg-surface pb-section">
+    <section id="process" aria-labelledby="process-heading" className="relative bg-surface-muted pb-section">
       <div className="container-zan pb-10 pt-section lg:pb-6">
         <SectionHeading id="process-heading" eyebrow={c.eyebrow} title={[c.label.join(" ")]} />
-        <p className="mt-5 max-w-[40ch] text-balance text-h3 text-ink">{processIntro.title.join(" ")}</p>
-        <p className="mt-3 max-w-[54ch] text-lead text-ink-2">{processIntro.lead}</p>
+        <p className="mt-5 max-w-[40ch] text-balance text-h3 text-foreground">{processIntro.title.join(" ")}</p>
+        <p className="mt-3 max-w-[54ch] text-lead text-muted">{processIntro.lead}</p>
       </div>
       <ProcessStage />
     </section>

@@ -206,7 +206,7 @@ export function Navbar() {
   const tabClass = (isOpen: boolean) =>
     cn(
       "group/tab relative inline-flex h-10 items-center gap-1 rounded-full px-3.5 text-small font-medium tracking-[-0.01em] transition-colors duration-300",
-      isOpen ? "text-ink" : "text-ink-2 hover:text-ink",
+      isOpen ? "text-foreground" : "text-muted hover:text-foreground",
     );
 
   // Hover wipe: in from the left, out to the right. Held while the mega
@@ -215,7 +215,7 @@ export function Navbar() {
     <span
       aria-hidden="true"
       className={cn(
-        "pointer-events-none absolute inset-x-3.5 bottom-1 h-[1.5px] rounded-full bg-brand-ink",
+        "pointer-events-none absolute inset-x-3.5 bottom-1 h-[1.5px] rounded-full bg-accent-ink",
         "transition-[scale] duration-500 ease-out-expo",
         held
           ? "origin-left scale-x-100"
@@ -237,7 +237,7 @@ export function Navbar() {
         <span
           aria-hidden="true"
           className={cn(
-            "pointer-events-none absolute inset-0 -z-10 border-b border-line bg-bg shadow-nav",
+            "pointer-events-none absolute inset-0 -z-10 border-b border-border bg-surface-raised shadow-nav",
             "transition-opacity duration-500 ease-smooth",
             solid ? "opacity-100" : "opacity-0",
           )}
@@ -329,9 +329,9 @@ export function Navbar() {
               <a
                 href={`tel:${office.phoneTel}`}
                 data-analytics-label={office.phoneDisplay}
-                className="hidden h-10 items-center gap-2 rounded-full px-2 text-small font-medium whitespace-nowrap text-ink-2 transition-colors duration-300 hover:text-brand-ink lg:inline-flex"
+                className="hidden h-10 items-center gap-2 rounded-full px-2 text-small font-medium whitespace-nowrap text-muted transition-colors duration-300 hover:text-accent-ink lg:inline-flex"
               >
-                <Phone aria-hidden="true" className="size-4 shrink-0 text-brand-ink" />
+                <Phone aria-hidden="true" className="size-4 shrink-0 text-accent-ink" />
                 <span className="sr-only">Call the {office.city} office: </span>
                 <span className="tabular-nums">{office.phoneDisplay}</span>
               </a>
@@ -342,7 +342,7 @@ export function Navbar() {
                 href={`tel:${office.phoneTel}`}
                 aria-label={`Call the ${office.city} office: ${office.phoneDisplay}`}
                 data-analytics-label={office.phoneDisplay}
-                className="grid size-11 shrink-0 place-items-center rounded-full border border-line bg-bg text-ink transition-colors duration-300 hover:border-line-strong hover:text-brand-ink lg:hidden"
+                className="grid size-11 shrink-0 place-items-center rounded-full border border-border bg-surface text-foreground transition-colors duration-300 hover:border-border-strong hover:text-accent-ink lg:hidden"
               >
                 <Phone aria-hidden="true" className="size-[1.125rem]" />
               </a>

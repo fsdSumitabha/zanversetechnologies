@@ -31,7 +31,7 @@ const COLLAPSE_AFTER = 24;
 const MOBILE = "(max-width: 767.98px)";
 const EASE = [0.16, 1, 0.3, 1] as const;
 
-const SHADOW = "shadow-[0_12px_28px_-12px_rgb(0_0_0/0.45)]";
+const SHADOW = "shadow-[0_12px_28px_-12px_color-mix(in_oklab,var(--color-shadow)_45%,transparent)]";
 
 const menu = {
   open: { transition: { staggerChildren: 0.045, staggerDirection: -1 } },
@@ -54,7 +54,7 @@ function Row({
   tone: string;
 }) {
   return (
-    <span className="flex items-center gap-2.5 rounded-full border border-line-strong bg-bg py-2.5 pr-4 pl-3.5 text-small font-medium whitespace-nowrap text-ink shadow-lift transition-colors duration-300 group-hover/row:border-ink">
+    <span className="flex items-center gap-2.5 rounded-full border border-border-strong bg-surface-raised py-2.5 pr-4 pl-3.5 text-small font-medium whitespace-nowrap text-foreground shadow-lift transition-colors duration-300 group-hover/row:border-foreground">
       <span aria-hidden="true" className={cn("grid size-5 shrink-0 place-items-center", tone)}>
         {icon}
       </span>
@@ -260,7 +260,7 @@ export function FloatingActions() {
                     <Row
                       icon={<AssistantMark className="size-[1.125rem]" />}
                       label="Chat with us"
-                      tone="text-brand-ink"
+                      tone="text-accent-ink"
                     />
                   </button>
                 </motion.li>
@@ -281,7 +281,7 @@ export function FloatingActions() {
                     <Row
                       icon={<SocialIcon name="WhatsApp" className="size-[1.125rem]" />}
                       label="WhatsApp"
-                      tone="text-whatsapp"
+                      tone="text-whatsapp-ink"
                     />
                   </a>
                 </motion.li>
@@ -298,7 +298,7 @@ export function FloatingActions() {
                     <Row
                       icon={<PenLine aria-hidden="true" className="size-[1.125rem]" strokeWidth={1.9} />}
                       label="Enquiry"
-                      tone="text-brand-ink"
+                      tone="text-accent-ink"
                     />
                   </SiteLink>
                 </motion.li>
@@ -314,7 +314,7 @@ export function FloatingActions() {
             onClick={toggle}
             data-contact="toggle"
             className={cn(
-              "flex h-12 items-center gap-2.5 rounded-full bg-brand-gradient px-4 text-on-brand sm:h-13 sm:px-5",
+              "flex h-12 items-center gap-2.5 rounded-full bg-action-gradient px-4 text-action-foreground sm:h-13 sm:px-5",
               SHADOW,
               "transition-transform duration-300 ease-out-expo active:scale-95",
             )}

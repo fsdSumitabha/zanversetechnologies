@@ -11,7 +11,7 @@ import { office, site } from "@/constants/zan";
  * full bleed. It holds there, then fades back to the page ground so the
  * metrics below arrive on continuous white.
  *
- * The word is drawn as a hole in a sheet of --color-bg rather than as type, so
+ * The word is drawn as a hole in a sheet of --color-surface rather than as type, so
  * it is invisible to a screen reader. The heading carries the section as real
  * text and names it, so the outline and the landmark list say what this is
  * rather than repeating the company name alone.
@@ -25,7 +25,7 @@ import { office, site } from "@/constants/zan";
  */
 export function Showreel() {
   return (
-    <section id="showreel" aria-labelledby="showreel-title" className="relative bg-bg">
+    <section id="showreel" aria-labelledby="showreel-title" className="relative bg-canvas">
       <h2 id="showreel-title" className="sr-only">
         {`${site.name} in ${office.city}`}
       </h2>

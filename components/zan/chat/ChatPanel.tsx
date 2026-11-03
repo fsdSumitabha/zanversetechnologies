@@ -145,7 +145,7 @@ export function ChatPanel({ open, onClose }: { open: boolean; onClose: () => voi
             // Above the page, below the navbar (z-50), the mobile menu (z-60) and
             // the preloader (z-200).
             "fixed z-45 flex origin-bottom-right flex-col overflow-hidden rounded-3xl",
-            "border border-line bg-bg shadow-float outline-none",
+            "border border-border bg-surface-raised shadow-float outline-none",
             // Anchored over the Contact Us button, which itself clears the home
             // indicator. The height cap subtracts what the panel is offset by AND
             // the navbar, so it can never run under the bar or off the top: a
@@ -157,11 +157,11 @@ export function ChatPanel({ open, onClose }: { open: boolean; onClose: () => voi
         >
           {/* Header. Who you are talking to is the most important fact in here, so
               the identity changes the moment a person picks the thread up. */}
-          <header className="flex items-center gap-3 border-b border-line bg-surface px-4 py-3">
+          <header className="flex items-center gap-3 border-b border-border bg-surface-muted px-4 py-3">
             <span
               className={cn(
                 "grid size-9 shrink-0 place-items-center rounded-full",
-                human ? "bg-brand text-on-brand" : "bg-brand-soft text-brand-ink",
+                human ? "bg-accent text-accent-foreground" : "bg-accent-soft text-accent-ink",
               )}
             >
               {human ? (
@@ -172,13 +172,13 @@ export function ChatPanel({ open, onClose }: { open: boolean; onClose: () => voi
             </span>
 
             <div className="min-w-0 flex-1">
-              <p className="truncate text-small font-semibold text-ink">
+              <p className="truncate text-small font-semibold text-foreground">
                 {human ? (chat.agentName ?? `${site.name} team`) : "Zan assistant"}
               </p>
-              <p className="flex items-center gap-1.5 text-[0.6875rem] text-muted">
+              <p className="flex items-center gap-1.5 text-[0.6875rem] text-subtle">
                 {chat.connection === "connecting" && !chat.ready ? (
                   <>
-                    <span aria-hidden="true" className="size-1.5 animate-pulse rounded-full bg-muted" />
+                    <span aria-hidden="true" className="size-1.5 animate-pulse rounded-full bg-subtle" />
                     Connecting
                   </>
                 ) : chat.connection === "error" ? (
@@ -188,7 +188,7 @@ export function ChatPanel({ open, onClose }: { open: boolean; onClose: () => voi
                   </>
                 ) : (
                   <>
-                    <span aria-hidden="true" className="size-1.5 rounded-full bg-brand" />
+                    <span aria-hidden="true" className="size-1.5 rounded-full bg-accent" />
                     {human ? "Live" : waiting ? "Getting someone" : `${office.city} team`}
                   </>
                 )}
@@ -199,7 +199,7 @@ export function ChatPanel({ open, onClose }: { open: boolean; onClose: () => voi
               type="button"
               onClick={() => void chat.reset()}
               aria-label="Start a new conversation"
-              className="grid size-9 shrink-0 place-items-center rounded-full text-muted transition-colors duration-300 hover:bg-surface-2 hover:text-ink"
+              className="grid size-9 shrink-0 place-items-center rounded-full text-subtle transition-colors duration-300 hover:bg-surface-muted hover:text-foreground"
             >
               <RotateCcw aria-hidden="true" className="size-4" />
             </button>
@@ -207,7 +207,7 @@ export function ChatPanel({ open, onClose }: { open: boolean; onClose: () => voi
               type="button"
               onClick={onClose}
               aria-label="Close chat"
-              className="grid size-9 shrink-0 place-items-center rounded-full text-muted transition-colors duration-300 hover:bg-surface-2 hover:text-ink"
+              className="grid size-9 shrink-0 place-items-center rounded-full text-subtle transition-colors duration-300 hover:bg-surface-muted hover:text-foreground"
             >
               <X aria-hidden="true" className="size-4" />
             </button>
@@ -219,7 +219,7 @@ export function ChatPanel({ open, onClose }: { open: boolean; onClose: () => voi
           <div
             ref={scrollRef}
             data-lenis-prevent
-            className="relative flex-1 overflow-y-auto overscroll-contain bg-surface"
+            className="relative flex-1 overflow-y-auto overscroll-contain bg-surface-muted"
             style={chatWallpaperStyle}
           >
             <div className="relative px-3.5 py-4">
@@ -268,7 +268,7 @@ export function ChatPanel({ open, onClose }: { open: boolean; onClose: () => voi
               )}
 
               {chat.error && (
-                <p className="mb-2 rounded-lg border border-line bg-bg/90 px-4 py-2.5 text-center text-eyebrow tracking-normal text-ink-2">
+                <p className="mb-2 rounded-lg border border-border bg-surface/90 px-4 py-2.5 text-center text-eyebrow tracking-normal text-muted">
                   {chat.error}
                 </p>
               )}
@@ -277,7 +277,7 @@ export function ChatPanel({ open, onClose }: { open: boolean; onClose: () => voi
 
           {/* Composer */}
           {!closed ? (
-            <div className="border-t border-line bg-surface px-4 py-3">
+            <div className="border-t border-border bg-surface-muted px-4 py-3">
               {actions.length > 0 && !chat.aiTyping && (
                 <div data-lenis-prevent className="mb-3 flex max-h-32 flex-wrap gap-2 overflow-y-auto">
                   {actions.map((action) => (
@@ -288,8 +288,8 @@ export function ChatPanel({ open, onClose }: { open: boolean; onClose: () => voi
                       className={cn(
                         "rounded-full border px-3.5 py-2 text-small transition-colors duration-300",
                         action.value === HANDOFF
-                          ? "border-brand bg-brand text-on-brand hover:bg-brand-dark"
-                          : "border-line bg-bg text-ink hover:border-line-strong hover:text-brand-ink",
+                          ? "border-action bg-action text-action-foreground hover:bg-action-hover"
+                          : "border-border bg-surface text-foreground hover:border-border-strong hover:text-accent-ink",
                       )}
                     >
                       {action.label}
@@ -321,10 +321,10 @@ export function ChatPanel({ open, onClose }: { open: boolean; onClose: () => voi
                   aria-label="Message"
                   disabled={!chat.ready}
                   className={cn(
-                    "min-h-11 flex-1 resize-none rounded-2xl border border-line bg-bg px-4 py-2.5",
+                    "min-h-11 flex-1 resize-none rounded-2xl border border-border-field bg-surface px-4 py-2.5",
                     // 16px minimum: below it, iOS Safari zooms the page on focus.
-                    "text-[1rem] text-ink outline-none placeholder:text-muted",
-                    "transition-colors duration-300 focus:border-brand-ink disabled:opacity-50",
+                    "text-[1rem] text-foreground outline-none placeholder:text-subtle",
+                    "transition-colors duration-300 focus:border-accent-ink disabled:opacity-50",
                   )}
                 />
                 <button
@@ -332,11 +332,11 @@ export function ChatPanel({ open, onClose }: { open: boolean; onClose: () => voi
                   disabled={!draft.trim() || !chat.ready}
                   aria-label="Send"
                   className={cn(
-                    "grid size-11 shrink-0 place-items-center rounded-full bg-brand text-on-brand",
-                    "transition-colors duration-300 hover:bg-brand-dark",
+                    "grid size-11 shrink-0 place-items-center rounded-full bg-action text-action-foreground",
+                    "transition-colors duration-300 hover:bg-action-hover",
                     // A disabled control should still read as a control, so it
                     // greys rather than fading to an apparent rendering artefact.
-                    "disabled:bg-line-strong disabled:text-muted",
+                    "disabled:bg-border-strong disabled:text-subtle",
                   )}
                 >
                   <ArrowUp aria-hidden="true" className="size-4" />
@@ -344,11 +344,11 @@ export function ChatPanel({ open, onClose }: { open: boolean; onClose: () => voi
               </form>
             </div>
           ) : (
-            <div className="border-t border-line bg-surface px-4 py-3 text-center">
+            <div className="border-t border-border bg-surface-muted px-4 py-3 text-center">
               <button
                 type="button"
                 onClick={() => void chat.reset()}
-                className="text-small font-medium text-brand-ink hover:underline"
+                className="text-small font-medium text-accent-ink hover:underline"
               >
                 Start a new conversation
               </button>

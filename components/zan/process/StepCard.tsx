@@ -27,30 +27,30 @@ export function StepCard({
   return (
     <article
       className={cn(
-        "min-w-0 rounded-3xl border bg-bg transition-[box-shadow,border-color] duration-500 ease-out-expo",
+        "min-w-0 rounded-3xl border bg-surface transition-[box-shadow,border-color] duration-500 ease-out-expo",
         compact ? "p-4 sm:p-6" : "p-6",
-        active ? "border-brand/40 shadow-float" : "border-line shadow-lift",
+        active ? "border-accent/40 shadow-float" : "border-border shadow-lift",
         className,
       )}
     >
       {/* A passed stage fades its content, not its card, so nothing behind shows through. */}
       <div className={cn("transition-opacity duration-500 ease-out-expo", dim && "opacity-55")}>
       {illustration && (
-        <div className="mb-5 rounded-2xl border border-line bg-surface p-4">
+        <div className="mb-5 rounded-2xl border border-border bg-surface-muted p-4">
           <div className="mx-auto max-w-[20rem]">
             <StepIllustration id={step.id} />
           </div>
         </div>
       )}
       <div className="flex items-center gap-3">
-        <span className="font-mono text-eyebrow text-brand-ink">{step.index}</span>
-        <span aria-hidden="true" className={cn("h-px flex-1", active ? "bg-brand/40" : "bg-line")} />
+        <span className="font-mono text-eyebrow text-accent-ink">{step.index}</span>
+        <span aria-hidden="true" className={cn("h-px flex-1", active ? "bg-accent/40" : "bg-border")} />
       </div>
-      <h3 className="mt-3 text-h3 text-ink">{step.title}</h3>
-      <p className="mt-2 text-small text-ink-2">{step.description}</p>
+      <h3 className="mt-3 text-h3 text-foreground">{step.title}</h3>
+      <p className="mt-2 text-small text-muted">{step.description}</p>
       <ul className="mt-4 flex flex-wrap gap-1.5" aria-label={`${step.title}: deliverables`}>
         {step.deliverables.map((d) => (
-          <li key={d} className="rounded-full bg-brand-soft px-2.5 py-1 text-[0.75rem] leading-snug text-brand-ink">
+          <li key={d} className="rounded-full bg-accent-soft px-2.5 py-1 text-[0.75rem] leading-snug text-accent-ink">
             {d}
           </li>
         ))}

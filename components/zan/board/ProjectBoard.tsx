@@ -93,7 +93,7 @@ export function ProjectBoard() {
       <div
         ref={boardRef}
         className={cn(
-          "@container absolute top-0 left-0 flex h-[600px] w-[800px] origin-top-left flex-col overflow-hidden bg-surface text-ink select-none",
+          "@container absolute top-0 left-0 flex h-[600px] w-[800px] origin-top-left flex-col overflow-hidden bg-canvas text-foreground select-none",
           "[scale:var(--fit,0.44)] lg:motion-reduce:h-[800px] lg:motion-reduce:w-[1280px] lg:motion-reduce:[scale:var(--fit,0.86)]",
           "lg:motion-safe:static lg:motion-safe:h-full lg:motion-safe:w-full lg:motion-safe:[scale:1]",
         )}
@@ -117,18 +117,18 @@ export function ProjectBoard() {
 
 function Chrome() {
   return (
-    <div className="grid h-10 shrink-0 grid-cols-[1fr_auto_1fr] items-center border-b border-line bg-bg px-4 @4xl:h-13 @4xl:px-5">
+    <div className="grid h-10 shrink-0 grid-cols-[1fr_auto_1fr] items-center border-b border-border bg-surface px-4 @4xl:h-13 @4xl:px-5">
       <div className="flex gap-1.5">
-        <span className="size-2.5 rounded-full bg-line-strong" />
-        <span className="size-2.5 rounded-full bg-line-strong" />
-        <span className="size-2.5 rounded-full bg-line-strong" />
+        <span className="size-2.5 rounded-full bg-border-strong" />
+        <span className="size-2.5 rounded-full bg-border-strong" />
+        <span className="size-2.5 rounded-full bg-border-strong" />
       </div>
-      <div className="flex items-center gap-2 rounded-md bg-surface px-3 py-1 text-[12px] font-medium text-ink-2">
+      <div className="flex items-center gap-2 rounded-md bg-surface-muted px-3 py-1 text-[12px] font-medium text-muted">
         <LayoutGrid className="size-3.5" strokeWidth={1.8} aria-hidden="true" />
         {site.name}
       </div>
       <div className="flex justify-end">
-        <Search className="size-4 text-muted" strokeWidth={1.8} aria-hidden="true" />
+        <Search className="size-4 text-subtle" strokeWidth={1.8} aria-hidden="true" />
       </div>
     </div>
   );
@@ -139,51 +139,51 @@ function Chrome() {
 function Sidebar({ counts }: { counts: number[] }) {
   const terms = about.principles.filter((p) => p.label === "Engagements" || p.label === "Support");
   return (
-    <div className="hidden w-56 shrink-0 flex-col border-r border-line bg-bg px-3 py-5 @4xl:flex @6xl:w-60">
+    <div className="hidden w-56 shrink-0 flex-col border-r border-border bg-surface px-3 py-5 @4xl:flex @6xl:w-60">
       <div className="px-2">
         <ZanLogo className="h-6 w-auto" />
       </div>
 
-      <div className={cn(eyebrow, "mt-8 px-2 text-muted")}>Practices</div>
+      <div className={cn(eyebrow, "mt-8 px-2 text-subtle")}>Practices</div>
       <div className="mt-2 space-y-0.5">
         {practices.map((p, i) => (
           <div
             key={p.id}
             className={cn(
               "flex items-center gap-3 rounded-lg px-2 py-2",
-              i === 0 ? "bg-brand-soft text-brand-ink" : "text-ink-2",
+              i === 0 ? "bg-accent-soft text-accent-ink" : "text-muted",
             )}
           >
             <span
               className={cn(
                 "grid size-7 shrink-0 place-items-center rounded-md",
-                i === 0 ? "bg-bg" : "bg-surface",
+                i === 0 ? "bg-surface" : "bg-surface-muted",
               )}
             >
               <ZanIcon name={p.items[0].icon} className="size-4" />
             </span>
             <span className="min-w-0 flex-1 truncate text-[13px] font-medium">{p.title}</span>
-            <span className="font-mono text-[11px] text-muted tabular-nums">{p.items.length}</span>
+            <span className="font-mono text-[11px] text-subtle tabular-nums">{p.items.length}</span>
           </div>
         ))}
       </div>
 
-      <div className={cn(eyebrow, "mt-7 px-2 text-muted")}>Stages</div>
+      <div className={cn(eyebrow, "mt-7 px-2 text-subtle")}>Stages</div>
       <div className="mt-2 space-y-0.5">
         {processSteps.map((s, i) => (
-          <div key={s.id} className="flex items-center gap-3 rounded-lg px-2 py-1.5 text-ink-2">
-            <span className="w-7 shrink-0 text-center font-mono text-[11px] text-brand-ink">{s.index}</span>
+          <div key={s.id} className="flex items-center gap-3 rounded-lg px-2 py-1.5 text-muted">
+            <span className="w-7 shrink-0 text-center font-mono text-[11px] text-accent-ink">{s.index}</span>
             <span className="min-w-0 flex-1 truncate text-[12.5px]">{s.title}</span>
-            <span className="font-mono text-[11px] text-muted tabular-nums">{counts[i]}</span>
+            <span className="font-mono text-[11px] text-subtle tabular-nums">{counts[i]}</span>
           </div>
         ))}
       </div>
 
-      <div className="mt-auto space-y-3 rounded-xl border border-line bg-surface p-3">
+      <div className="mt-auto space-y-3 rounded-xl border border-border bg-surface-muted p-3">
         {terms.map((t) => (
           <div key={t.label}>
-            <div className={cn(eyebrow, "text-[9.5px] text-muted")}>{t.label}</div>
-            <div className="mt-1 text-[12.5px] font-medium text-ink">{t.value}</div>
+            <div className={cn(eyebrow, "text-[9.5px] text-subtle")}>{t.label}</div>
+            <div className="mt-1 text-[12.5px] font-medium text-foreground">{t.value}</div>
           </div>
         ))}
       </div>
@@ -198,26 +198,26 @@ function TopStrip({ minute }: { minute: number | null }) {
   return (
     <div className="flex items-end justify-between gap-4">
       <div className="hidden min-w-0 @4xl:block">
-        <div className={cn(eyebrow, "text-brand-ink")}>{processIntro.eyebrow}</div>
-        <div className="mt-1.5 truncate text-[20px] font-semibold tracking-[-0.015em] text-ink">
+        <div className={cn(eyebrow, "text-accent-ink")}>{processIntro.eyebrow}</div>
+        <div className="mt-1.5 truncate text-[20px] font-semibold tracking-[-0.015em] text-foreground">
           Project board
         </div>
       </div>
       <div className="flex w-full items-center justify-between gap-3 @4xl:w-auto @4xl:justify-end">
-        <span className="inline-flex shrink-0 items-center gap-2 rounded-full bg-brand-soft px-3 py-1.5 text-[12px] font-medium text-brand-ink">
+        <span className="inline-flex shrink-0 items-center gap-2 rounded-full bg-accent-soft px-3 py-1.5 text-[12px] font-medium text-accent-ink">
           <span className="relative flex size-2">
-            <span className="absolute inline-flex size-full animate-ping rounded-full bg-brand opacity-60" />
-            <span className="relative inline-flex size-2 rounded-full bg-brand" />
+            <span className="absolute inline-flex size-full animate-ping rounded-full bg-accent opacity-60" />
+            <span className="relative inline-flex size-2 rounded-full bg-accent" />
           </span>
           Accepting new projects
         </span>
         {/* One office, one clock: the city, its time and its offset in a
             single pill, the same height as the status beside it. */}
-        <span className="inline-flex shrink-0 items-center gap-2 rounded-full border border-line bg-bg py-1.5 pr-3 pl-2.5">
-          <Clock3 className="size-3.5 text-brand-ink" strokeWidth={1.8} aria-hidden="true" />
-          <span className="text-[11px] text-ink-2">{office.city}</span>
-          <span className="font-mono text-[12px] text-ink tabular-nums">{formatClock(minute, office.timeZone)}</span>
-          {zone && <span className="font-mono text-[10.5px] text-muted">{zone}</span>}
+        <span className="inline-flex shrink-0 items-center gap-2 rounded-full border border-border bg-surface py-1.5 pr-3 pl-2.5">
+          <Clock3 className="size-3.5 text-accent-ink" strokeWidth={1.8} aria-hidden="true" />
+          <span className="text-[11px] text-muted">{office.city}</span>
+          <span className="font-mono text-[12px] text-foreground tabular-nums">{formatClock(minute, office.timeZone)}</span>
+          {zone && <span className="font-mono text-[10.5px] text-subtle">{zone}</span>}
         </span>
       </div>
     </div>
@@ -240,11 +240,11 @@ function Kanban({ placement, counts }: { placement: Map<string, Placement>; coun
     <div className={cn("relative min-h-0 flex-1", LANE_VARS)}>
       <div className="absolute inset-0 grid grid-cols-4 gap-[var(--gap)]">
         {processSteps.map((s, lane) => (
-          <div key={s.id} className="rounded-2xl border border-line bg-surface-2/70">
+          <div key={s.id} className="rounded-2xl border border-border bg-surface-muted/70">
             <div className="flex h-[var(--head)] items-center gap-2 px-[calc(var(--pad)+4px)]">
-              <span className="font-mono text-[10.5px] text-brand-ink">{s.index}</span>
-              <span className="min-w-0 truncate text-[12px] font-semibold text-ink @4xl:text-[13px]">{s.title}</span>
-              <span className="ml-auto rounded-full bg-bg px-1.5 py-px font-mono text-[10.5px] text-muted tabular-nums">
+              <span className="font-mono text-[10.5px] text-accent-ink">{s.index}</span>
+              <span className="min-w-0 truncate text-[12px] font-semibold text-foreground @4xl:text-[13px]">{s.title}</span>
+              <span className="ml-auto rounded-full bg-surface px-1.5 py-px font-mono text-[10.5px] text-subtle tabular-nums">
                 {counts[lane]}
               </span>
             </div>
@@ -268,22 +268,22 @@ function Kanban({ placement, counts }: { placement: Map<string, Placement>; coun
           >
             <div
               className={cn(
-                "flex h-full flex-col justify-between rounded-xl border bg-bg px-3 py-2 @4xl:py-2.5",
+                "flex h-full flex-col justify-between rounded-xl border bg-surface px-3 py-2 @4xl:py-2.5",
                 at.walking
-                  ? "border-transparent shadow-float ring-1 ring-brand/40"
-                  : "border-line shadow-lift",
+                  ? "border-transparent shadow-float ring-1 ring-accent/40"
+                  : "border-border shadow-lift",
               )}
             >
-              <div className="line-clamp-2 text-[11.5px] leading-snug font-medium text-ink @4xl:text-[12.5px] @6xl:text-[13.5px]">
+              <div className="line-clamp-2 text-[11.5px] leading-snug font-medium text-foreground @4xl:text-[12.5px] @6xl:text-[13.5px]">
                 {card.title}
               </div>
               <div className="flex items-center gap-2">
-                <span className={cn("font-mono text-[9.5px] @4xl:text-[10px]", at.walking ? "text-brand-ink" : "text-muted")}>
+                <span className={cn("font-mono text-[9.5px] @4xl:text-[10px]", at.walking ? "text-accent-ink" : "text-subtle")}>
                   {processSteps[card.home].index}
                 </span>
-                <span className="h-1 flex-1 overflow-hidden rounded-full bg-surface-2">
+                <span className="h-1 flex-1 overflow-hidden rounded-full bg-surface-muted">
                   <span
-                    className="block h-full rounded-full bg-brand transition-[width] duration-[1100ms] ease-out-expo"
+                    className="block h-full rounded-full bg-action transition-[width] duration-[1100ms] ease-out-expo"
                     style={{ width: `${((at.lane + 1) / LANES) * 100}%` }}
                   />
                 </span>
@@ -300,17 +300,17 @@ function Kanban({ placement, counts }: { placement: Map<string, Placement>; coun
 
 function Metrics({ run, armed }: { run: boolean; armed: boolean }) {
   return (
-    <div className="grid shrink-0 grid-cols-5 divide-x divide-line rounded-2xl border border-line bg-bg">
+    <div className="grid shrink-0 grid-cols-5 divide-x divide-border rounded-2xl border border-border bg-surface">
       {metrics.map((m) => (
         <div key={m.id} className="min-w-0 px-3 py-2.5 @4xl:px-5 @4xl:py-4">
           <CountUp
             value={m.value}
             run={run}
             armed={armed}
-            className="block text-[19px] leading-tight font-semibold tracking-[-0.02em] text-ink tabular-nums @4xl:text-[26px]"
+            className="block text-[19px] leading-tight font-semibold tracking-[-0.02em] text-foreground tabular-nums @4xl:text-[26px]"
           />
-          <span className="mt-0.5 block truncate text-[10.5px] text-ink-2 @4xl:mt-1 @4xl:text-[12.5px]">{m.label}</span>
-          <span className="hidden truncate text-[11px] text-muted @4xl:block">{m.detail}</span>
+          <span className="mt-0.5 block truncate text-[10.5px] text-muted @4xl:mt-1 @4xl:text-[12.5px]">{m.label}</span>
+          <span className="hidden truncate text-[11px] text-subtle @4xl:block">{m.detail}</span>
         </div>
       ))}
     </div>

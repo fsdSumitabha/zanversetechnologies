@@ -3,7 +3,7 @@ import { extendTailwindMerge } from "tailwind-merge";
 
 /**
  * tailwind-merge only knows Tailwind's stock sizes. Any other `text-*` class
- * it takes for a text COLOUR, so `text-eyebrow text-brand-ink` looked like two
+ * it takes for a text COLOUR, so `text-eyebrow text-accent-ink` looked like two
  * colours and the size was silently dropped — eyebrows and leads lost their
  * type size wherever a colour followed. The same applied to the custom
  * shadows. Registering the design tokens puts each in its real group.

@@ -17,7 +17,7 @@ const SOLID_AT = 24;
 const WHATSAPP_HREF = waLink(site.whatsapp, site.name);
 
 const roundButton =
-  "grid size-10 shrink-0 place-items-center rounded-full border border-line bg-bg transition-colors duration-300 hover:border-line-strong sm:size-11";
+  "grid size-10 shrink-0 place-items-center rounded-full border border-border bg-surface transition-colors duration-300 hover:border-border-strong sm:size-11";
 
 function subscribeScroll(onChange: () => void) {
   window.addEventListener("scroll", onChange, { passive: true });
@@ -76,7 +76,7 @@ export function LandingNav() {
       <span
         aria-hidden="true"
         className={cn(
-          "pointer-events-none absolute inset-0 -z-10 border-b border-line bg-bg shadow-nav",
+          "pointer-events-none absolute inset-0 -z-10 border-b border-border bg-surface-raised shadow-nav",
           "transition-opacity duration-500 ease-smooth",
           scrolled ? "opacity-100" : "opacity-0",
         )}
@@ -102,14 +102,14 @@ export function LandingNav() {
                     aria-current={active ? "location" : undefined}
                     className={cn(
                       "group/tab relative inline-flex h-10 items-center rounded-full px-3.5 text-small font-medium tracking-[-0.01em] transition-colors duration-300",
-                      active ? "text-ink" : "text-ink-2 hover:text-ink",
+                      active ? "text-foreground" : "text-muted hover:text-foreground",
                     )}
                   >
                     {label}
                     <span
                       aria-hidden="true"
                       className={cn(
-                        "pointer-events-none absolute inset-x-3.5 bottom-1 h-[1.5px] rounded-full bg-brand-ink transition-[scale] duration-500 ease-out-expo",
+                        "pointer-events-none absolute inset-x-3.5 bottom-1 h-[1.5px] rounded-full bg-accent-ink transition-[scale] duration-500 ease-out-expo",
                         active
                           ? "origin-left scale-x-100"
                           : "origin-right scale-x-0 group-hover/tab:origin-left group-hover/tab:scale-x-100",
@@ -129,16 +129,16 @@ export function LandingNav() {
             rel="noopener"
             aria-label="WhatsApp (opens in a new tab)"
             onClick={() => trackWhatsAppClick("Landing Nav WhatsApp")}
-            className={cn(roundButton, "text-whatsapp")}
+            className={cn(roundButton, "text-whatsapp-ink")}
           >
             <SocialIcon name="WhatsApp" className="size-[1.125rem]" />
           </a>
           <a
             href={`tel:${office.phoneTel}`}
             data-analytics-label={office.phoneDisplay}
-            className="hidden h-10 items-center gap-2 rounded-full px-2 text-small font-medium whitespace-nowrap text-ink-2 transition-colors duration-300 hover:text-brand-ink xl:inline-flex"
+            className="hidden h-10 items-center gap-2 rounded-full px-2 text-small font-medium whitespace-nowrap text-muted transition-colors duration-300 hover:text-accent-ink xl:inline-flex"
           >
-            <Phone aria-hidden="true" className="size-4 shrink-0 text-brand-ink" />
+            <Phone aria-hidden="true" className="size-4 shrink-0 text-accent-ink" />
             <span className="sr-only">Call the {office.city} office: </span>
             <span className="tabular-nums">{office.phoneDisplay}</span>
           </a>
@@ -146,7 +146,7 @@ export function LandingNav() {
             href={`tel:${office.phoneTel}`}
             aria-label={`Call the ${office.city} office: ${office.phoneDisplay}`}
             data-analytics-label={office.phoneDisplay}
-            className={cn(roundButton, "text-ink hover:text-brand-ink xl:hidden")}
+            className={cn(roundButton, "text-foreground hover:text-accent-ink xl:hidden")}
           >
             <Phone aria-hidden="true" className="size-[1.125rem]" />
           </a>

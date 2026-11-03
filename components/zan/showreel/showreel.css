@@ -43,7 +43,7 @@
 
 /* ── The picture ──────────────────────────────────────────────────────────────
    Dubai at golden hour is a still, so it is kept moving: the whole picture
-   drifts and pushes in over half a minute and back, and a band of warm light
+   drifts and pushes in over half a minute and back, and a band of light
    crosses it every twelve seconds — a sheen through the letters, the sun
    catching glass once the picture is full bleed. Both are transforms, and
    both stop while the section is far off screen (data-paused). */
@@ -58,13 +58,13 @@
   transform-origin: 50% 100%;
 }
 
-/* Screen, not soft-light: soft-light of gold over the blue sky turns green.
-   Screened, the band only ever lightens towards a warm white. */
+/* Screen, not soft-light: soft-light of a saturated colour shifts the sky's hue.
+   Screened, the band only ever lightens towards white. */
 .zan-showreel-glint {
   background: linear-gradient(
     100deg,
     transparent 44%,
-    color-mix(in oklab, var(--color-brand-glow) 30%, transparent) 50%,
+    color-mix(in oklab, var(--color-accent) 30%, transparent) 50%,
     transparent 56%
   );
   mix-blend-mode: screen;

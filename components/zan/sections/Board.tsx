@@ -40,7 +40,7 @@ function BoardTitle() {
       <Eyebrow>{processIntro.eyebrow}</Eyebrow>
 
       <h2 aria-label={heading} className="mt-5 text-balance">
-        <span aria-hidden="true" className="block font-display text-h1 text-ink">
+        <span aria-hidden="true" className="block font-display text-h1 text-foreground">
           {TITLE.lead}
         </span>{" "}
         <span
@@ -51,7 +51,7 @@ function BoardTitle() {
         </span>
       </h2>
 
-      <p className="mt-6 max-w-[52ch] text-lead text-ink-2">{firstSentence(processIntro.lead)}</p>
+      <p className="mt-6 max-w-[52ch] text-lead text-muted">{firstSentence(processIntro.lead)}</p>
 
       <BoardCtas />
     </div>

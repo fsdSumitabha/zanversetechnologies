@@ -19,7 +19,7 @@ import { FaqAside } from "@/components/zan/contact/FaqAside";
  */
 export function FAQ() {
   return (
-    <section id="faq" className="relative scroll-mt-nav border-t border-line bg-bg py-section">
+    <section id="faq" className="relative scroll-mt-nav border-t border-border bg-canvas py-section">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(faqSchema(faqs)) }} />
       <div className="container-zan grid gap-12 lg:grid-cols-12 lg:gap-16">
         <div className="lg:col-span-5">

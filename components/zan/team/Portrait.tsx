@@ -46,14 +46,14 @@ export function Portrait({
   return (
     <span
       className={cn(
-        "relative grid shrink-0 place-items-center overflow-hidden rounded-2xl bg-brand-soft",
+        "relative grid shrink-0 place-items-center overflow-hidden rounded-2xl bg-accent-soft",
         className,
       )}
     >
       {person.portrait ? (
         <Image src={person.portrait} alt="" fill sizes={sizes} className="object-cover" />
       ) : (
-        <span aria-hidden="true" className={cn("font-display text-brand-ink", monogramClassName)}>
+        <span aria-hidden="true" className={cn("font-display text-accent-ink", monogramClassName)}>
           {initials(person.name)}
         </span>
       )}

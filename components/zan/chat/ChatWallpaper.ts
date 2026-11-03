@@ -6,7 +6,7 @@ import type { CSSProperties } from "react";
  * Some texture behind the bubbles is what makes a bubble read as a bubble:
  * white on white loses its edges entirely. This is a faint brand-tinted grid
  * in the page's own language rather than borrowed doodles, and it holds no
- * colour of its own: both stops are color-mix() over --color-brand.
+ * colour of its own: both stops are color-mix() over --color-accent.
  *
  * ── Why this is a style and not a component ───────────────────────────────
  * In the main app it used to be a `<div className="absolute inset-0">` inside
@@ -22,8 +22,8 @@ import type { CSSProperties } from "react";
  */
 export const chatWallpaperStyle: CSSProperties = {
   backgroundImage: `
-    radial-gradient(circle at 12px 12px, color-mix(in oklab, var(--color-brand) 9%, transparent) 1.5px, transparent 1.6px),
-    linear-gradient(45deg, color-mix(in oklab, var(--color-brand) 4%, transparent) 25%, transparent 25%, transparent 75%, color-mix(in oklab, var(--color-brand) 4%, transparent) 75%)
+    radial-gradient(circle at 12px 12px, color-mix(in oklab, var(--color-accent) 9%, transparent) 1.5px, transparent 1.6px),
+    linear-gradient(45deg, color-mix(in oklab, var(--color-accent) 4%, transparent) 25%, transparent 25%, transparent 75%, color-mix(in oklab, var(--color-accent) 4%, transparent) 75%)
   `,
   backgroundSize: "24px 24px, 48px 48px",
 };

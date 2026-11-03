@@ -23,9 +23,9 @@ import { MessageBubble } from "../chat/MessageBubble";
 import { groupMessages } from "../chat/grouping";
 
 const SCORE_STYLE: Record<string, string> = {
-  HIGH: "bg-danger/10 text-danger",
-  MEDIUM: "bg-brand-soft text-brand-ink",
-  LOW: "bg-surface-2 text-ink-2",
+  HIGH: "bg-danger/10 text-danger-ink",
+  MEDIUM: "bg-accent-soft text-accent-ink",
+  LOW: "bg-surface-muted text-muted",
 };
 
 const STATUS_LABEL: Record<string, string> = {
@@ -77,9 +77,9 @@ function QueueSection({
 }) {
   return (
     <div className="mb-6">
-      <h2 className="text-eyebrow mb-2 flex items-center gap-2 text-muted">
+      <h2 className="text-eyebrow mb-2 flex items-center gap-2 text-subtle">
         {title}
-        <span className="rounded-full bg-surface-2 px-2 py-0.5 tabular-nums">{items.length}</span>
+        <span className="rounded-full bg-surface-muted px-2 py-0.5 tabular-nums">{items.length}</span>
       </h2>
       <ul className="space-y-1.5">
         {items.map((row) => (
@@ -90,19 +90,19 @@ function QueueSection({
               className={cn(
                 "w-full rounded-xl border p-3 text-left transition-colors",
                 selectedId === row.conversationId
-                  ? "border-brand-ink bg-brand-soft/40"
-                  : "border-line bg-bg hover:border-line-strong",
+                  ? "border-accent-ink bg-accent-soft/40"
+                  : "border-border bg-surface hover:border-border-strong",
               )}
             >
               <div className="flex items-center justify-between gap-2">
-                <span className="truncate text-small font-medium text-ink">
+                <span className="truncate text-small font-medium text-foreground">
                   {row.name ?? "Unnamed visitor"}
                 </span>
                 <span className="flex shrink-0 items-center gap-1.5">
                   {notAlerted(row) && (
                     <span
                       title={row.handoffError ?? undefined}
-                      className="text-eyebrow rounded-full bg-danger px-2 py-0.5 text-white"
+                      className="text-eyebrow rounded-full bg-danger px-2 py-0.5 text-danger-foreground"
                     >
                       Not alerted
                     </span>
@@ -119,17 +119,17 @@ function QueueSection({
                   )}
                 </span>
               </div>
-              <p className="mt-1 truncate text-[0.8125rem] text-ink-2">
+              <p className="mt-1 truncate text-[0.8125rem] text-muted">
                 {row.projectType ?? row.service ?? "Not yet classified"}
               </p>
-              <p className="text-eyebrow mt-1.5 truncate text-muted">
+              <p className="text-eyebrow mt-1.5 truncate text-subtle">
                 {[row.budget, row.timeline].filter(Boolean).join(" · ") || "No budget yet"}
               </p>
             </button>
           </li>
         ))}
         {items.length === 0 && (
-          <li className="px-3 py-2 text-[0.8125rem] text-muted">Nothing here.</li>
+          <li className="px-3 py-2 text-[0.8125rem] text-subtle">Nothing here.</li>
         )}
       </ul>
     </div>
@@ -301,7 +301,7 @@ export function AgentConsole() {
   // Shown under the reply box, or in the empty panel when a thread failed to
   // open before any was showing.
   const actionErrorNote = actionError && (
-    <p role="alert" className="mt-3 rounded-xl bg-danger/10 px-4 py-2.5 text-small text-danger">
+    <p role="alert" className="mt-3 rounded-xl bg-danger/10 px-4 py-2.5 text-small text-danger-ink">
       {actionError}
     </p>
   );
@@ -309,7 +309,7 @@ export function AgentConsole() {
   return (
     <div className="mx-auto grid min-h-svh w-full max-w-[1500px] grid-cols-1 gap-0 lg:grid-cols-[340px_1fr]">
       {/* Queue */}
-      <aside className="border-r border-line bg-bg p-5 lg:h-svh lg:overflow-y-auto">
+      <aside className="border-r border-border bg-surface p-5 lg:h-svh lg:overflow-y-auto">
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-h3 tracking-[-0.02em]">Leads</h1>
           <div className="flex gap-1">
@@ -317,7 +317,7 @@ export function AgentConsole() {
               type="button"
               onClick={() => void manualRefresh()}
               aria-label="Refresh"
-              className="grid size-9 place-items-center rounded-full text-muted transition-colors hover:bg-surface hover:text-ink"
+              className="grid size-9 place-items-center rounded-full text-subtle transition-colors hover:bg-surface-muted hover:text-foreground"
             >
               <RefreshCw className={cn("size-4", loading && "animate-spin")} />
             </button>
@@ -325,7 +325,7 @@ export function AgentConsole() {
               type="button"
               onClick={signOut}
               aria-label="Sign out"
-              className="grid size-9 place-items-center rounded-full text-muted transition-colors hover:bg-surface hover:text-ink"
+              className="grid size-9 place-items-center rounded-full text-subtle transition-colors hover:bg-surface-muted hover:text-foreground"
             >
               <LogOut className="size-4" />
             </button>
@@ -357,20 +357,20 @@ export function AgentConsole() {
         {!selected ? (
           <div className="grid flex-1 place-items-center p-10 text-center">
             <div>
-              <MessageSquare aria-hidden className="mx-auto size-8 text-muted" />
-              <p className="mt-4 text-small text-ink-2">Select a lead to read the conversation.</p>
+              <MessageSquare aria-hidden className="mx-auto size-8 text-subtle" />
+              <p className="mt-4 text-small text-muted">Select a lead to read the conversation.</p>
               {actionErrorNote}
             </div>
           </div>
         ) : (
           <>
-            <header className="border-b border-line bg-bg px-6 py-4">
+            <header className="border-b border-border bg-surface px-6 py-4">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="min-w-0">
                   <h2 className="truncate text-h3 tracking-[-0.02em]">
                     {(selected.conversation.leadData.name as string) ?? "Unnamed visitor"}
                   </h2>
-                  <p className="text-eyebrow mt-1 text-muted">
+                  <p className="text-eyebrow mt-1 text-subtle">
                     {STATUS_LABEL[selected.conversation.status]}
                     <span className="px-1.5">•</span>
                     {selected.conversation.conversationId}
@@ -380,14 +380,14 @@ export function AgentConsole() {
                   <button
                     type="button"
                     onClick={() => void runAction(takeOver, "Could not take over this conversation.")}
-                    className="inline-flex h-10 items-center gap-2 rounded-full bg-ink px-4 text-small font-medium text-bg transition-colors hover:bg-brand-dark"
+                    className="inline-flex h-10 items-center gap-2 rounded-full bg-action px-4 text-small font-medium text-action-foreground transition-colors hover:bg-action-hover"
                   >
                     <Hand aria-hidden className="size-4" /> Take over
                   </button>
                   <button
                     type="button"
                     onClick={() => void runAction(closeConversation, "Could not close this conversation.")}
-                    className="inline-flex h-10 items-center gap-2 rounded-full border border-line px-4 text-small font-medium text-ink transition-colors hover:border-ink"
+                    className="inline-flex h-10 items-center gap-2 rounded-full border border-border px-4 text-small font-medium text-foreground transition-colors hover:border-foreground"
                   >
                     <CheckCircle2 aria-hidden className="size-4" /> Close
                   </button>
@@ -395,14 +395,14 @@ export function AgentConsole() {
               </div>
 
               {selected.conversation.aiSummary && (
-                <p className="mt-4 rounded-xl border border-line bg-surface p-3 text-[0.8125rem] leading-relaxed text-ink-2">
-                  <span className="text-eyebrow mr-2 text-brand-ink">AI summary</span>
+                <p className="mt-4 rounded-xl border border-border bg-surface-muted p-3 text-[0.8125rem] leading-relaxed text-muted">
+                  <span className="text-eyebrow mr-2 text-accent-ink">AI summary</span>
                   {selected.conversation.aiSummary}
                 </p>
               )}
             </header>
 
-            <div className="flex-1 space-y-3 overflow-y-auto bg-surface px-6 py-6">
+            <div className="flex-1 space-y-3 overflow-y-auto bg-surface-muted px-6 py-6">
               {groupMessages(selected.messages).map(({ message, firstOfGroup, lastOfGroup }) => (
                 <MessageBubble
                   key={message.id}
@@ -419,7 +419,7 @@ export function AgentConsole() {
                 e.preventDefault();
                 void send();
               }}
-              className="border-t border-line bg-bg px-6 py-4"
+              className="border-t border-border bg-surface px-6 py-4"
             >
               <div className="flex items-end gap-2">
                 <textarea
@@ -435,13 +435,13 @@ export function AgentConsole() {
                   rows={1}
                   placeholder="Reply to the client…"
                   aria-label="Reply"
-                  className="min-h-11 flex-1 resize-none rounded-2xl border border-line bg-bg px-4 py-2.5 text-small outline-none transition-colors focus:border-brand-ink"
+                  className="min-h-11 flex-1 resize-none rounded-2xl border border-border-field bg-surface px-4 py-2.5 text-small outline-none transition-colors focus:border-accent-ink"
                 />
                 <button
                   type="submit"
                   disabled={!draft.trim() || sending}
                   aria-label="Send"
-                  className="grid size-11 shrink-0 place-items-center rounded-full bg-ink text-bg transition-colors hover:bg-brand-dark disabled:opacity-30"
+                  className="grid size-11 shrink-0 place-items-center rounded-full bg-action text-action-foreground transition-colors hover:bg-action-hover disabled:opacity-30"
                 >
                   <Send className="size-4" />
                 </button>

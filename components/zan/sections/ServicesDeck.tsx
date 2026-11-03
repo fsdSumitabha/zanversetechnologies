@@ -16,8 +16,8 @@ import "@/components/zan/services/deck.css";
    differs from the one it is dealt onto.
 
    #services      the deck
-   #development   brand-soft, the flat colour the Chapter 01 curtain ends on
-   #marketing     page ground, with one brand-ink word
+   #development   accent-soft, the flat colour the Chapter 01 curtain ends on
+   #marketing     page ground, with one accent-ink word
    #blockchain    surface-2, with the blockchain stack as chips
    #designing     paper
    #why-us        surface, then the page's two calls to action
