@@ -1,19 +1,19 @@
 /* ───────────────────────────────────────────────────────────────────────────
    ANALYTICS
 
-   One dataLayer, three tags. Google Tag Manager, the Meta Pixel and the
-   LinkedIn Insight tag are all loaded by components/zan/analytics/Analytics.tsx,
+   One dataLayer, four tags. Google Tag Manager, the Google Ads tag, the Meta
+   Pixel and the LinkedIn Insight tag are all loaded by
+   components/zan/analytics/Analytics.tsx,
    and only for a visitor who has agreed to them in the cookie banner
    (lib/consent.ts). Even then they are deferred to browser idle or the
    visitor's first interaction, whichever comes first — the same arrangement
    the company's earlier site used, so nothing here costs LCP.
 
-   Everything below pushes to `window.dataLayer` and nothing else. GTM is the
-   only tag that reads it; Meta and LinkedIn are fired from inside GTM, which
-   is where the container's triggers already live. Naming the events any other
-   way would mean rebuilding those triggers, so the event names and their
-   payload shapes are the earlier site's exactly, bar one deliberate change:
-   form_submission no longer carries what the visitor typed.
+   Everything below pushes to `window.dataLayer` and nothing else. Triggers in
+   the GTM container are what act on these events, so they have to listen for
+   the names spelled exactly as they are here. The event names and their payload
+   shapes are the earlier site's, bar one deliberate change: form_submission no
+   longer carries what the visitor typed.
 
      form_submission   an enquiry was sent: the form name and the service,
                        nothing personal
@@ -103,9 +103,10 @@ export function trackContactClick(label: string) {
 /**
  * A tel: link, as a Google Ads conversion.
  *
- * Spaces and capitals included, this is the exact event the call conversion in
- * GTM-WKT2N6FF is triggered by. Neither the earlier site nor any build since has
- * ever sent it (they send contact_click), so that conversion has never fired.
+ * Spaces and capitals included, this is the exact event the company's call
+ * conversion was built on, in GTM-WKT2N6FF, which does not load on this site. A
+ * trigger in this site's container has to use the same spelling. The earlier site
+ * never sent it (it sent contact_click), so that conversion never fired there.
  * Sent beside contact_click rather than instead of it: the reports keep their row.
  */
 export function trackPhoneClick() {
