@@ -3,12 +3,12 @@ import { ContactClicks } from "./ContactClicks";
 import { TagLoader } from "./TagLoader";
 
 /* ───────────────────────────────────────────────────────────────────────────
-   THE THREE TAGS, AND THE CONSENT THEY WAIT FOR
+   THE FOUR TAGS, AND THE CONSENT THEY WAIT FOR
 
-   Google Tag Manager (which carries Google Analytics and Google Ads), the Meta
-   Pixel and the LinkedIn Insight tag. Meta and LinkedIn are the company's
-   existing accounts, so the history in each carries over rather than starting
-   again. The GTM container is in TagLoader.
+   Google Tag Manager, the Google Ads tag, the Meta Pixel and the LinkedIn
+   Insight tag. Google Ads, Meta and LinkedIn are the company's existing
+   accounts, so the history in each carries over rather than starting again.
+   The GTM container and the account IDs are in TagLoader.
 
    NONE OF THEM LOADS UNTIL THE VISITOR AGREES. The Cookie Policy
    (constants/legal.ts, "How We Obtain Consent") promises opt-in consent, by
@@ -24,8 +24,8 @@ import { TagLoader } from "./TagLoader";
         is not lost, it is waiting, and if the visitor never agrees nothing
         ever reads it.
      2. TagLoader, after hydration, which loads only what was agreed to: GTM
-        for either category, Meta and LinkedIn for marketing alone, and only
-        on the production domain (site.url), so test visits never reach the
+        for either category, Google Ads, Meta and LinkedIn for marketing alone,
+        and only on the production domain (site.url), so test visits never reach the
         live accounts. It still waits for browser idle or the first touch, so
         a returning visitor who agreed pays nothing at first paint.
 

@@ -57,7 +57,7 @@
   #                               break a deploy for a reason nobody would guess.
   #
   # The analytics IDs are NOT listed because they are not environment variables:
-  # GTM, Meta Pixel and LinkedIn are hardcoded public IDs in
+  # GTM, Google Ads, Meta Pixel and LinkedIn are hardcoded public IDs in
   # components/zan/analytics/TagLoader.tsx, so the scanner never sees them.
   #
   # Before adding anything to this list, confirm the variable is genuinely not

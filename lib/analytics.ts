@@ -1,18 +1,19 @@
 /* ───────────────────────────────────────────────────────────────────────────
    ANALYTICS
 
-   One dataLayer, three tags. Google Tag Manager, the Meta Pixel and the
-   LinkedIn Insight tag are all loaded by components/zan/analytics/Analytics.tsx,
+   One dataLayer, four tags. Google Tag Manager, the Google Ads tag, the Meta
+   Pixel and the LinkedIn Insight tag are all loaded by
+   components/zan/analytics/Analytics.tsx,
    and only for a visitor who has agreed to them in the cookie banner
    (lib/consent.ts). Even then they are deferred to browser idle or the
    visitor's first interaction, whichever comes first — the same arrangement
    the company's earlier site used, so nothing here costs LCP.
 
-   Everything below pushes to `window.dataLayer` and nothing else. GTM is the
-   only tag that reads it, so these names are what the container's triggers
-   have to listen for, spelled exactly as they are here. The event names and
-   their payload shapes are the earlier site's, bar one deliberate change:
-   form_submission no longer carries what the visitor typed.
+   Everything below pushes to `window.dataLayer` and nothing else. Triggers in
+   the GTM container are what act on these events, so they have to listen for
+   the names spelled exactly as they are here. The event names and their payload
+   shapes are the earlier site's, bar one deliberate change: form_submission no
+   longer carries what the visitor typed.
 
      form_submission   an enquiry was sent: the form name and the service,
                        nothing personal

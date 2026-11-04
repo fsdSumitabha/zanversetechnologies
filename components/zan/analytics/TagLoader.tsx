@@ -7,6 +7,7 @@ import { useConsent } from "@/lib/useConsent";
 
 /* The company's own accounts, the ones its earlier site already reported to,
    so the history in each carries over. */
+const GOOGLE_ADS_ID = "AW-17890514943";
 const META_PIXEL_ID = "1425758958953911";
 const LINKEDIN_PARTNER_ID = "9756265";
 
@@ -34,10 +35,11 @@ declare global {
   }
 }
 
-function addScript(src: string) {
+function addScript(src: string, onLoad?: () => void) {
   const script = document.createElement("script");
   script.async = true;
   script.src = src;
+  if (onLoad) script.onload = onLoad;
   document.head.appendChild(script);
 }
 
@@ -45,7 +47,7 @@ function addScript(src: string) {
 const loaded = { gtm: false, marketing: false };
 
 function loadTags(consent: Consent) {
-  // GTM carries Google Analytics and the Google Ads tags, so either category
+  // GTM can carry both Google Analytics and Google Ads tags, so either category
   // needs it. Consent Mode is already in the dataLayer ahead of gtm.js, so
   // every Google tag knows what it may do before it first fires.
   if ((consent.analytics || consent.marketing) && !loaded.gtm) {
@@ -54,10 +56,20 @@ function loadTags(consent: Consent) {
     addScript(`https://www.googletagmanager.com/gtm.js?id=${GTM_ID}`);
   }
 
-  // Meta and LinkedIn do not read Consent Mode. They load with marketing
-  // consent and not otherwise.
+  // Meta and LinkedIn do not read Consent Mode, and the Cookie Policy files
+  // Google Ads under marketing too. All three load with marketing consent and
+  // not otherwise.
   if (consent.marketing && !loaded.marketing) {
     loaded.marketing = true;
+    // Google's snippet, on the bootstrap's gtag, with one change: "config" waits
+    // for the script. GTM reads the same dataLayer, and if it sees "config" before
+    // this script has run it loads the script a second time. Google Ads receives
+    // the same calls either way. "js" repeats GTM's start signal, and Google's
+    // code acts on that signal once, so GTM's page-view tags do not fire twice.
+    window.gtag?.("js", new Date());
+    addScript(`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`, () =>
+      window.gtag?.("config", GOOGLE_ADS_ID),
+    );
     (window._linkedin_data_partner_ids ??= []).push(LINKEDIN_PARTNER_ID);
     addScript("https://snap.licdn.com/li.lms-analytics/insight.min.js");
     // Queued on the bootstrap's stub and run in order when fbevents.js lands,
