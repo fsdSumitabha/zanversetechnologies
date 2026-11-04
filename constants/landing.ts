@@ -51,6 +51,7 @@ import {
   clients,
   digitalMarketingFaqs,
   metrics,
+  office,
   practices,
   projects,
   webDevFaqs,
@@ -481,21 +482,40 @@ export const landingPages: readonly LandingPage[] = [
     service: "Digital Marketing",
     seo: {
       title: "Digital Marketing Agency in Dubai | SEO, Google Ads & Social",
-      description: `SEO, AEO & GEO, Google and Meta Ads, social media and influencer marketing in Dubai, reported against revenue. ${stat("rating")} client rating. Get a free quote.`,
+      description: `Full service digital marketing agency in Dubai: SEO, Google Ads, social media and performance marketing, reported against revenue. ${stat("rating")} rating. Free quote.`,
+      /* From the client's Keyword Planner report for this campaign (searches July
+         to September 2026): highest searches first, then the six Dubai rows the
+         report has no figures for. After those, what else the page sells that the
+         report does not cover. The report's match types and negative keywords
+         belong in the Google Ads campaign, not here. */
       keywords: [
+        "digital marketing agency",
+        "marketing agency near me",
+        "digital marketing agency near me",
+        "digital marketing services",
+        "digital marketing company",
+        "performance marketing agency",
+        "social media marketing agency",
+        "digital marketing companies near me",
+        "real estate digital marketing agency",
+        "ecommerce agency",
+        "seo agency near me",
+        "ppc agency",
+        "full service digital marketing agency",
+        "digital marketing agency for small business",
         "digital marketing agency dubai",
         "digital marketing company dubai",
-        "digital marketing services dubai",
-        "seo company dubai",
+        "marketing agency in dubai",
+        "social media marketing agency dubai",
+        "performance marketing agency dubai",
         "seo agency dubai",
+        "digital marketing services dubai",
         "seo services dubai",
         "google ads agency dubai",
         "ppc agency dubai",
         "ppc management dubai",
-        "performance marketing agency dubai",
         "meta ads agency dubai",
         "linkedin ads agency uae",
-        "social media marketing agency dubai",
         "social media management dubai",
         "influencer marketing agency dubai",
         "generative engine optimization dubai",
@@ -507,18 +527,19 @@ export const landingPages: readonly LandingPage[] = [
     eyebrow: "Digital Marketing Agency in Dubai",
     headline: { lead: "Marketing Judged On", accent: "What It Returns" },
     subhead:
-      "Digital marketing services in Dubai: SEO, Google Ads, Meta Ads, social media marketing and influencer marketing run as one strategy, with the tracking to prove which part of the spend actually worked.",
+      "Digital marketing services in Dubai from a full service digital marketing agency: SEO, Google Ads, Meta Ads, social media marketing and influencer marketing run as one strategy, with the tracking to prove which part of the spend actually worked.",
     serviceTerms: [
+      "Digital marketing services",
       "SEO services",
       "AI SEO (AEO and GEO)",
       "Google Ads management",
       "PPC management",
       "Performance marketing",
-      "Meta Ads",
-      "LinkedIn Ads",
       "Social media marketing",
-      "Social media management",
       "Influencer marketing",
+      "Real estate digital marketing",
+      "E-commerce marketing",
+      "Small business digital marketing",
     ],
     outcomes: [
       { value: "3x", label: "Organic traffic growth" },
@@ -528,7 +549,7 @@ export const landingPages: readonly LandingPage[] = [
     proof: { value: "3x", label: "organic traffic in six months for a B2B SaaS" },
     packagesIntro: {
       title: ["Digital marketing", "services in Dubai"],
-      lead: "We are a digital marketing company in Dubai, so you brief one team instead of a separate SEO agency, AI SEO agency, PPC agency, social media marketing agency and influencer marketing agency. Buy one service or run them together. Final scope is confirmed in a written quotation before work begins.",
+      lead: "We are a full service digital marketing agency and digital marketing company in Dubai, so you brief one team instead of a separate SEO agency, AI SEO agency, PPC agency, performance marketing agency, social media marketing agency and influencer marketing agency. Buy one service or run them together. Final scope is confirmed in a written quotation before work begins.",
     },
     decks: [
       {
@@ -539,7 +560,7 @@ export const landingPages: readonly LandingPage[] = [
           {
             title: "SEO",
             description:
-              "SEO services from an SEO company in Dubai: technical, on-page and content-led SEO that compounds. We fix what blocks crawlers, build the pages that rank, and earn the links that hold those rankings.",
+              "SEO services from an SEO agency in Dubai: technical, on-page and content-led SEO that compounds. We fix what blocks crawlers, build the pages that rank, and earn the links that hold those rankings.",
             includes: ["Technical audit", "On-page optimisation", "Link building", "Monthly reporting"],
             popular: true,
             art: "seo",
@@ -576,7 +597,7 @@ export const landingPages: readonly LandingPage[] = [
           {
             title: "Google Ads",
             description:
-              "PPC management from a Google Ads agency in Dubai: Search, Display, Shopping and Performance Max campaigns built around intent, and kept clean with disciplined negative-keyword hygiene.",
+              "PPC management from a PPC agency and Google Ads agency in Dubai: Search, Display, Shopping and Performance Max campaigns built around intent, and kept clean with disciplined negative-keyword hygiene.",
             includes: ["Keyword strategy", "Bid management", "PMax setup", "Conversion tracking"],
             art: "google-ads",
           },
@@ -612,14 +633,14 @@ export const landingPages: readonly LandingPage[] = [
           {
             title: "Social Starter",
             description:
-              "Social media management for local businesses and new brands that need a consistent, credible presence before they spend on ads.",
+              "Social media management for small and local businesses and new brands that need a consistent, credible presence before they spend on ads.",
             includes: ["1-2 platforms", "12-14 posts a month", "Caption and hashtag strategy", "Monthly report"],
             art: "social-starter",
           },
           {
             title: "Social Growth",
             description:
-              "Social media marketing with reels, carousels and active community management, for brands ready to turn followers into a pipeline.",
+              "Social media marketing from a social media marketing agency in Dubai, with reels, carousels and active community management, for brands ready to turn followers into a pipeline.",
             includes: ["2-3 platforms", "16-20 posts a month", "Reels and carousels", "Community management"],
             popular: true,
             art: "social-growth",
@@ -713,9 +734,39 @@ export const landingPages: readonly LandingPage[] = [
         },
       ],
       recommendation:
-        "The most effective strategy combines all three channels. Start with PPC for immediate leads, invest in SEO for long-term compounding growth, and use social media to build brand awareness. We build integrated strategies that use each channel's strengths.",
+        "The most effective strategy combines all three channels. Start with PPC for immediate leads, invest in SEO for long-term compounding growth, and use social media to build brand awareness. As a digital marketing agency in Dubai, we build integrated strategies that use each channel's strengths.",
     },
-    faqs: digitalMarketingFaqs,
+    /* The first five are this page's own, as the web page's Shopify question is:
+       digitalMarketingFaqs is also the main site's service page, and these answer
+       what the ads bid on. None is a new claim: each answer is this page's services,
+       the industries the site already lists, and the office. */
+    faqs: [
+      {
+        question: "Are you a full service digital marketing agency in Dubai?",
+        answer:
+          "Yes. We are a digital marketing company with one team for SEO, AEO and GEO, Google Ads, Meta Ads, LinkedIn Ads, social media marketing and influencer marketing, so you do not need a separate agency for each. Buy one service or run them together. The scope is confirmed in a written quotation before work begins.",
+      },
+      {
+        question: "Is there a digital marketing agency near me in Dubai?",
+        answer: `Yes, if you are in Dubai or elsewhere in the UAE. Our office is at ${office.addressLines.join(", ")}, and you can call or message us on WhatsApp at ${office.phoneDisplay}. So if you searched for a marketing agency near me, digital marketing companies near me or an SEO agency near me, you can brief one team here for all of it.`,
+      },
+      {
+        question: "Are you a digital marketing agency for small business?",
+        answer:
+          "Yes. A small business can start with one focused service, such as SEO, Google Ads or our Social Starter package, and build the budget in phases as it starts to return. The first call and the written proposal are free, and nothing is charged until the proposal is signed off.",
+      },
+      {
+        question: "Are you a real estate digital marketing agency?",
+        answer:
+          "Yes. Real estate is one of the industries we work with. For property companies in Dubai that means Google Ads for people already searching, Meta Ads with click-to-WhatsApp for buyers who prefer to talk in chat, and SEO for the searches that keep coming after the ads stop. Results are reported against revenue.",
+      },
+      {
+        question: "Are you an ecommerce agency?",
+        answer:
+          "Yes. For e-commerce brands we run Google Shopping and Performance Max campaigns, Meta Ads with creative testing, SEO and influencer marketing, reported against revenue. We are also a web development company, so we can build the online store itself.",
+      },
+      ...digitalMarketingFaqs,
+    ],
     featuredFaqs: ["How much should I budget for digital marketing?", "How long does SEO take to show results?"],
   },
 ];
