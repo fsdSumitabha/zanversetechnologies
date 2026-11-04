@@ -140,8 +140,8 @@ Put component-specific CSS (keyframes and anything else Tailwind cannot express)
 | Hero headline and set-pieces | `font-hero` (Bricolage Grotesque, with its weight, width and optical-size axes) | The hero headline, and display set-pieces such as the showreel's wordmark |
 | Chapter labels and deck headlines | `font-sans font-bold uppercase text-giant` (0.9 leading, tight tracking) | The reference's big grotesk statements |
 | Eyebrows and indices | `font-mono text-eyebrow uppercase` | Eyebrows and indices |
-| Body | `text-lead` / `text-body` in `text-ink-2` | Body copy |
-| Surfaces | `rounded-2xl`/`rounded-3xl`, 1px `border-line`, `shadow-lift` / `shadow-float` | Cards and panels; no heavy black shadows |
+| Body | `text-lead` / `text-body` in `text-muted` | Body copy |
+| Surfaces | `rounded-2xl`/`rounded-3xl`, 1px `border-border`, `shadow-lift` / `shadow-float` | Cards and panels; no heavy black shadows |
 | Motion | `ease-out-expo` or GSAP `power3.out` / `expo.out` | Confident, not bouncy |
 
 ## How to verify

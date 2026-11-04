@@ -76,7 +76,7 @@ Limits: 5 leads per IP in 10 minutes, 40 per hour across the site, and 3 confirm
 | `app/(console)/agent/` | The agent console, with its own root layout: no site shell, no consent banner, no tags |
 | `app/api/` | The chat, the enquiry forms' leads, the agent console's API, Pusher auth and the WhatsApp webhook |
 | `app/global-not-found.tsx` | The 404 for unmatched URLs, rendered in the site layout (the two root layouts leave no shared one) |
-| `app/globals.css` | Design tokens and the gold palette. The light theme is the only theme. |
+| `app/globals.css` | Design tokens: the navy and cyan palette, and the light and dark themes. Light is the default. |
 | `constants/zan.ts` | The company (`site`, `office`) and all homepage content. Sections never hard-code copy. |
 | `constants/pages.ts`, `constants/legal.ts` | The copy for every other page, and the five policies |
 | `constants/landing.ts`, `components/zan/landing/` | The landing pages' copy and configuration, and the sections they are built from |
