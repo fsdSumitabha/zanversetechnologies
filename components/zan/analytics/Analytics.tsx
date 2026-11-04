@@ -6,8 +6,9 @@ import { TagLoader } from "./TagLoader";
    THE THREE TAGS, AND THE CONSENT THEY WAIT FOR
 
    Google Tag Manager (which carries Google Analytics and Google Ads), the Meta
-   Pixel and the LinkedIn Insight tag, on the company's existing containers,
-   so the history in each account carries over rather than starting again.
+   Pixel and the LinkedIn Insight tag. Meta and LinkedIn are the company's
+   existing accounts, so the history in each carries over rather than starting
+   again. The GTM container is in TagLoader.
 
    NONE OF THEM LOADS UNTIL THE VISITOR AGREES. The Cookie Policy
    (constants/legal.ts, "How We Obtain Consent") promises opt-in consent, by

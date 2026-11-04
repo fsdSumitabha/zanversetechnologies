@@ -1,6 +1,5 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { site } from "@/constants/zan";
 import type { Consent } from "@/lib/consent";
@@ -11,12 +10,10 @@ import { useConsent } from "@/lib/useConsent";
 const META_PIXEL_ID = "1425758958953911";
 const LINKEDIN_PARTNER_ID = "9756265";
 
-/* The only GTM container on this site, on one page: the campaign's, where the
-   UAE web development campaign lands. The company's main container,
-   GTM-WKT2N6FF, stays off every UAE page (decided 23 Oct 2026), and this site
-   is UAE only, so it does not load here. This is the tag setup the /ae pages
-   of the previous build had when this site replaced them. */
-const PAGE_GTM = { id: "GTM-PGGNMWGN", path: "/services/web-development" } as const;
+/* The one GTM container, on every page of the site and the landing pages. The
+   company's main container, GTM-WKT2N6FF, stays off every UAE page (decided
+   23 Oct 2026), and this site is UAE only, so it does not load here. */
+const GTM_ID = "GTM-KHWHV5DT";
 
 /* Because those are the LIVE accounts, they load on the production host and
    nowhere else. A tester who accepts on localhost, the staging build or a
@@ -45,16 +42,16 @@ function addScript(src: string) {
 }
 
 /** Module scope: a remount, or StrictMode's second effect, must not load a tag twice. */
-const loaded = { pageGtm: false, marketing: false };
+const loaded = { gtm: false, marketing: false };
 
-function loadTags(consent: Consent, onCampaignPage: boolean) {
+function loadTags(consent: Consent) {
   // GTM carries Google Analytics and the Google Ads tags, so either category
   // needs it. Consent Mode is already in the dataLayer ahead of gtm.js, so
   // every Google tag knows what it may do before it first fires.
-  if (onCampaignPage && (consent.analytics || consent.marketing) && !loaded.pageGtm) {
-    loaded.pageGtm = true;
+  if ((consent.analytics || consent.marketing) && !loaded.gtm) {
+    loaded.gtm = true;
     (window.dataLayer ??= []).push({ "gtm.start": Date.now(), event: "gtm.js" });
-    addScript(`https://www.googletagmanager.com/gtm.js?id=${PAGE_GTM.id}`);
+    addScript(`https://www.googletagmanager.com/gtm.js?id=${GTM_ID}`);
   }
 
   // Meta and LinkedIn do not read Consent Mode. They load with marketing
@@ -81,7 +78,6 @@ function loadTags(consent: Consent, onCampaignPage: boolean) {
  */
 export function TagLoader() {
   const consent = useConsent();
-  const onCampaignPage = usePathname() === PAGE_GTM.path;
 
   useEffect(() => {
     if (!consent || !(consent.analytics || consent.marketing)) return;
@@ -94,7 +90,7 @@ export function TagLoader() {
     const run = () => {
       if (done) return;
       done = true;
-      loadTags(consent, onCampaignPage);
+      loadTags(consent);
     };
 
     const idle = typeof window.requestIdleCallback === "function";
@@ -108,7 +104,7 @@ export function TagLoader() {
       else window.clearTimeout(handle);
       for (const type of touches) window.removeEventListener(type, run);
     };
-  }, [consent, onCampaignPage]);
+  }, [consent]);
 
   return null;
 }
