@@ -116,7 +116,7 @@ export function QuoteModal({ request, onClose }: { request: QuoteRequest | null;
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="absolute inset-0 bg-ink/45 backdrop-blur-sm"
+            className="absolute inset-0 bg-scrim/45 backdrop-blur-sm"
           />
 
           <motion.div
@@ -134,7 +134,7 @@ export function QuoteModal({ request, onClose }: { request: QuoteRequest | null;
               "relative z-10 w-full outline-none sm:max-w-xl",
               // Taller than the window on a phone, so it scrolls inside itself.
               "max-h-[92dvh] overflow-y-auto overscroll-contain sm:max-h-[calc(100dvh-3rem)]",
-              "rounded-t-3xl border border-line bg-bg px-5 pt-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] shadow-float",
+              "rounded-t-3xl border border-border bg-surface-raised px-5 pt-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] shadow-float",
               "sm:rounded-3xl sm:px-8 sm:py-7",
             )}
           >
@@ -142,16 +142,16 @@ export function QuoteModal({ request, onClose }: { request: QuoteRequest | null;
               type="button"
               onClick={onClose}
               aria-label="Close"
-              className="absolute top-3.5 right-3.5 grid size-10 place-items-center rounded-full text-ink-2 transition-colors duration-300 hover:bg-surface hover:text-ink sm:top-5 sm:right-5"
+              className="absolute top-3.5 right-3.5 grid size-10 place-items-center rounded-full text-muted transition-colors duration-300 hover:bg-surface-muted hover:text-foreground sm:top-5 sm:right-5"
             >
               <X aria-hidden="true" className="size-4" />
             </button>
 
             <Eyebrow className="hidden sm:inline-flex">{copy.eyebrow}</Eyebrow>
-            <h2 id={titleId} className="pr-12 font-display text-h3 font-semibold text-ink sm:mt-3 sm:text-h2">
+            <h2 id={titleId} className="pr-12 font-display text-h3 font-semibold text-foreground sm:mt-3 sm:text-h2">
               {request.interest ? `Get a free quote for ${request.interest}` : copy.title}
             </h2>
-            <p className="mt-1.5 text-small text-ink-2 sm:mt-2.5 sm:text-body">{copy.lead}</p>
+            <p className="mt-1.5 text-small text-muted sm:mt-2.5 sm:text-body">{copy.lead}</p>
 
             <LandingForm
               key={`${request.location}:${request.interest ?? ""}`}
@@ -160,12 +160,12 @@ export function QuoteModal({ request, onClose }: { request: QuoteRequest | null;
               className="mt-5"
             />
 
-            <p className="mt-4 border-t border-line pt-4 text-center text-small text-ink-2">
+            <p className="mt-4 border-t border-border pt-4 text-center text-small text-muted">
               Prefer to talk?{" "}
               <a
                 href={`tel:${office.phoneTel}`}
                 data-analytics-label="Landing Popup"
-                className="inline-flex items-center gap-1.5 font-medium text-brand-ink underline decoration-current/40 underline-offset-4 hover:decoration-current"
+                className="inline-flex items-center gap-1.5 font-medium text-accent-ink underline decoration-current/40 underline-offset-4 hover:decoration-current"
               >
                 <Phone aria-hidden="true" className="size-3.5 shrink-0" strokeWidth={2} />
                 <span className="tabular-nums">{office.phoneDisplay}</span>

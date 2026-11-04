@@ -57,7 +57,7 @@ const images: readonly ZoomImage[] = [
 
 export function About() {
   return (
-    <section id="about" className="relative scroll-mt-nav border-t border-line bg-bg">
+    <section id="about" className="relative scroll-mt-nav border-t border-border bg-canvas">
       <div className="container-zan pt-section pb-[clamp(2.5rem,5vw,5rem)]">
         <SectionHeading eyebrow={about.eyebrow} title={about.heading} />
       </div>

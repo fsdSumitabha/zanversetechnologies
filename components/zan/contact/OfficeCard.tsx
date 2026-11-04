@@ -278,13 +278,13 @@ function Way({
       >
         <span
           aria-hidden="true"
-          className="grid size-9 shrink-0 place-items-center rounded-full border border-line bg-bg transition-[background-color,border-color] duration-300 group-hover/way:border-brand group-hover/way:bg-brand-soft"
+          className="grid size-9 shrink-0 place-items-center rounded-full border border-border bg-surface transition-[background-color,border-color] duration-300 group-hover/way:border-accent group-hover/way:bg-accent-soft"
         >
           {icon}
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block font-mono text-[0.6875rem] tracking-[0.14em] text-muted uppercase">{label}</span>
-          <span className="mt-0.5 block truncate text-body font-medium text-ink transition-colors duration-300 group-hover/way:text-brand-ink">
+          <span className="block font-mono text-[0.6875rem] tracking-[0.14em] text-subtle uppercase">{label}</span>
+          <span className="mt-0.5 block truncate text-body font-medium text-foreground transition-colors duration-300 group-hover/way:text-accent-ink">
             {children}
           </span>
         </span>
@@ -292,7 +292,7 @@ function Way({
           <>
             <ArrowUpRight
               aria-hidden="true"
-              className="size-4 shrink-0 text-muted transition-[translate,color] duration-300 ease-out-expo group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5 group-hover/way:text-brand-ink"
+              className="size-4 shrink-0 text-subtle transition-[translate,color] duration-300 ease-out-expo group-hover/way:translate-x-0.5 group-hover/way:-translate-y-0.5 group-hover/way:text-accent-ink"
               strokeWidth={2}
             />
             <span className="sr-only"> (opens in a new tab)</span>
@@ -353,7 +353,7 @@ function OfficeCard() {
       <article
         ref={cardRef}
         aria-labelledby={titleId}
-        className="zan-oc-card overflow-hidden rounded-3xl border border-line"
+        className="zan-oc-card overflow-hidden rounded-3xl border border-border"
       >
         {/* Before the sheen and the glare, so the light passes over it. */}
         <div aria-hidden="true" className="zan-oc-map h-24 sm:h-28">
@@ -368,8 +368,8 @@ function OfficeCard() {
         <div className="zan-oc-content px-6 pb-6 sm:px-7 sm:pb-7">
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0 pt-6">
-              <p className="truncate font-mono text-eyebrow text-muted uppercase">{office.country}</p>
-              <h3 id={titleId} className="mt-3 font-display text-h2 text-ink">
+              <p className="truncate font-mono text-eyebrow text-subtle uppercase">{office.country}</p>
+              <h3 id={titleId} className="mt-3 font-display text-h2 text-foreground">
                 {office.city}
               </h3>
             </div>
@@ -379,7 +379,7 @@ function OfficeCard() {
             </div>
           </div>
 
-          <address className="mt-4 text-small text-ink-2 not-italic">
+          <address className="mt-4 text-small text-muted not-italic">
             {office.addressLines.map((line) => (
               <span key={line} className="block">
                 {line}
@@ -388,12 +388,12 @@ function OfficeCard() {
             <span className="block">{office.city}</span>
           </address>
 
-          <ul className="mt-6 divide-y divide-line border-y border-line">
+          <ul className="mt-6 divide-y divide-border border-y border-border">
             <Way
               href={`tel:${office.phoneTel}`}
               label="Call"
               analyticsLabel={office.phoneDisplay}
-              icon={<Phone aria-hidden="true" className={cn(wayIcon, "text-brand-ink")} strokeWidth={1.8} />}
+              icon={<Phone aria-hidden="true" className={cn(wayIcon, "text-accent-ink")} strokeWidth={1.8} />}
             >
               <span className="tabular-nums">{office.phoneDisplay}</span>
             </Way>
@@ -402,7 +402,7 @@ function OfficeCard() {
               label="WhatsApp"
               external
               onClick={() => trackWhatsAppClick("Office Card WhatsApp")}
-              icon={<SocialIcon name="WhatsApp" className={cn(wayIcon, "text-whatsapp")} />}
+              icon={<SocialIcon name="WhatsApp" className={cn(wayIcon, "text-whatsapp-ink")} />}
             >
               Message us
             </Way>
@@ -410,19 +410,19 @@ function OfficeCard() {
               href={DIRECTIONS_HREF}
               label="Directions"
               external
-              icon={<MapPin aria-hidden="true" className={cn(wayIcon, "text-brand-ink")} strokeWidth={1.8} />}
+              icon={<MapPin aria-hidden="true" className={cn(wayIcon, "text-accent-ink")} strokeWidth={1.8} />}
             >
               Open in Google Maps
             </Way>
           </ul>
 
           <div className="mt-5 flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
-            <p className="font-mono text-[0.6875rem] tracking-[0.14em] text-muted uppercase">Local time</p>
+            <p className="font-mono text-[0.6875rem] tracking-[0.14em] text-subtle uppercase">Local time</p>
             <p className="flex items-baseline gap-2">
-              <time dateTime={iso} className="font-mono text-h3 text-ink tabular-nums">
+              <time dateTime={iso} className="font-mono text-h3 text-foreground tabular-nums">
                 {time}
               </time>
-              {offset && <span className="font-mono text-[0.6875rem] tracking-[0.06em] text-muted">{offset}</span>}
+              {offset && <span className="font-mono text-[0.6875rem] tracking-[0.06em] text-subtle">{offset}</span>}
             </p>
           </div>
         </div>

@@ -8,10 +8,10 @@ import { DomainGrid } from "@/components/zan/tech/DomainGrid";
  */
 export function TechStack() {
   return (
-    <section id="technology" className="relative bg-surface">
+    <section id="technology" className="relative bg-surface-muted">
       <TechMorph />
       <div className="container-zan pb-section pt-12 md:pt-6">
-        <p className="mb-6 font-mono text-eyebrow uppercase text-muted">By domain</p>
+        <p className="mb-6 font-mono text-eyebrow uppercase text-subtle">By domain</p>
         <DomainGrid />
       </div>
     </section>

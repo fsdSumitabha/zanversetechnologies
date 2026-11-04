@@ -64,7 +64,7 @@ export function PackageTabs({
         role="tablist"
         aria-label={label}
         onKeyDown={onKeyDown}
-        className="mt-10 grid grid-cols-2 gap-px overflow-hidden rounded-3xl border border-line bg-line sm:mt-12 lg:grid-cols-4"
+        className="mt-10 grid grid-cols-2 gap-px overflow-hidden rounded-3xl border border-border bg-border sm:mt-12 lg:grid-cols-4"
       >
         {tabs.map((tab, i) => {
           const selected = i === active;
@@ -80,27 +80,27 @@ export function PackageTabs({
               onClick={() => setActive(i)}
               className={cn(
                 "group relative flex min-w-0 flex-col items-start px-4 py-4 text-left transition-colors duration-300 sm:px-6 sm:py-5",
-                selected ? "bg-bg" : "bg-surface hover:bg-bg",
+                selected ? "bg-surface" : "bg-surface-muted hover:bg-surface",
               )}
             >
-              <span className={cn("font-mono text-eyebrow", selected ? "text-brand-ink" : "text-muted")}>
+              <span className={cn("font-mono text-eyebrow", selected ? "text-accent-ink" : "text-subtle")}>
                 {String(i + 1).padStart(2, "0")}
               </span>
               <span
                 className={cn(
                   "mt-2.5 font-display text-h3 font-semibold transition-colors duration-300",
-                  selected ? "text-ink" : "text-ink-2 group-hover:text-ink",
+                  selected ? "text-foreground" : "text-muted group-hover:text-foreground",
                 )}
               >
                 {tab.label}
               </span>
-              <span className="mt-1 text-[0.8125rem] leading-snug text-muted">{tab.covers}</span>
+              <span className="mt-1 text-[0.8125rem] leading-snug text-subtle">{tab.covers}</span>
               {selected && (
                 <motion.span
                   layoutId={`${base}-rule`}
                   aria-hidden="true"
                   transition={{ duration: 0.5, ease: EASE }}
-                  className="absolute inset-x-0 bottom-0 h-[3px] bg-brand-gradient"
+                  className="absolute inset-x-0 bottom-0 h-[3px] bg-accent-gradient"
                 />
               )}
             </button>

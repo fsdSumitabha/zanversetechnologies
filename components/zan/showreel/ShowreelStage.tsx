@@ -14,7 +14,7 @@ import "@/components/zan/showreel/showreel.css";
    out of it, and the cut opening as you scroll.
 
    The mask, not background-clip: on a light page the reliable shape is an
-   overlay that covers the viewport in --color-bg and has the word knocked out
+   overlay that covers the viewport in --color-surface and has the word knocked out
    (mask: an opaque rect, the word painted black over it). Everything but the
    letters stays page ground, so the section reads as the page until the word
    opens.
@@ -461,11 +461,11 @@ export function ShowreelStage({ eyebrow, line, still }: Props) {
 
   return (
     <div ref={rootRef} className="relative w-full">
-      <div ref={stageRef} className="zan-showreel-stage relative isolate w-full overflow-hidden bg-bg">
+      <div ref={stageRef} className="zan-showreel-stage relative isolate w-full overflow-hidden bg-canvas">
         {/* The picture, decorative. Ink until it has loaded, so the word is
             never white on white. The scroll scene scales this layer; the
             drift and the band of light move what is inside it (CSS). */}
-        <div ref={filmRef} className="zan-showreel-film absolute inset-0 overflow-hidden bg-ink">
+        <div ref={filmRef} className="zan-showreel-film absolute inset-0 overflow-hidden bg-inverse">
           <div className="zan-showreel-drift absolute -inset-[4%]">
             {/* Below 3:2 (every phone), cover fits the picture to the height:
                 a 3:2 photo in a layer 108% tall is drawn about 1.62 screen
@@ -528,7 +528,7 @@ export function ShowreelStage({ eyebrow, line, still }: Props) {
               </svg>
             </mask>
           </defs>
-          <rect ref={sheetRef} width="100%" height="100%" fill="var(--color-bg)" mask={`url(#${MASK_ID})`} />
+          <rect ref={sheetRef} width="100%" height="100%" fill="var(--color-canvas)" mask={`url(#${MASK_ID})`} />
         </svg>
 
         {/* Copy, on the ground above and below the wordmark. The layer lets
@@ -538,14 +538,14 @@ export function ShowreelStage({ eyebrow, line, still }: Props) {
             <Eyebrow>{eyebrow}</Eyebrow>
           </div>
           {line && (
-            <p ref={lineRef} className="pointer-events-auto max-w-[38ch] text-balance text-lead text-ink-2">
+            <p ref={lineRef} className="pointer-events-auto max-w-[38ch] text-balance text-lead text-muted">
               {line}
             </p>
           )}
         </div>
 
         {/* The fade to the page ground that hands off to the section below. */}
-        <div ref={coverRef} aria-hidden="true" className="pointer-events-none absolute inset-0 z-20 bg-bg opacity-0" />
+        <div ref={coverRef} aria-hidden="true" className="pointer-events-none absolute inset-0 z-20 bg-canvas opacity-0" />
       </div>
     </div>
   );

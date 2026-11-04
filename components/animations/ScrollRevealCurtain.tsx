@@ -18,7 +18,7 @@ gsap.registerPlugin(useGSAP);
    Touch widths and reduced motion: no pin. The content beneath, then the
    same panel as a static band with the label.
 
-   The panel is one flat token colour (bg-brand-soft by default), so the join
+   The panel is one flat token colour (bg-accent-soft by default), so the join
    to a next section painted in that token cannot show, whatever its height.
    ═══════════════════════════════════════════════════════════════════════════ */
 
@@ -28,7 +28,7 @@ export function ScrollRevealCurtain({
   label,
   distance = 1.2,
   className,
-  curtainClassName = "bg-brand-soft text-ink",
+  curtainClassName = "bg-accent-soft text-foreground",
   onCoverChange,
 }: {
   id?: string;
@@ -127,8 +127,8 @@ export function ScrollRevealCurtain({
   );
 
   return (
-    <section ref={sectionRef} id={id} className={cn("relative isolate bg-bg", className)}>
-      <div ref={stageRef} className="relative bg-bg lg:motion-safe:h-svh lg:motion-safe:overflow-hidden">
+    <section ref={sectionRef} id={id} className={cn("relative isolate bg-canvas", className)}>
+      <div ref={stageRef} className="relative bg-canvas lg:motion-safe:h-svh lg:motion-safe:overflow-hidden">
         <div
           ref={beneathRef}
           className="relative lg:motion-safe:absolute lg:motion-safe:inset-0 lg:motion-safe:will-change-transform"
@@ -140,7 +140,7 @@ export function ScrollRevealCurtain({
         <div
           ref={veilRef}
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-[2] hidden bg-[color-mix(in_oklab,var(--color-bg)_88%,transparent)] opacity-0 lg:motion-safe:block"
+          className="pointer-events-none absolute inset-0 z-[2] hidden bg-[color-mix(in_oklab,var(--color-canvas)_88%,transparent)] opacity-0 lg:motion-safe:block"
         />
 
         <div

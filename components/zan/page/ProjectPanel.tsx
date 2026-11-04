@@ -19,11 +19,11 @@ export function ProjectPanel({ project, flip = false }: { project: Project; flip
     <article
       id={`case-${project.id}`}
       aria-labelledby={`case-${project.id}-title`}
-      className="scroll-mt-nav border-t border-line pt-10 first:border-t-0 first:pt-0 sm:pt-14"
+      className="scroll-mt-nav border-t border-border pt-10 first:border-t-0 first:pt-0 sm:pt-14"
     >
       <div className="grid gap-8 lg:grid-cols-12 lg:gap-12">
         <Reveal className={cn("lg:col-span-5", flip && "lg:order-last")}>
-          <div className="overflow-hidden rounded-3xl border border-line bg-surface">
+          <div className="overflow-hidden rounded-3xl border border-border bg-surface-muted">
             <div className="relative aspect-[4/3]">
               {project.screenshot ? (
                 <Image
@@ -39,15 +39,15 @@ export function ProjectPanel({ project, flip = false }: { project: Project; flip
             </div>
           </div>
 
-          <dl className="mt-5 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-line">
+          <dl className="mt-5 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border">
             {project.results.map((r) => (
-              <div key={r.metric} className="bg-bg px-4 py-4">
+              <div key={r.metric} className="bg-surface px-4 py-4">
                 <dt className="sr-only">{r.metric}</dt>
                 <dd>
-                  <span className="block font-sans text-[clamp(1.5rem,1.2rem+1.2vw,2rem)] leading-none font-bold tracking-[-0.03em] text-ink tabular-nums">
+                  <span className="block font-sans text-[clamp(1.5rem,1.2rem+1.2vw,2rem)] leading-none font-bold tracking-[-0.03em] text-foreground tabular-nums">
                     {r.value}
                   </span>
-                  <span className="mt-2 block text-[0.8125rem] leading-snug text-muted">{r.metric}</span>
+                  <span className="mt-2 block text-[0.8125rem] leading-snug text-subtle">{r.metric}</span>
                 </dd>
               </div>
             ))}
@@ -55,8 +55,8 @@ export function ProjectPanel({ project, flip = false }: { project: Project; flip
         </Reveal>
 
         <Reveal delay={0.08} className="lg:col-span-7">
-          <p className={cn(mono, "flex flex-wrap items-center gap-x-2.5 gap-y-1 text-muted")}>
-            <span className="text-brand-ink">{project.index}</span>
+          <p className={cn(mono, "flex flex-wrap items-center gap-x-2.5 gap-y-1 text-subtle")}>
+            <span className="text-accent-ink">{project.index}</span>
             <span aria-hidden="true">/</span>
             <span>{project.discipline}</span>
             <span aria-hidden="true">/</span>
@@ -65,18 +65,18 @@ export function ProjectPanel({ project, flip = false }: { project: Project; flip
             <span>{project.timeline}</span>
           </p>
 
-          <h3 id={`case-${project.id}-title`} className="mt-4 font-display text-h2 text-balance text-ink">
+          <h3 id={`case-${project.id}-title`} className="mt-4 font-display text-h2 text-balance text-foreground">
             {project.name}
           </h3>
 
           <div className="mt-7 space-y-6">
             <div>
-              <h4 className={cn(mono, "text-muted")}>The brief</h4>
-              <p className="mt-2.5 max-w-[62ch] text-body text-ink-2">{project.challenge}</p>
+              <h4 className={cn(mono, "text-subtle")}>The brief</h4>
+              <p className="mt-2.5 max-w-[62ch] text-body text-muted">{project.challenge}</p>
             </div>
             <div>
-              <h4 className={cn(mono, "text-muted")}>What we built</h4>
-              <p className="mt-2.5 max-w-[62ch] text-body text-ink-2">{project.solution}</p>
+              <h4 className={cn(mono, "text-subtle")}>What we built</h4>
+              <p className="mt-2.5 max-w-[62ch] text-body text-muted">{project.solution}</p>
             </div>
           </div>
 
@@ -84,7 +84,7 @@ export function ProjectPanel({ project, flip = false }: { project: Project; flip
             {project.techStack.map((tech) => (
               <li
                 key={tech}
-                className="rounded-full border border-line bg-surface px-3 py-1.5 text-[0.8125rem] leading-none text-ink-2"
+                className="rounded-full border border-border bg-surface-muted px-3 py-1.5 text-[0.8125rem] leading-none text-muted"
               >
                 {tech}
               </li>

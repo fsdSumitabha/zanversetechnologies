@@ -19,7 +19,7 @@ const WHATSAPP_HREF = waLink(site.whatsapp, site.name);
 const BANNER_GAP = 12;
 
 const iconButton =
-  "grid size-12 shrink-0 place-items-center rounded-full border border-line-strong bg-bg transition-[border-color,color,translate] duration-300 ease-out-expo hover:-translate-y-0.5 hover:border-ink md:size-11";
+  "grid size-12 shrink-0 place-items-center rounded-full border border-border-strong bg-surface transition-[border-color,color,translate] duration-300 ease-out-expo hover:-translate-y-0.5 hover:border-foreground md:size-11";
 
 /**
  * "Get My Free Quote", following the reader.
@@ -76,13 +76,13 @@ export function QuoteDock({ label, show }: { label: string; show: boolean }) {
             exit={{ y: "130%", opacity: 0 }}
             transition={{ duration: 0.55, ease: EASE }}
             className={cn(
-              "pointer-events-auto flex w-full items-center gap-2 border-t border-line bg-bg px-3 pt-2.5 pb-[max(0.625rem,env(safe-area-inset-bottom))]",
-              "shadow-[0_-12px_32px_-16px_rgb(17_16_22/0.22)]",
-              "md:w-auto md:gap-2.5 md:rounded-full md:border md:border-line-strong md:p-2 md:shadow-float xl:pl-6",
+              "pointer-events-auto flex w-full items-center gap-2 border-t border-border bg-surface-raised px-3 pt-2.5 pb-[max(0.625rem,env(safe-area-inset-bottom))]",
+              "shadow-[0_-12px_32px_-16px_color-mix(in_oklab,var(--color-shadow)_22%,transparent)]",
+              "md:w-auto md:gap-2.5 md:rounded-full md:border md:border-border-strong md:p-2 md:shadow-float xl:pl-6",
             )}
           >
             <p className="mr-4 hidden min-w-0 xl:block">
-              <span className="block text-small leading-tight font-semibold whitespace-nowrap text-ink">{label}</span>
+              <span className="block text-small leading-tight font-semibold whitespace-nowrap text-foreground">{label}</span>
               <Eyebrow as="span" className="mt-1 text-[0.625rem] leading-none">
                 Free consultation
               </Eyebrow>
@@ -92,7 +92,7 @@ export function QuoteDock({ label, show }: { label: string; show: boolean }) {
               href={`tel:${office.phoneTel}`}
               aria-label={`Call the ${office.city} office: ${office.phoneDisplay}`}
               data-analytics-label="Landing Sticky Call"
-              className={cn(iconButton, "text-brand-ink")}
+              className={cn(iconButton, "text-accent-ink")}
             >
               <Phone aria-hidden="true" className="size-[1.125rem]" />
             </a>
@@ -102,7 +102,7 @@ export function QuoteDock({ label, show }: { label: string; show: boolean }) {
               rel="noopener"
               aria-label="WhatsApp (opens in a new tab)"
               onClick={() => trackWhatsAppClick("Landing Sticky WhatsApp")}
-              className={cn(iconButton, "text-whatsapp")}
+              className={cn(iconButton, "text-whatsapp-ink")}
             >
               <SocialIcon name="WhatsApp" className="size-[1.125rem]" />
             </a>

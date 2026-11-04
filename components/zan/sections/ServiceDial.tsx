@@ -75,9 +75,9 @@ const LINE_RISE: Variants = {
 const WORDS = pillars.map((p) => ({ id: p.id, label: p.title }));
 
 /* Each area's plate gets its own ground, so the four read as four even at a
-   glance and even mid-slide. All four are palette tokens, never a hex. Gold
-   brand-ink measures only 4.49:1 on paper, so that plate's numeral stays
-   ink. */
+   glance and even mid-slide. All four are palette tokens, never a hex. The
+   marketing plate is the tinted one, and its numeral stays foreground.
+   Blockchain's numeral is the violet kept for AI and blockchain. */
 interface PlateTone {
   plate: string;
   rule: string;
@@ -85,10 +85,10 @@ interface PlateTone {
 }
 
 const TONES: Record<Pillar["id"], PlateTone> = {
-  development: { plate: "border-brand/25 bg-brand-soft", rule: "border-ink/12", numeral: "text-brand-ink" },
-  marketing: { plate: "border-ink/12 bg-paper", rule: "border-ink/12", numeral: "text-ink" },
-  blockchain: { plate: "border-line-strong bg-surface-2", rule: "border-ink/12", numeral: "text-brand-ink" },
-  designing: { plate: "border-line-strong bg-bg shadow-lift", rule: "border-line-strong", numeral: "text-brand-ink" },
+  development: { plate: "border-accent/25 bg-accent-soft", rule: "border-foreground/12", numeral: "text-accent-ink" },
+  marketing: { plate: "border-foreground/12 bg-surface-tint", rule: "border-foreground/12", numeral: "text-foreground" },
+  blockchain: { plate: "border-border-strong bg-surface-muted", rule: "border-foreground/12", numeral: "text-ai" },
+  designing: { plate: "border-border-strong bg-surface shadow-lift", rule: "border-border-strong", numeral: "text-accent-ink" },
 };
 
 type LenisWheel = WheelEvent & { lenisStopPropagation?: boolean };
@@ -258,7 +258,7 @@ export function ServiceDial() {
   };
 
   return (
-    <section ref={sectionRef} id="expertise" aria-labelledby={`${uid}-title`} className="zan-dial relative bg-bg">
+    <section ref={sectionRef} id="expertise" aria-labelledby={`${uid}-title`} className="zan-dial relative bg-canvas">
       <div className="container-zan flex flex-col items-center pt-section text-center">
         <motion.div
           data-reveal
@@ -290,7 +290,7 @@ export function ServiceDial() {
         </motion.h2>
         <motion.p
           data-reveal
-          className="mt-5 max-w-[54ch] text-body text-ink-2"
+          className="mt-5 max-w-[54ch] text-body text-muted"
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={VIEWPORT}
@@ -307,11 +307,11 @@ export function ServiceDial() {
           aria-hidden="true"
           className="zan-dial-chrome container-zan flex items-center justify-between gap-6 pb-2.5 lg:pb-[clamp(0.5rem,1.4vh,0.875rem)]"
         >
-          <p className="inline-flex items-center gap-2 font-mono text-eyebrow text-muted uppercase">
+          <p className="inline-flex items-center gap-2 font-mono text-eyebrow text-subtle uppercase">
             Scroll
             <ArrowRight className="size-3.5 rotate-90" strokeWidth={1.8} />
           </p>
-          <p className="font-mono text-eyebrow text-ink-2 tabular-nums">
+          <p className="font-mono text-eyebrow text-muted tabular-nums">
             {pad(active + 1)} / {pad(N)}
           </p>
         </div>
@@ -334,7 +334,7 @@ export function ServiceDial() {
             are pointer shortcuts to the same thing. */}
         <div aria-hidden="true" className="zan-dial-chrome container-zan pt-2.5 lg:pt-[clamp(0.5rem,1.4vh,0.875rem)]">
           <div className="relative grid grid-cols-4">
-            <span data-dial-marker="" className="absolute -top-px left-0 h-0.5 w-1/4 bg-brand" />
+            <span data-dial-marker="" className="absolute -top-px left-0 h-0.5 w-1/4 bg-accent-ink" />
             {pillars.map((pillar, i) => (
               <button
                 key={pillar.id}
@@ -342,7 +342,7 @@ export function ServiceDial() {
                 tabIndex={-1}
                 onClick={() => pick(i)}
                 data-active={i === active ? "true" : "false"}
-                className="min-h-11 cursor-pointer truncate border-t border-line pt-2 pr-3 text-left font-mono text-eyebrow text-muted uppercase transition-colors duration-300 hover:text-ink-2 data-[active=true]:text-ink lg:pt-2.5"
+                className="min-h-11 cursor-pointer truncate border-t border-border pt-2 pr-3 text-left font-mono text-eyebrow text-subtle uppercase transition-colors duration-300 hover:text-muted data-[active=true]:text-foreground lg:pt-2.5"
               >
                 <span className="tabular-nums">{pillar.index}</span>
                 <span className="hidden lg:inline"> · {pillar.title}</span>
@@ -380,17 +380,17 @@ function DialSpread({ id, pillar, tone, href }: { id: string; pillar: Pillar; to
       <div className="zan-dial-grid container-zan grid gap-y-4 sm:gap-y-6 md:grid-cols-2 md:items-center md:gap-x-10 lg:grid-cols-12 lg:gap-x-12">
         <div className="flex min-w-0 flex-col lg:col-span-6">
           <div className="flex items-center gap-3">
-            <ZanIcon name={pillar.icon} className="size-4.5 shrink-0 text-brand-ink lg:size-5" />
-            <span className="font-mono text-eyebrow text-brand-ink tabular-nums">{pillar.index}</span>
-            <span aria-hidden="true" className="h-px flex-1 bg-line" />
+            <ZanIcon name={pillar.icon} className="size-4.5 shrink-0 text-accent-ink lg:size-5" />
+            <span className="font-mono text-eyebrow text-accent-ink tabular-nums">{pillar.index}</span>
+            <span aria-hidden="true" className="h-px flex-1 bg-border" />
           </div>
 
           {/* When pinned the scale carries the name, so here it is for screen
               readers only and the tagline is the headline (dial.css). */}
-          <h3 id={titleId} className="zan-dial-name mt-5 font-display text-h1 text-ink">
+          <h3 id={titleId} className="zan-dial-name mt-5 font-display text-h1 text-foreground">
             {pillar.title}
           </h3>
-          <p className="mt-3 font-display text-[clamp(1.5rem,1.1rem+1.9vw,2.25rem)] leading-[1.1] text-ink lg:mt-[clamp(1rem,2.6vh,1.75rem)] lg:text-[min(clamp(2rem,0.9rem+1.9vw,3rem),6vh)] lg:leading-[1.06]">
+          <p className="mt-3 font-display text-[clamp(1.5rem,1.1rem+1.9vw,2.25rem)] leading-[1.1] text-foreground lg:mt-[clamp(1rem,2.6vh,1.75rem)] lg:text-[min(clamp(2rem,0.9rem+1.9vw,3rem),6vh)] lg:leading-[1.06]">
             {sentences(pillar.tagline).map((line, i, all) => (
               <span key={line} className="sm:block">
                 {line}
@@ -398,7 +398,7 @@ function DialSpread({ id, pillar, tone, href }: { id: string; pillar: Pillar; to
               </span>
             ))}
           </p>
-          <p className="zan-dial-lead mt-2 max-w-[40ch] text-small text-ink-2 sm:mt-3 sm:text-body lg:mt-[clamp(0.75rem,2vh,1.25rem)] lg:text-lead">
+          <p className="zan-dial-lead mt-2 max-w-[40ch] text-small text-muted sm:mt-3 sm:text-body lg:mt-[clamp(0.75rem,2vh,1.25rem)] lg:text-lead">
             {pillar.description}
           </p>
 
@@ -417,7 +417,7 @@ function DialSpread({ id, pillar, tone, href }: { id: string; pillar: Pillar; to
             className={`flex flex-col rounded-2xl border px-4 py-3 sm:px-7 sm:py-6 lg:rounded-3xl lg:px-8 lg:py-[clamp(1.25rem,3vh,2rem)] ${tone.plate}`}
           >
             <div className="flex items-end justify-between gap-4 pb-2 sm:pb-3 lg:pb-4">
-              <p className="font-mono text-eyebrow text-ink-2 uppercase">{pad(pillar.items.length)} disciplines</p>
+              <p className="font-mono text-eyebrow text-muted uppercase">{pad(pillar.items.length)} disciplines</p>
               <p
                 aria-hidden="true"
                 className={`font-display text-[clamp(1.5rem,1rem+1.8vw,2.75rem)] leading-[0.8] tabular-nums ${tone.numeral}`}
@@ -431,8 +431,8 @@ function DialSpread({ id, pillar, tone, href }: { id: string; pillar: Pillar; to
                   key={item}
                   className={`flex items-center gap-3 border-t py-2 sm:gap-4 sm:py-3 lg:py-[clamp(0.625rem,1.6vh,0.95rem)] ${tone.rule}`}
                 >
-                  <span className="w-5 shrink-0 font-mono text-eyebrow text-ink-2 tabular-nums">{pad(i + 1)}</span>
-                  <span className="text-[0.9375rem] font-medium text-ink sm:text-body lg:text-[1.0625rem] xl:text-lg">
+                  <span className="w-5 shrink-0 font-mono text-eyebrow text-muted tabular-nums">{pad(i + 1)}</span>
+                  <span className="text-[0.9375rem] font-medium text-foreground sm:text-body lg:text-[1.0625rem] xl:text-lg">
                     {item}
                   </span>
                 </li>

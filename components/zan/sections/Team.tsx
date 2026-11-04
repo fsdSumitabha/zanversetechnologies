@@ -40,7 +40,7 @@ export function Team() {
     <section
       id="team"
       aria-labelledby="team-heading"
-      className="relative scroll-mt-nav overflow-x-clip border-t border-line bg-surface py-section"
+      className="relative scroll-mt-nav overflow-x-clip border-t border-border bg-surface-muted py-section"
     >
       <div className="container-zan">
         <SectionHeading
@@ -64,7 +64,7 @@ export function Team() {
             <Fragment key={group.id}>
               <li className="zan-team-marker">
                 <span aria-hidden="true" className="zan-team-dot" />
-                <h3 className="zan-team-marker-label font-mono text-eyebrow text-ink uppercase">{group.label}</h3>
+                <h3 className="zan-team-marker-label font-mono text-eyebrow text-foreground uppercase">{group.label}</h3>
                 <span aria-hidden="true" className="zan-team-rule" />
               </li>
               {group.people.map((person) => {

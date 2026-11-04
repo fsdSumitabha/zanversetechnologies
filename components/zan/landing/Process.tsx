@@ -5,7 +5,7 @@ import { ProcessTrack } from "./ProcessTrack";
 export function Process() {
   const { process } = landingCopy;
   return (
-    <section id="process" className="scroll-mt-nav border-t border-line bg-paper py-[clamp(4rem,2.8rem+4.6vw,7rem)]">
+    <section id="process" className="scroll-mt-nav border-t border-border bg-surface-tint py-[clamp(4rem,2.8rem+4.6vw,7rem)]">
       <div className="container-zan">
         <SectionHeading eyebrow={process.eyebrow} title={process.title} lead={process.lead} size="h1" accentLine={1} />
         <ProcessTrack />

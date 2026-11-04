@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
    The page's buttons. Every call to action uses these, so a CTA looks and
    moves the same wherever it appears.
 
-   primary    brand gradient pill — the one main action per view
+   primary    navy pill (cyan in dark) — the one main action per view
    secondary  hairline outline on the page ground
    onBrand    for use ON a brand fill (the deck's gradient panels): a page-
               ground pill, because a brand pill on a brand panel disappears
@@ -28,12 +28,12 @@ const base =
 
 const variants: Record<ButtonVariant, string> = {
   primary:
-    "bg-brand-gradient text-on-brand shadow-[0_10px_24px_-12px_color-mix(in_oklab,var(--color-brand)_45%,transparent)] " +
-    "hover:-translate-y-0.5 hover:shadow-[0_14px_30px_-12px_color-mix(in_oklab,var(--color-brand)_60%,transparent)]",
+    "bg-action-gradient text-action-foreground shadow-[0_10px_24px_-12px_color-mix(in_oklab,var(--color-shadow)_45%,transparent)] " +
+    "hover:-translate-y-0.5 hover:shadow-[0_14px_30px_-12px_color-mix(in_oklab,var(--color-shadow)_60%,transparent)]",
   secondary:
-    "border border-line-strong bg-bg/75 text-ink backdrop-blur-sm hover:-translate-y-0.5 hover:border-ink",
-  onBrand: "bg-bg text-ink shadow-lift hover:-translate-y-0.5",
-  ghost: "px-0! text-ink hover:text-brand-ink",
+    "border border-border-strong bg-surface/75 text-foreground backdrop-blur-sm hover:-translate-y-0.5 hover:border-foreground",
+  onBrand: "bg-surface text-foreground shadow-lift hover:-translate-y-0.5",
+  ghost: "px-0! text-foreground hover:text-accent-ink",
 };
 
 const sizes: Record<ButtonSize, string> = {

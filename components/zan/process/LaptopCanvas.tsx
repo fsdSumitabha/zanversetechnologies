@@ -254,7 +254,7 @@ function Laptop({
       </group>
       {spin && (
         <group ref={shadowRef} position={[0, -1, 0]}>
-          <ContactShadows opacity={0.3} scale={5} blur={2.4} far={1.6} resolution={256} color={palette.ink} />
+          <ContactShadows opacity={0.3} scale={5} blur={2.4} far={1.6} resolution={256} color={palette.foreground} />
         </group>
       )}
     </>
@@ -268,7 +268,7 @@ function Lights({ palette }: { palette: BrandPalette }) {
       <directionalLight position={[3, 6, 5]} intensity={1.1} />
       {/* A local studio: light walls and softboxes, no remote HDR. */}
       <Environment resolution={256} frames={1}>
-        <color attach="background" args={[palette.line]} />
+        <color attach="background" args={[palette.border]} />
         <Lightformer form="rect" intensity={4} position={[0, 6, 0]} rotation-x={Math.PI / 2} scale={[12, 6, 1]} />
         <Lightformer form="rect" intensity={2.5} position={[-7, 2, 2]} rotation-y={Math.PI / 2} scale={[6, 8, 1]} />
         <Lightformer form="rect" intensity={2.5} position={[7, 2, 2]} rotation-y={-Math.PI / 2} scale={[6, 8, 1]} />
@@ -331,7 +331,7 @@ export default function LaptopCanvas({
         <Suspense fallback={null}>
           <Laptop progressRef={progressRef} step={step} palette={brandPalette} variant={variant} onReady={onReady} />
           {!spin && (
-            <ContactShadows position={[0, -0.95, 0]} opacity={0.32} scale={9} blur={2.6} far={2.4} color={brandPalette.ink} />
+            <ContactShadows position={[0, -0.95, 0]} opacity={0.32} scale={9} blur={2.6} far={2.4} color={brandPalette.foreground} />
           )}
         </Suspense>
       </Canvas>

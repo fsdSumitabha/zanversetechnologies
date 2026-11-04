@@ -16,13 +16,13 @@ import { cn } from "@/lib/utils";
 /** Slides and scales glide; `fill-box` makes an element turn around its own middle. */
 const MOVES = "transition-[translate,scale,rotate] duration-700 ease-out-expo [transform-box:fill-box] origin-center";
 
-const ink = "fill-ink/75";
-const rule = "fill-line-strong";
-const pale = "fill-surface-2";
-const gold = "fill-brand";
-const tint = "fill-brand-soft";
-const frame = "fill-bg stroke-line-strong";
-const hair = "fill-none stroke-line-strong";
+const ink = "fill-foreground/75";
+const rule = "fill-border-strong";
+const pale = "fill-surface-muted";
+const accent = "fill-accent";
+const tint = "fill-accent-soft";
+const frame = "fill-surface stroke-border-strong";
+const hair = "fill-none stroke-border-strong";
 
 function Bar({
   x,
@@ -91,7 +91,7 @@ function Screen({ x, y }: { x: number; y: number }) {
       <Bar x={x + 6} y={y + 67} w={42} />
       <rect x={x + 6} y={y + 76} width={22} height={18} rx={4} className={pale} />
       <rect x={x + 32} y={y + 76} width={22} height={18} rx={4} className={pale} />
-      <rect x={x + 6} y={y + 101} width={48} height={12} rx={6} className={gold} />
+      <rect x={x + 6} y={y + 101} width={48} height={12} rx={6} className={accent} />
     </g>
   );
 }
@@ -101,7 +101,7 @@ function Tick({ cx, cy, r = 8 }: { cx: number; cy: number; r?: number }) {
   return (
     <path
       d={`M${cx - r * 0.42} ${cy + r * 0.02}l${r * 0.3} ${r * 0.32} ${r * 0.56}-${r * 0.66}`}
-      className="fill-none stroke-on-brand"
+      className="fill-none stroke-accent-foreground"
       strokeWidth={1.8}
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -113,10 +113,10 @@ function SearchBox({ x, y, w }: { x: number; y: number; w: number }) {
   return (
     <g>
       <rect x={x} y={y} width={w} height={14} rx={7} className={pale} />
-      <circle cx={x + 9} cy={y + 6.6} r={2.8} className="fill-none stroke-ink/60" strokeWidth={1.3} />
+      <circle cx={x + 9} cy={y + 6.6} r={2.8} className="fill-none stroke-foreground/60" strokeWidth={1.3} />
       <path
         d={`M${x + 11} ${y + 8.8}l2.4 2.4`}
-        className="fill-none stroke-ink/60"
+        className="fill-none stroke-foreground/60"
         strokeWidth={1.3}
         strokeLinecap="round"
       />
@@ -125,7 +125,7 @@ function SearchBox({ x, y, w }: { x: number; y: number; w: number }) {
   );
 }
 
-function Star({ cx, cy, r = 4, className = gold }: { cx: number; cy: number; r?: number; className?: string }) {
+function Star({ cx, cy, r = 4, className = accent }: { cx: number; cy: number; r?: number; className?: string }) {
   const points = Array.from({ length: 10 }, (_, i) => {
     const radius = i % 2 ? r * 0.45 : r;
     const angle = (Math.PI / 5) * i - Math.PI / 2;
@@ -134,7 +134,7 @@ function Star({ cx, cy, r = 4, className = gold }: { cx: number; cy: number; r?:
   return <polygon points={points.join(" ")} className={className} />;
 }
 
-function Heart({ x, y, s = 1, className = gold }: { x: number; y: number; s?: number; className?: string }) {
+function Heart({ x, y, s = 1, className = accent }: { x: number; y: number; s?: number; className?: string }) {
   return (
     <path
       transform={`translate(${x} ${y}) scale(${s})`}
@@ -147,8 +147,8 @@ function Heart({ x, y, s = 1, className = gold }: { x: number; y: number; s?: nu
 function Play({ cx, cy, r = 11 }: { cx: number; cy: number; r?: number }) {
   return (
     <g>
-      <circle cx={cx} cy={cy} r={r} className={gold} />
-      <path d={`M${cx - r * 0.28} ${cy - r * 0.4}v${r * 0.8}l${r * 0.68}-${r * 0.4}Z`} className="fill-on-brand" />
+      <circle cx={cx} cy={cy} r={r} className={accent} />
+      <path d={`M${cx - r * 0.28} ${cy - r * 0.4}v${r * 0.8}l${r * 0.68}-${r * 0.4}Z`} className="fill-accent-foreground" />
     </g>
   );
 }
@@ -160,9 +160,9 @@ function Picture({ x, y, w, h }: { x: number; y: number; w: number; h: number })
       <rect x={x} y={y} width={w} height={h} rx={4} className={tint} />
       <path
         d={`M${x} ${y + h * 0.82}l${w * 0.3}-${h * 0.34} ${w * 0.2} ${h * 0.2} ${w * 0.22}-${h * 0.26} ${w * 0.28} ${h * 0.4}V${y + h - 4}a4 4 0 0 1-4 4H${x + 4}a4 4 0 0 1-4-4Z`}
-        className="fill-brand/45"
+        className="fill-accent/45"
       />
-      <circle cx={x + w * 0.74} cy={y + h * 0.26} r={Math.min(w, h) * 0.09} className={gold} />
+      <circle cx={x + w * 0.74} cy={y + h * 0.26} r={Math.min(w, h) * 0.09} className={accent} />
     </g>
   );
 }
@@ -176,20 +176,20 @@ const DRAWINGS: Record<PackageArtKey, () => ReactNode> = {
         <Bar x={62} y={64} w={54} h={7} className={ink} />
         <Bar x={62} y={82} w={74} />
         <Bar x={62} y={90} w={62} />
-        <rect x={62} y={104} width={46} height={13} rx={6.5} className={gold} />
+        <rect x={62} y={104} width={46} height={13} rx={6.5} className={accent} />
       </Browser>
       <g className={cn(MOVES, "group-hover/card:-translate-x-1 group-hover/card:-translate-y-1.5")}>
         <rect x={158} y={46} width={84} height={100} rx={7} className={frame} />
         <rect x={166} y={55} width={68} height={12} rx={4} className={pale} />
         <rect x={166} y={72} width={68} height={12} rx={4} className={pale} />
         <rect x={166} y={89} width={68} height={22} rx={4} className={pale} />
-        <rect x={166} y={118} width={68} height={17} rx={8.5} className={gold} />
+        <rect x={166} y={118} width={68} height={17} rx={8.5} className={accent} />
       </g>
       <g className={cn(MOVES, "group-hover/card:scale-115")}>
         <circle cx={258} cy={150} r={13} className="fill-whatsapp" />
         <path
           d="M252 150a6 6 0 1 1 3 5.2l-3.4.9.9-3.3a6 6 0 0 1-.5-2.8Z"
-          className="fill-none stroke-bg"
+          className="fill-none stroke-surface"
           strokeWidth={1.5}
           strokeLinejoin="round"
         />
@@ -216,11 +216,11 @@ const DRAWINGS: Record<PackageArtKey, () => ReactNode> = {
       </g>
       <Browser x={58} y={50} w={118} h={112}>
         <rect x={68} y={72} width={98} height={38} rx={5} className={tint} />
-        <path d="M68 104l24-16 16 10 18-14 40 26H68Z" className="fill-brand/45" />
-        <circle cx={146} cy={82} r={5} className={gold} />
+        <path d="M68 104l24-16 16 10 18-14 40 26H68Z" className="fill-accent/45" />
+        <circle cx={146} cy={82} r={5} className={accent} />
         <Bar x={68} y={118} w={62} h={5} className={ink} />
         <Bar x={68} y={129} w={92} />
-        <rect x={68} y={140} width={36} height={12} rx={6} className={gold} />
+        <rect x={68} y={140} width={36} height={12} rx={6} className={accent} />
       </Browser>
     </>
   ),
@@ -228,7 +228,7 @@ const DRAWINGS: Record<PackageArtKey, () => ReactNode> = {
   /* A company's front door, with the numbers behind it. The bars grow on hover. */
   "business-site": () => (
     <Browser x={40} y={20} w={240} h={140}>
-      <circle cx={54} cy={46} r={5} className={gold} />
+      <circle cx={54} cy={46} r={5} className={accent} />
       <Bar x={190} y={44} w={18} />
       <Bar x={214} y={44} w={18} />
       <Bar x={238} y={44} w={28} />
@@ -236,14 +236,14 @@ const DRAWINGS: Record<PackageArtKey, () => ReactNode> = {
       <Bar x={54} y={78} w={62} h={7} className={ink} />
       <Bar x={54} y={94} w={88} />
       <Bar x={54} y={102} w={72} />
-      <rect x={54} y={116} width={42} height={13} rx={6.5} className={gold} />
-      <rect x={160} y={60} width={106} height={86} rx={6} className="fill-surface stroke-line" />
+      <rect x={54} y={116} width={42} height={13} rx={6.5} className={accent} />
+      <rect x={160} y={60} width={106} height={86} rx={6} className="fill-surface-muted stroke-border" />
       {[
         { x: 171, h: 20, c: rule },
         { x: 188, h: 32, c: rule },
         { x: 205, h: 26, c: rule },
-        { x: 222, h: 44, c: "fill-brand/55" },
-        { x: 239, h: 60, c: gold },
+        { x: 222, h: 44, c: "fill-accent/55" },
+        { x: 239, h: 60, c: accent },
       ].map((b) => (
         <rect
           key={b.x}
@@ -272,17 +272,17 @@ const DRAWINGS: Record<PackageArtKey, () => ReactNode> = {
               <g key={`${col}-${row}`}>
                 <rect x={x} y={y} width={66} height={30} rx={4} className={lit ? tint : pale} />
                 <Bar x={x} y={y + 35} w={38} className={lit ? ink : rule} />
-                {lit && <rect x={x + 44} y={y + 33} width={22} height={8} rx={4} className={gold} />}
+                {lit && <rect x={x + 44} y={y + 33} width={22} height={8} rx={4} className={accent} />}
               </g>
             );
           }),
         )}
       </Browser>
       <g className={cn(MOVES, "group-hover/card:scale-125")}>
-        <circle cx={262} cy={46} r={10} className={gold} />
+        <circle cx={262} cy={46} r={10} className={accent} />
         <path
           d="M258 43h1.4l1.2 6h5.2l1-4.4h-6.6"
-          className="fill-none stroke-on-brand"
+          className="fill-none stroke-accent-foreground"
           strokeWidth={1.2}
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -301,7 +301,7 @@ const DRAWINGS: Record<PackageArtKey, () => ReactNode> = {
           width={52}
           height={106}
           rx={9}
-          className="fill-none stroke-line-strong"
+          className="fill-none stroke-border-strong"
           strokeDasharray="4 4"
         />
       </g>
@@ -312,7 +312,7 @@ const DRAWINGS: Record<PackageArtKey, () => ReactNode> = {
           width={52}
           height={106}
           rx={9}
-          className="fill-none stroke-line-strong"
+          className="fill-none stroke-border-strong"
           strokeDasharray="4 4"
         />
       </g>
@@ -337,10 +337,10 @@ const DRAWINGS: Record<PackageArtKey, () => ReactNode> = {
         </Phone>
       </g>
       <g className={cn(MOVES, "group-hover/card:scale-110")}>
-        <rect x={140} y={76} width={40} height={28} rx={14} className={gold} />
+        <rect x={140} y={76} width={40} height={28} rx={14} className={accent} />
         <path
           d="M154 85l-5 5 5 5m12-10 5 5-5 5m-4-11-4 12"
-          className="fill-none stroke-on-brand"
+          className="fill-none stroke-accent-foreground"
           strokeWidth={1.6}
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -358,16 +358,16 @@ const DRAWINGS: Record<PackageArtKey, () => ReactNode> = {
       {[0, 1, 2].map((i) => (
         <g key={i}>
           <rect x={186} y={36 + i * 38} width={78} height={30} rx={6} className={frame} />
-          <circle cx={198} cy={51 + i * 38} r={2.5} className={i === 0 ? gold : rule} />
+          <circle cx={198} cy={51 + i * 38} r={2.5} className={i === 0 ? accent : rule} />
           <Bar x={206} y={49 + i * 38} w={46} />
         </g>
       ))}
       <path d="M122 90h64" className={hair} strokeDasharray="3 3" />
       <g className={cn(MOVES, "group-hover/card:-translate-y-1 group-hover/card:scale-110")}>
-        <path d="M154 70l15 5.5v12c0 10-6.4 16.6-15 20-8.6-3.4-15-10-15-20v-12L154 70Z" className={gold} />
+        <path d="M154 70l15 5.5v12c0 10-6.4 16.6-15 20-8.6-3.4-15-10-15-20v-12L154 70Z" className={accent} />
         <path
           d="m147.5 89 4.6 4.6 8.4-9"
-          className="fill-none stroke-on-brand"
+          className="fill-none stroke-accent-foreground"
           strokeWidth={2}
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -383,23 +383,23 @@ const DRAWINGS: Record<PackageArtKey, () => ReactNode> = {
         <Screen x={70} y={28} />
       </Phone>
       <g className={cn(MOVES, "group-hover/card:rotate-90")}>
-        <path d="M188 60a30 30 0 0 1 49 12" className="fill-none stroke-brand" strokeWidth={3} strokeLinecap="round" />
+        <path d="M188 60a30 30 0 0 1 49 12" className="fill-none stroke-accent" strokeWidth={3} strokeLinecap="round" />
         <path
           d="M242 62l-4 11-10-5"
-          className="fill-none stroke-brand"
+          className="fill-none stroke-accent"
           strokeWidth={3}
           strokeLinecap="round"
           strokeLinejoin="round"
         />
         <path
           d="M240 90a30 30 0 0 1-49-12"
-          className="fill-none stroke-line-strong"
+          className="fill-none stroke-border-strong"
           strokeWidth={3}
           strokeLinecap="round"
         />
         <path
           d="M186 88l4-11 10 5"
-          className="fill-none stroke-line-strong"
+          className="fill-none stroke-border-strong"
           strokeWidth={3}
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -407,7 +407,7 @@ const DRAWINGS: Record<PackageArtKey, () => ReactNode> = {
       </g>
       <path d="M162 134h92" className={hair} />
       {[0, 1, 2, 3].map((i) => (
-        <circle key={i} cx={170 + i * 26} cy={134} r={4.5} className={i === 3 ? gold : "fill-bg stroke-line-strong"} />
+        <circle key={i} cx={170 + i * 26} cy={134} r={4.5} className={i === 3 ? accent : "fill-surface stroke-border-strong"} />
       ))}
     </>
   ),
@@ -426,8 +426,8 @@ const DRAWINGS: Record<PackageArtKey, () => ReactNode> = {
         </g>
       ))}
       <g className={cn(MOVES, "group-hover/card:-translate-y-1 group-hover/card:scale-[1.03]")}>
-        <rect x={60} y={64} width={200} height={36} rx={6} className="fill-brand-soft stroke-brand/40" />
-        <circle cx={76} cy={82} r={9} className={gold} />
+        <rect x={60} y={64} width={200} height={36} rx={6} className="fill-accent-soft stroke-accent/40" />
+        <circle cx={76} cy={82} r={9} className={accent} />
         <Tick cx={76} cy={82} r={9} />
         <Bar x={93} y={74} w={94} h={5} className={ink} />
         <Bar x={93} y={85} w={150} />
@@ -446,8 +446,8 @@ const DRAWINGS: Record<PackageArtKey, () => ReactNode> = {
       <Bar x={66} y={94} w={188} />
       <Bar x={66} y={108} w={52} />
       <g className={cn(MOVES, "group-hover/card:scale-110")}>
-        <rect x={124} y={102} width={72} height={16} rx={8} className={gold} />
-        <Bar x={134} y={108} w={52} h={4} className="fill-on-brand/70" />
+        <rect x={124} y={102} width={72} height={16} rx={8} className={accent} />
+        <Bar x={134} y={108} w={52} h={4} className="fill-accent-foreground/70" />
       </g>
       <Bar x={202} y={108} w={52} />
       <Bar x={66} y={126} w={172} />
@@ -459,24 +459,24 @@ const DRAWINGS: Record<PackageArtKey, () => ReactNode> = {
   "search-bundle": () => (
     <>
       <g className={cn(MOVES, "group-hover/card:translate-y-1")}>
-        <circle cx={160} cy={62} r={42} className="fill-brand/20 stroke-line-strong" />
-        <text x={160} y={46} textAnchor="middle" className="fill-ink/70 font-mono text-[10px]">
+        <circle cx={160} cy={62} r={42} className="fill-accent/20 stroke-border-strong" />
+        <text x={160} y={46} textAnchor="middle" className="fill-foreground/70 font-mono text-[10px]">
           SEO
         </text>
       </g>
       <g className={cn(MOVES, "group-hover/card:translate-x-1 group-hover/card:-translate-y-0.5")}>
-        <circle cx={126} cy={116} r={42} className="fill-brand/20 stroke-line-strong" />
-        <text x={108} y={132} textAnchor="middle" className="fill-ink/70 font-mono text-[10px]">
+        <circle cx={126} cy={116} r={42} className="fill-accent/20 stroke-border-strong" />
+        <text x={108} y={132} textAnchor="middle" className="fill-foreground/70 font-mono text-[10px]">
           AEO
         </text>
       </g>
       <g className={cn(MOVES, "group-hover/card:-translate-x-1 group-hover/card:-translate-y-0.5")}>
-        <circle cx={194} cy={116} r={42} className="fill-brand/20 stroke-line-strong" />
-        <text x={212} y={132} textAnchor="middle" className="fill-ink/70 font-mono text-[10px]">
+        <circle cx={194} cy={116} r={42} className="fill-accent/20 stroke-border-strong" />
+        <text x={212} y={132} textAnchor="middle" className="fill-foreground/70 font-mono text-[10px]">
           GEO
         </text>
       </g>
-      <circle cx={160} cy={97} r={13} className={gold} />
+      <circle cx={160} cy={97} r={13} className={accent} />
       <Tick cx={160} cy={97} r={13} />
     </>
   ),
@@ -487,19 +487,19 @@ const DRAWINGS: Record<PackageArtKey, () => ReactNode> = {
       <g className={cn(MOVES, "group-hover/card:translate-x-1.5")}>
         <rect x={50} y={58} width={70} height={16} rx={8} className={frame} />
         <Bar x={60} y={64} w={46} />
-        <rect x={66} y={82} width={54} height={16} rx={8} className="fill-brand-soft stroke-brand/40" />
-        <Bar x={76} y={88} w={32} className="fill-brand-ink/60" />
+        <rect x={66} y={82} width={54} height={16} rx={8} className="fill-accent-soft stroke-accent/40" />
+        <Bar x={76} y={88} w={32} className="fill-accent-ink/60" />
         <rect x={58} y={106} width={62} height={16} rx={8} className={frame} />
         <Bar x={68} y={112} w={40} />
       </g>
       <Phone x={130} y={26}>
-        <rect x={137} y={41} width={18} height={18} rx={5} className={gold} />
+        <rect x={137} y={41} width={18} height={18} rx={5} className={accent} />
         <Bar x={159} y={44} w={24} h={4} className={ink} />
         <Bar x={159} y={53} w={18} />
         {[0, 1, 2, 3, 4].map((i) => (
           <Star key={i} cx={141 + i * 9.5} cy={69} r={3.8} />
         ))}
-        <rect x={137} y={78} width={46} height={12} rx={6} className={gold} />
+        <rect x={137} y={78} width={46} height={12} rx={6} className={accent} />
         <rect x={137} y={96} width={21} height={44} rx={3} className={tint} />
         <rect x={162} y={96} width={21} height={44} rx={3} className={pale} />
       </Phone>
@@ -518,9 +518,9 @@ const DRAWINGS: Record<PackageArtKey, () => ReactNode> = {
   "google-ads": () => (
     <Browser x={48} y={20} w={224} h={140}>
       <SearchBox x={60} y={42} w={168} />
-      <rect x={60} y={64} width={200} height={36} rx={6} className="fill-brand-soft stroke-brand/40" />
-      <rect x={69} y={72} width={20} height={11} rx={3} className={gold} />
-      <text x={79} y={80.5} textAnchor="middle" className="fill-on-brand font-mono text-[7.5px] font-semibold">
+      <rect x={60} y={64} width={200} height={36} rx={6} className="fill-accent-soft stroke-accent/40" />
+      <rect x={69} y={72} width={20} height={11} rx={3} className={accent} />
+      <text x={79} y={80.5} textAnchor="middle" className="fill-accent-foreground font-mono text-[7.5px] font-semibold">
         Ad
       </text>
       <Bar x={95} y={75} w={112} h={5} className={ink} />
@@ -530,9 +530,9 @@ const DRAWINGS: Record<PackageArtKey, () => ReactNode> = {
       <Bar x={60} y={136} w={96} className={rule} />
       <Bar x={60} y={144} w={120} className={pale} />
       <g className={cn(MOVES, "group-hover/card:scale-115")}>
-        <circle cx={238} cy={132} r={19} className="fill-bg stroke-line-strong" />
+        <circle cx={238} cy={132} r={19} className="fill-surface stroke-border-strong" />
         <circle cx={238} cy={132} r={12} className={tint} />
-        <circle cx={238} cy={132} r={5} className={gold} />
+        <circle cx={238} cy={132} r={5} className={accent} />
       </g>
     </Browser>
   ),
@@ -546,7 +546,7 @@ const DRAWINGS: Record<PackageArtKey, () => ReactNode> = {
         <Picture x={78} y={56} w={48} h={46} />
         <Bar x={78} y={108} w={40} />
         <Bar x={78} y={115} w={30} />
-        <rect x={78} y={125} width={48} height={15} rx={7.5} className={gold} />
+        <rect x={78} y={125} width={48} height={15} rx={7.5} className={accent} />
       </Phone>
       <path d="M132 132C164 132 158 86 186 86" className={hair} strokeDasharray="3 3" />
       <g className={cn(MOVES, "group-hover/card:scale-105")}>
@@ -574,9 +574,9 @@ const DRAWINGS: Record<PackageArtKey, () => ReactNode> = {
         </g>
       ))}
       <g className={cn(MOVES, "group-hover/card:-translate-y-1.5 group-hover/card:scale-105")}>
-        <rect x={120} y={22} width={80} height={34} rx={8} className={gold} />
-        <circle cx={137} cy={39} r={7.5} className="fill-on-brand/75" />
-        <Bar x={150} y={36} w={40} h={5} className="fill-on-brand/75" />
+        <rect x={120} y={22} width={80} height={34} rx={8} className={accent} />
+        <circle cx={137} cy={39} r={7.5} className="fill-accent-foreground/75" />
+        <Bar x={150} y={36} w={40} h={5} className="fill-accent-foreground/75" />
       </g>
     </>
   ),
@@ -586,19 +586,19 @@ const DRAWINGS: Record<PackageArtKey, () => ReactNode> = {
     <>
       <path d="M46 28h156l-17 28H63Z" className={rule} />
       <path d="M67 60h114l-15 28H82Z" className={tint} />
-      <path d="M86 92h76l-13 28H99Z" className="fill-brand/55" />
+      <path d="M86 92h76l-13 28H99Z" className="fill-accent/55" />
       <g className={cn(MOVES, "group-hover/card:translate-y-1.5")}>
-        <path d="M103 124h42l-8 28h-26Z" className={gold} />
+        <path d="M103 124h42l-8 28h-26Z" className={accent} />
       </g>
       <rect x={214} y={42} width={66} height={102} rx={8} className={frame} />
       <Bar x={224} y={54} w={36} h={4} className={ink} />
       <path
         d="M224 122c12-4 16-20 26-22s12-14 20-24"
-        className="fill-none stroke-brand"
+        className="fill-none stroke-accent"
         strokeWidth={2.5}
         strokeLinecap="round"
       />
-      <circle cx={270} cy={76} r={3.5} className={gold} />
+      <circle cx={270} cy={76} r={3.5} className={accent} />
       <Bar x={224} y={130} w={44} />
     </>
   ),
@@ -622,7 +622,7 @@ const DRAWINGS: Record<PackageArtKey, () => ReactNode> = {
             width={20}
             height={20}
             rx={4}
-            className={cn(lit ? gold : pale, lit && MOVES, lit && "group-hover/card:scale-110")}
+            className={cn(lit ? accent : pale, lit && MOVES, lit && "group-hover/card:scale-110")}
           />
         );
       })}
@@ -638,13 +638,13 @@ const DRAWINGS: Record<PackageArtKey, () => ReactNode> = {
         <Bar x={110} y={119} w={34} className={ink} />
         <Bar x={110} y={127} w={48} />
         {[0, 1, 2].map((i) => (
-          <circle key={i} cx={124 + i * 10} cy={139} r={2.2} className={i === 0 ? gold : rule} />
+          <circle key={i} cx={124 + i * 10} cy={139} r={2.2} className={i === 0 ? accent : rule} />
         ))}
       </Phone>
       <g className={cn(MOVES, "group-hover/card:-translate-y-2")}>
         <Heart x={196} y={52} s={1.5} />
-        <Heart x={228} y={80} s={1} className="fill-brand/55" />
-        <Heart x={186} y={92} s={0.8} className="fill-brand/35" />
+        <Heart x={228} y={80} s={1} className="fill-accent/55" />
+        <Heart x={186} y={92} s={0.8} className="fill-accent/35" />
       </g>
       <rect x={180} y={116} width={82} height={28} rx={14} className={frame} />
       <circle cx={196} cy={130} r={6} className={pale} />
@@ -683,13 +683,13 @@ const DRAWINGS: Record<PackageArtKey, () => ReactNode> = {
     <>
       <rect x={100} y={34} width={38} height={18} rx={4} className={frame} />
       <rect x={60} y={46} width={156} height={100} rx={13} className={frame} />
-      <circle cx={138} cy={96} r={38} className="fill-surface-2 stroke-line-strong" />
+      <circle cx={138} cy={96} r={38} className="fill-surface-muted stroke-border-strong" />
       <g className={cn(MOVES, "group-hover/card:scale-110")}>
         <circle cx={138} cy={96} r={26} className={tint} />
         <circle cx={138} cy={96} r={15} className={ink} />
-        <circle cx={144} cy={90} r={4.5} className={gold} />
+        <circle cx={144} cy={90} r={4.5} className={accent} />
       </g>
-      <rect x={190} y={58} width={16} height={10} rx={3} className={gold} />
+      <rect x={190} y={58} width={16} height={10} rx={3} className={accent} />
       <rect x={232} y={36} width={34} height={118} rx={5} className={frame} />
       {[0, 1, 2, 3].map((i) => (
         <rect key={i} x={238} y={43 + i * 27} width={22} height={21} rx={2.5} className={i === 1 ? tint : pale} />
@@ -712,9 +712,9 @@ const DRAWINGS: Record<PackageArtKey, () => ReactNode> = {
         </g>
       ))}
       <g className={cn(MOVES, "group-hover/card:-translate-x-1 group-hover/card:-translate-y-1")}>
-        <path d="M193 133l15 15" className="fill-none stroke-ink/75" strokeWidth={5} strokeLinecap="round" />
-        <circle cx={172} cy={113} r={27} className="fill-bg/55 stroke-ink/75" strokeWidth={3} />
-        <circle cx={172} cy={113} r={12} className={gold} />
+        <path d="M193 133l15 15" className="fill-none stroke-foreground/75" strokeWidth={5} strokeLinecap="round" />
+        <circle cx={172} cy={113} r={27} className="fill-surface/55 stroke-foreground/75" strokeWidth={3} />
+        <circle cx={172} cy={113} r={12} className={accent} />
         <Tick cx={172} cy={113} r={12} />
       </g>
     </>
@@ -735,10 +735,10 @@ const DRAWINGS: Record<PackageArtKey, () => ReactNode> = {
       <Bar x={136} y={108} w={44} />
       <Bar x={136} y={118} w={30} />
       <g className={cn(MOVES, "group-hover/card:-translate-y-1.5 group-hover/card:scale-105")}>
-        <rect x={210} y={46} width={66} height={88} rx={9} className="fill-brand-soft stroke-brand/40" />
-        <circle cx={243} cy={80} r={17} className={gold} />
+        <rect x={210} y={46} width={66} height={88} rx={9} className="fill-accent-soft stroke-accent/40" />
+        <circle cx={243} cy={80} r={17} className={accent} />
         <Tick cx={243} cy={80} r={17} />
-        <Bar x={222} y={110} w={42} className="fill-brand-ink/60" />
+        <Bar x={222} y={110} w={42} className="fill-accent-ink/60" />
       </g>
     </>
   ),
@@ -756,13 +756,13 @@ const DRAWINGS: Record<PackageArtKey, () => ReactNode> = {
       <path d="m166 87 6 5-6 5" className={hair} strokeLinecap="round" strokeLinejoin="round" />
       <g className={cn(MOVES, "group-hover/card:-translate-x-1")}>
         <Phone x={182} y={26}>
-          <rect x={188} y={41} width={20} height={11} rx={3} className={gold} />
-          <text x={198} y={49.5} textAnchor="middle" className="fill-on-brand font-mono text-[7.5px] font-semibold">
+          <rect x={188} y={41} width={20} height={11} rx={3} className={accent} />
+          <text x={198} y={49.5} textAnchor="middle" className="fill-accent-foreground font-mono text-[7.5px] font-semibold">
             Ad
           </text>
           <Picture x={188} y={58} w={48} h={46} />
           <Bar x={188} y={111} w={38} />
-          <rect x={188} y={122} width={48} height={18} rx={9} className={gold} />
+          <rect x={188} y={122} width={48} height={18} rx={9} className={accent} />
         </Phone>
       </g>
     </>
@@ -772,11 +772,11 @@ const DRAWINGS: Record<PackageArtKey, () => ReactNode> = {
   "creator-attribution": () => (
     <>
       <rect x={50} y={24} width={220} height={132} rx={10} className={frame} />
-      <path d="M66 74H254M66 104H254M66 134H254" className="fill-none stroke-line" />
-      <path d="M68 134c26-6 38-22 62-26s38-18 60-32 40-22 60-30V134Z" className="fill-brand/15" />
+      <path d="M66 74H254M66 104H254M66 134H254" className="fill-none stroke-border" />
+      <path d="M68 134c26-6 38-22 62-26s38-18 60-32 40-22 60-30V134Z" className="fill-accent/15" />
       <path
         d="M68 134c26-6 38-22 62-26s38-18 60-32 40-22 60-30"
-        className="fill-none stroke-brand"
+        className="fill-none stroke-accent"
         strokeWidth={3}
         strokeLinecap="round"
       />
@@ -784,18 +784,18 @@ const DRAWINGS: Record<PackageArtKey, () => ReactNode> = {
         [130, 108],
         [190, 76],
       ].map(([cx, cy]) => (
-        <circle key={cx} cx={cx} cy={cy} r={4} className="fill-bg stroke-brand" strokeWidth={2} />
+        <circle key={cx} cx={cx} cy={cy} r={4} className="fill-surface stroke-accent" strokeWidth={2} />
       ))}
-      <circle cx={250} cy={46} r={6} className={gold} />
+      <circle cx={250} cy={46} r={6} className={accent} />
       <g className={cn(MOVES, "group-hover/card:scale-110")}>
         <rect x={62} y={36} width={78} height={22} rx={11} className={tint} />
         <path
           d="M76 50.5l-1 1a3 3 0 0 1-4.2-4.2l2.4-2.4a3 3 0 0 1 4.2 0M75.6 42.5l1-1a3 3 0 0 1 4.2 4.2l-2.4 2.4a3 3 0 0 1-4.2 0"
-          className="fill-none stroke-brand-ink"
+          className="fill-none stroke-accent-ink"
           strokeWidth={1.5}
           strokeLinecap="round"
         />
-        <Bar x={90} y={45} w={40} className="fill-brand-ink/60" />
+        <Bar x={90} y={45} w={40} className="fill-accent-ink/60" />
       </g>
     </>
   ),

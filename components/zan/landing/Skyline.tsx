@@ -7,14 +7,14 @@ import { useMediaQuery } from "@/components/zan/shell/shellStore";
 import { MQ } from "@/lib/gsap";
 
 /**
- * Dubai at the close of the page, in the brand's gold: the Burj Khalifa to the
+ * Dubai at the close of the page, in the brand's blue: the Burj Khalifa to the
  * centre, the Burj Al Arab to the right, open sky above them to rise out of the
  * section's ground. It rises a little further as the reader arrives, which is
  * the only movement on it.
  *
  * The artwork is the site's own skyline (/images/uae/uae_landscape.webp): its
  * baked-in map pin retouched out, its uneven sky flattened and the whole mapped
- * onto the gold ramp. On a phone `object-cover` keeps the two landmarks in the
+ * onto a single ramp that landing.css turns to blue. On a phone `object-cover` keeps the two landmarks in the
  * frame rather than a slice of water, by anchoring to the right of centre.
  */
 export function Skyline() {

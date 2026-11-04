@@ -306,10 +306,10 @@ function MorphStage() {
               className="zan-tech-card absolute left-0 top-0 size-10 opacity-0 will-change-transform md:size-[60px]"
             >
               <div className="zan-tech-card-inner relative size-full">
-                <div className="zan-tech-face absolute inset-0 rounded-xl bg-bg p-1.5 shadow-lift ring-1 ring-line md:rounded-2xl md:p-2.5">
+                <div className="zan-tech-face absolute inset-0 rounded-xl bg-plate p-1.5 shadow-lift ring-1 ring-border md:rounded-2xl md:p-2.5">
                   <Plate src={tool.src} />
                 </div>
-                <div className="zan-tech-face zan-tech-back absolute inset-0 flex flex-col items-center justify-center rounded-xl bg-brand-gradient px-1 text-center text-on-brand md:rounded-2xl">
+                <div className="zan-tech-face zan-tech-back absolute inset-0 flex flex-col items-center justify-center rounded-xl bg-action-gradient px-1 text-center text-action-foreground md:rounded-2xl">
                   <span className="text-[7px] font-semibold leading-tight md:text-[9px]">{tool.name}</span>
                   {tool.domain && (
                     <span className="mt-0.5 font-mono text-[5.5px] uppercase leading-none tracking-[0.12em] md:text-[7px]">
@@ -340,7 +340,7 @@ function StaticTech() {
       <Heading />
       <ul aria-hidden="true" className="mx-auto mt-12 flex max-w-4xl flex-wrap justify-center gap-3">
         {TOOLS.map((tool) => (
-          <li key={tool.name} className="relative size-14 rounded-2xl bg-bg p-2.5 shadow-lift ring-1 ring-line">
+          <li key={tool.name} className="relative size-14 rounded-2xl bg-plate p-2.5 shadow-lift ring-1 ring-border">
             <Plate src={tool.src} />
           </li>
         ))}

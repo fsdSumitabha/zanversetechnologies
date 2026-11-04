@@ -25,7 +25,7 @@
   }
 }
 
-/* A form a call to action has just pointed at: one gold ring, opening outwards. */
+/* A form a call to action has just pointed at: one cyan ring, opening outwards. */
 [data-lp-form][data-attention] {
   animation: zan-lp-attention 1.3s var(--ease-smooth);
 }
@@ -33,12 +33,12 @@
 @keyframes zan-lp-attention {
   from {
     box-shadow:
-      0 0 0 0 color-mix(in oklab, var(--color-brand) 75%, transparent),
+      0 0 0 0 color-mix(in oklab, var(--color-accent) 75%, transparent),
       var(--shadow-float);
   }
   to {
     box-shadow:
-      0 0 0 22px color-mix(in oklab, var(--color-brand) 0%, transparent),
+      0 0 0 22px color-mix(in oklab, var(--color-accent) 0%, transparent),
       var(--shadow-float);
   }
 }
@@ -46,7 +46,7 @@
 /* The small drawing boards the package art sits on: the hero's grid, at the
    scale of a card, fading out so it has no hard edge against the card. */
 .zan-lp-board {
-  --zan-lp-rule: color-mix(in oklab, var(--color-ink) 6%, transparent);
+  --zan-lp-rule: color-mix(in oklab, var(--color-foreground) 6%, transparent);
   background-image:
     linear-gradient(to right, var(--zan-lp-rule) 1px, transparent 1px),
     linear-gradient(to bottom, var(--zan-lp-rule) 1px, transparent 1px);
@@ -60,4 +60,13 @@
 .zan-lp-skyline {
   -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 38%, black 88%, transparent 100%);
   mask-image: linear-gradient(to bottom, transparent 0%, black 38%, black 88%, transparent 100%);
+}
+/* The file is mapped onto a single gold ramp, so one hue turn carries the whole
+   picture onto the brand's blue. An image cannot read a token; this filter is
+   the one place the picture's colour is set. */
+.zan-lp-skyline img {
+  filter: hue-rotate(158deg) saturate(0.8);
+}
+.dark .zan-lp-skyline img {
+  filter: hue-rotate(158deg) saturate(0.8) brightness(0.5);
 }

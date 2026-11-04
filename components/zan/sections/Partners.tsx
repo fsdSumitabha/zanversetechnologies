@@ -14,7 +14,7 @@ import { clients, ctas, partnersIntro, type Client } from "@/constants/zan";
 export function Plate({ client, echo = false }: { client: Client; echo?: boolean }) {
   return (
     <figure className="group/plate flex w-48 flex-col items-center sm:w-56 lg:w-64">
-      <div className="relative h-32 w-full overflow-hidden rounded-2xl border border-line bg-bg shadow-lift transition-[translate,box-shadow] duration-500 ease-out-expo group-hover/plate:-translate-y-1.5 group-hover/plate:shadow-float sm:h-36 lg:h-44">
+      <div className="relative h-32 w-full overflow-hidden rounded-2xl border border-border bg-plate shadow-lift transition-[translate,box-shadow] duration-500 ease-out-expo group-hover/plate:-translate-y-1.5 group-hover/plate:shadow-float sm:h-36 lg:h-44">
         <Image
           src={client.src}
           alt={echo ? "" : client.name}
@@ -23,7 +23,7 @@ export function Plate({ client, echo = false }: { client: Client; echo?: boolean
           className="scale-[1.28] object-contain"
         />
       </div>
-      <figcaption className="mt-3 max-w-full text-balance text-center text-[0.8125rem] leading-snug text-ink-2">
+      <figcaption className="mt-3 max-w-full text-balance text-center text-[0.8125rem] leading-snug text-muted">
         {client.sector}
       </figcaption>
     </figure>
@@ -34,7 +34,7 @@ export function Partners() {
   return (
     <section
       id="partners"
-      className="relative overflow-clip border-brand-gradient-t bg-brand-veil py-section"
+      className="relative overflow-clip border-accent-gradient-t bg-accent-veil py-section"
     >
       <div className="container-zan relative">
         <SectionHeading

@@ -123,7 +123,7 @@ export function SectionHeading({
           <span key={i} aria-hidden="true" className="-mb-[0.1em] block overflow-hidden pb-[0.1em]">
             <motion.span
               data-reveal
-              className={cn("block", i === accentLine && "text-brand-gradient")}
+              className={cn("block", i === accentLine && "text-accent-gradient")}
               variants={line}
               custom={i}
             >
@@ -136,7 +136,7 @@ export function SectionHeading({
       {lead && (
         <motion.p
           data-reveal
-          className={cn("mt-6 max-w-[54ch] text-lead text-ink-2", leadClassName)}
+          className={cn("mt-6 max-w-[54ch] text-lead text-muted", leadClassName)}
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={VIEWPORT}

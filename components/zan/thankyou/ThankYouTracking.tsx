@@ -48,7 +48,7 @@ export function ThankYouWhatsApp() {
       rel="noopener noreferrer"
       variant="secondary"
       icon={
-        <MessageCircle aria-hidden="true" className="size-4 shrink-0 text-whatsapp" strokeWidth={2} />
+        <MessageCircle aria-hidden="true" className="size-4 shrink-0 text-whatsapp-ink" strokeWidth={2} />
       }
     >
       Message us on WhatsApp

@@ -52,9 +52,9 @@ function page(body: string): string {
   const logoWidth = Math.round((logoHeight * site.logo.width) / site.logo.height);
   return `<!doctype html>
 <html lang="en">
-<body style="margin:0;padding:24px 16px;background:${palette.bg};color:${palette.ink};font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6">
+<body style="margin:0;padding:24px 16px;background:${palette.surface};color:${palette.foreground};font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6">
   <div style="max-width:560px;margin:0 auto">
-    <div style="padding-bottom:16px;border-bottom:3px solid ${palette.brand}">
+    <div style="padding-bottom:16px;border-bottom:3px solid ${palette.accent}">
       <img src="${site.url}${site.logo.png}" alt="${site.name}" width="${logoWidth}" height="${logoHeight}" style="display:block">
     </div>
     ${body}
@@ -90,8 +90,8 @@ export async function sendLeadNotification(lead: Lead): Promise<void> {
       ${rows
         .map(
           ([label, value]) => `<tr>
-        <td style="padding:8px 12px 8px 0;border-bottom:1px solid ${palette.line};font-weight:700;vertical-align:top;white-space:nowrap">${label}</td>
-        <td style="padding:8px 0;border-bottom:1px solid ${palette.line};word-break:break-word">${escapeHtml(value)}</td>
+        <td style="padding:8px 12px 8px 0;border-bottom:1px solid ${palette.border};font-weight:700;vertical-align:top;white-space:nowrap">${label}</td>
+        <td style="padding:8px 0;border-bottom:1px solid ${palette.border};word-break:break-word">${escapeHtml(value)}</td>
       </tr>`,
         )
         .join("\n      ")}
@@ -140,10 +140,10 @@ export async function sendLeadConfirmation(lead: Lead): Promise<void> {
     html: page(`
     <p style="margin:20px 0 12px">${name ? `Hello ${escapeHtml(name)},` : "Hello,"}</p>
     ${paragraphs.map((p) => `<p style="margin:0 0 12px">${p}</p>`).join("\n    ")}
-    <p style="margin:24px 0 0;padding-top:16px;border-top:1px solid ${palette.line};font-size:13px">
+    <p style="margin:24px 0 0;padding-top:16px;border-top:1px solid ${palette.border};font-size:13px">
       <strong>${site.name}</strong><br>
       ${address}, ${office.city}<br>
-      <a href="mailto:${site.email}" style="color:${palette.brandInk}">${site.email}</a>
+      <a href="mailto:${site.email}" style="color:${palette.accentInk}">${site.email}</a>
     </p>
     <p style="margin:12px 0 0;font-size:12px">${notYou}</p>`),
   });

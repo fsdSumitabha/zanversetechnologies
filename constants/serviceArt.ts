@@ -4,14 +4,14 @@
 
      · DRAWN PLATES, at the bottom of this file. Hand-drawn 160 x 100 SVG in
        ink and neutral greys on a transparent ground, nothing coloured, so the
-       card can multiply them into a plate tinted with the brand's gold
+       card can multiply them into a plate tinted with the brand's cyan
        (.zan-deck-plate in components/zan/services/deck.css). An <img> cannot
        read a CSS variable, so a colour baked into the file would sit outside
        the palette tokens and stay behind when they change. None of them
        carries one.
      · PHOTOGRAPHS, below. One per subject, 1200 x 750 JPEG under 120 KB,
        cropped with the subject in the middle so a cover crop never loses it.
-       A photograph cannot take the gold tint; a card showing one drops the
+       A photograph cannot take the cyan tint; a card showing one drops the
        tint and keeps the accent as a hairline instead.
 
    ── The photographs ────────────────────────────────────────────────────────
@@ -162,7 +162,7 @@ export function getReasonArt(id: string): CardArt | undefined {
    The other set. Same subjects, same keys, hand-drawn instead of shot: ink
    linework and neutral greys on a transparent ground, deliberately uncoloured
    so the card can tint them with the brand accent. Keep that rule for
-   anything added here: the gold lives in the palette tokens in globals.css,
+   anything added here: the cyan lives in the palette tokens in globals.css,
    and a drawing picks it up wherever it is placed only because it carries no
    colour of its own.
    ────────────────────────────────────────────────────────────────────────── */

@@ -22,7 +22,7 @@ export function ZanLogo({ className, eager = false }: { className?: string; eage
       height={site.logo.height}
       loading={eager ? "eager" : "lazy"}
       fetchPriority={eager ? "high" : undefined}
-      className={cn("h-8 w-auto select-none", className)}
+      className={cn("zan-logo h-8 w-auto select-none", className)}
       draggable={false}
     />
   );

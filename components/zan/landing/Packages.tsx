@@ -10,24 +10,24 @@ import { QuoteButton } from "./QuoteButton";
 function PackageCard({ item }: { item: LandingPackage }) {
   const copy = landingCopy.packages;
   return (
-    <article className="group/card flex h-full flex-col overflow-hidden rounded-3xl border border-line bg-bg transition-[border-color,box-shadow,translate] duration-500 ease-out-expo hover:-translate-y-1 hover:border-line-strong hover:shadow-float">
-      <div className="zan-lp-board relative aspect-[16/9] border-b border-line bg-surface">
+    <article className="group/card flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-surface transition-[border-color,box-shadow,translate] duration-500 ease-out-expo hover:-translate-y-1 hover:border-border-strong hover:shadow-float">
+      <div className="zan-lp-board relative aspect-[16/9] border-b border-border bg-surface-muted">
         <PackageArt name={item.art} />
         {item.popular && (
-          <span className="absolute top-3 left-3 rounded-full bg-brand-soft px-2.5 py-1.5 font-mono text-[0.625rem] leading-none tracking-[0.16em] text-brand-ink uppercase">
+          <span className="absolute top-3 left-3 rounded-full bg-accent-soft px-2.5 py-1.5 font-mono text-[0.625rem] leading-none tracking-[0.16em] text-accent-ink uppercase">
             {copy.popular}
           </span>
         )}
       </div>
 
       <div className="flex flex-1 flex-col p-6">
-        <h3 className="font-display text-h3 font-semibold text-ink">{item.title}</h3>
-        <p className="mt-2.5 text-small text-ink-2">{item.description}</p>
+        <h3 className="font-display text-h3 font-semibold text-foreground">{item.title}</h3>
+        <p className="mt-2.5 text-small text-muted">{item.description}</p>
 
-        <ul className="mt-5 space-y-2 border-t border-line pt-5">
+        <ul className="mt-5 space-y-2 border-t border-border pt-5">
           {item.includes.map((line) => (
-            <li key={line} className="flex items-start gap-2.5 text-small text-ink">
-              <Check aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-brand-ink" strokeWidth={2.2} />
+            <li key={line} className="flex items-start gap-2.5 text-small text-foreground">
+              <Check aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-accent-ink" strokeWidth={2.2} />
               {line}
             </li>
           ))}
@@ -70,7 +70,7 @@ function PackageGrid({ items }: { items: readonly LandingPackage[] }) {
  */
 export function Packages({ page }: { page: LandingPage }) {
   return (
-    <section id="services" className="scroll-mt-nav bg-bg py-[clamp(4rem,2.8rem+4.6vw,7rem)]">
+    <section id="services" className="scroll-mt-nav bg-canvas py-[clamp(4rem,2.8rem+4.6vw,7rem)]">
       <div className="container-zan">
         <SectionHeading
           eyebrow={landingCopy.packages.eyebrow}
@@ -88,8 +88,8 @@ export function Packages({ page }: { page: LandingPage }) {
               <Fragment key={deck.label}>
                 {deck.intro && (
                   <div className="mb-8">
-                    <p className="font-mono text-eyebrow text-brand-ink uppercase">{deck.intro.tagline}</p>
-                    <p className="mt-3 max-w-[70ch] text-body text-ink-2">{deck.intro.description}</p>
+                    <p className="font-mono text-eyebrow text-accent-ink uppercase">{deck.intro.tagline}</p>
+                    <p className="mt-3 max-w-[70ch] text-body text-muted">{deck.intro.description}</p>
                   </div>
                 )}
                 <PackageGrid items={deck.packages} />

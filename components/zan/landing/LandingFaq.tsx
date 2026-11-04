@@ -33,17 +33,17 @@ export function LandingFaq({ faqs }: { faqs: ReturnType<typeof splitFaqs> }) {
       <div className="grid gap-5 lg:grid-cols-2">
         {faqs.featured.map((item, i) => (
           <Reveal key={item.question} delay={i * 0.06} className="h-full">
-            <article className="flex h-full flex-col rounded-3xl border border-line bg-bg p-6 shadow-lift sm:p-8">
-              <span className="font-mono text-eyebrow text-brand-ink">{String(i + 1).padStart(2, "0")}</span>
-              <h3 className="mt-4 text-h3 text-ink">{item.question}</h3>
-              <p className="mt-3.5 text-body text-ink-2">{item.answer}</p>
+            <article className="flex h-full flex-col rounded-3xl border border-border bg-surface p-6 shadow-lift sm:p-8">
+              <span className="font-mono text-eyebrow text-accent-ink">{String(i + 1).padStart(2, "0")}</span>
+              <h3 className="mt-4 text-h3 text-foreground">{item.question}</h3>
+              <p className="mt-3.5 text-body text-muted">{item.answer}</p>
             </article>
           </Reveal>
         ))}
       </div>
 
       <Reveal className="mt-5">
-        <div className="overflow-hidden rounded-3xl border border-line bg-bg">
+        <div className="overflow-hidden rounded-3xl border border-border bg-surface">
           <button
             type="button"
             aria-expanded={open}
@@ -51,7 +51,7 @@ export function LandingFaq({ faqs }: { faqs: ReturnType<typeof splitFaqs> }) {
             onClick={() => setOpen((v) => !v)}
             className="group flex w-full items-center justify-between gap-4 px-6 py-5 text-left sm:px-8 sm:py-6"
           >
-            <span className="text-h3 text-ink transition-colors duration-300 group-hover:text-brand-ink">
+            <span className="text-h3 text-foreground transition-colors duration-300 group-hover:text-accent-ink">
               {open ? faq.less : faq.more(faqs.rest.length)}
             </span>
             <span
@@ -59,8 +59,8 @@ export function LandingFaq({ faqs }: { faqs: ReturnType<typeof splitFaqs> }) {
               className={cn(
                 "grid size-10 shrink-0 place-items-center rounded-full border transition-[background-color,border-color,color,transform] duration-500 ease-out-expo",
                 open
-                  ? "rotate-45 border-transparent bg-brand text-on-brand"
-                  : "border-line-strong bg-bg text-ink group-hover:border-ink",
+                  ? "rotate-45 border-transparent bg-accent text-accent-foreground"
+                  : "border-border-strong bg-surface text-foreground group-hover:border-foreground",
               )}
             >
               <Plus className="size-4" strokeWidth={2} />
@@ -83,13 +83,13 @@ export function LandingFaq({ faqs }: { faqs: ReturnType<typeof splitFaqs> }) {
       </Reveal>
 
       <Reveal className="mt-7 text-center">
-        <p className="text-body text-ink-2">
+        <p className="text-body text-muted">
           {faq.still}{" "}
           <Button
             variant="ghost"
             arrow={false}
             onClick={() => ask({ location: "faq" })}
-            className="h-auto align-baseline font-semibold text-brand-ink underline decoration-current/40 underline-offset-4 hover:decoration-current"
+            className="h-auto align-baseline font-semibold text-accent-ink underline decoration-current/40 underline-offset-4 hover:decoration-current"
           >
             {faq.ask}
           </Button>

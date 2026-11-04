@@ -18,7 +18,7 @@ export function ScrollProgress() {
   return (
     <motion.div
       aria-hidden="true"
-      className="pointer-events-none fixed inset-x-0 top-0 z-[55] h-[2px] origin-left bg-brand-gradient will-change-transform"
+      className="pointer-events-none fixed inset-x-0 top-0 z-[55] h-[2px] origin-left bg-accent-gradient will-change-transform"
       style={{ scaleX: reduce ? scrollYProgress : smooth }}
     />
   );

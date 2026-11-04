@@ -37,8 +37,8 @@ export function HeroActions() {
         rel="noopener noreferrer"
         variant="secondary"
         size="lg"
-        icon={<MessageCircle aria-hidden="true" className="size-[1.125rem] shrink-0 text-whatsapp" strokeWidth={2} />}
-        className={cn(SIZE, "bg-bg")}
+        icon={<MessageCircle aria-hidden="true" className="size-[1.125rem] shrink-0 text-whatsapp-ink" strokeWidth={2} />}
+        className={cn(SIZE, "bg-surface")}
       >
         <span className="hidden sm:inline">{hero.whatsapp.label}</span>
         <span className="sm:hidden">{hero.whatsapp.short}</span>

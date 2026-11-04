@@ -19,7 +19,7 @@ export function IndustriesIntro() {
         <div
           className="absolute inset-0"
           style={{
-            backgroundImage: "radial-gradient(color-mix(in oklab, var(--color-ink) 10%, transparent) 1px, transparent 1px)",
+            backgroundImage: "radial-gradient(color-mix(in oklab, var(--color-foreground) 10%, transparent) 1px, transparent 1px)",
             backgroundSize: "32px 32px",
             maskImage: "radial-gradient(ellipse at center, black 25%, transparent 78%)",
             WebkitMaskImage: "radial-gradient(ellipse at center, black 25%, transparent 78%)",
@@ -29,7 +29,7 @@ export function IndustriesIntro() {
           className="absolute inset-y-[18%] left-[clamp(1.25rem,4vw,3rem)] hidden w-px sm:block"
           style={{
             backgroundImage:
-              "linear-gradient(180deg, transparent 0%, var(--color-line-strong) 20%, var(--color-line-strong) 80%, transparent 100%)",
+              "linear-gradient(180deg, transparent 0%, var(--color-border-strong) 20%, var(--color-border-strong) 80%, transparent 100%)",
           }}
         />
         {BRACKETS.map((b) => (
@@ -38,7 +38,7 @@ export function IndustriesIntro() {
             width="18"
             height="18"
             viewBox="0 0 18 18"
-            className={`absolute text-brand-ink opacity-50 ${b.className}`}
+            className={`absolute text-accent-ink opacity-50 ${b.className}`}
             style={{ transform: `rotate(${b.rotate}deg)` }}
           >
             <path d="M1 7 L1 1 L7 1" stroke="currentColor" strokeWidth="1" fill="none" strokeLinecap="square" />

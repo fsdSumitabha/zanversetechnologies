@@ -23,7 +23,7 @@ const getServerSnapshot = () => false;
 /**
  * The light behind the contact heading: a quiet static wash, plus the
  * reference's WebGL light rays on desktop, kept restrained. A shader cannot
- * read the CSS tokens, so the rays take their gold from lib/brand.ts.
+ * read the CSS tokens, so the rays take their cyan from lib/brand.ts.
  */
 export function ContactRays() {
   const allowed = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
@@ -57,7 +57,7 @@ export function ContactRays() {
       {allowed && near && (
         <div className="zan-contact-rays absolute inset-0">
           <LightRays
-            color={brandPalette.brand}
+            color={brandPalette.accent}
             glow={brandPalette.glow}
             origin="top-center"
             speed={0.4}

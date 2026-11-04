@@ -65,7 +65,7 @@ export function MarkStage() {
           decoding="async"
           draggable={false}
           className={cn(
-            "zan-hero-mark-flat pointer-events-none absolute top-[11.5%] left-[11.5%] size-[77%] object-contain select-none",
+            "zan-mark zan-hero-mark-flat pointer-events-none absolute top-[11.5%] left-[11.5%] size-[77%] object-contain select-none",
             "transition-opacity duration-700 ease-out-expo",
             showing3D && "opacity-0",
           )}

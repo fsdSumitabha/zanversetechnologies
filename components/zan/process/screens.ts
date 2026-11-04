@@ -66,9 +66,9 @@ function strokeRR(ctx: Ctx, x: number, y: number, w: number, h: number, r: numbe
   ctx.stroke();
   ctx.setLineDash([]);
 }
-function card(ctx: Ctx, p: BrandPalette, x: number, y: number, w: number, h: number, fill: string = p.bg) {
+function card(ctx: Ctx, p: BrandPalette, x: number, y: number, w: number, h: number, fill: string = p.surface) {
   fillRR(ctx, x, y, w, h, 20, fill);
-  strokeRR(ctx, x, y, w, h, 20, p.line, 2);
+  strokeRR(ctx, x, y, w, h, 20, p.border, 2);
 }
 function bar(ctx: Ctx, x: number, y: number, w: number, h: number, color: string | CanvasGradient) {
   fillRR(ctx, x, y, w, h, h / 2, color);
@@ -87,12 +87,12 @@ function ring(ctx: Ctx, x: number, y: number, r: number, stroke: string, lw: num
   ctx.stroke();
 }
 function check(ctx: Ctx, x: number, y: number, r: number, p: BrandPalette) {
-  circle(ctx, x, y, r, p.brand);
+  circle(ctx, x, y, r, p.accent);
   ctx.beginPath();
   ctx.moveTo(x - r * 0.42, y + r * 0.02);
   ctx.lineTo(x - r * 0.1, y + r * 0.34);
   ctx.lineTo(x + r * 0.45, y - r * 0.3);
-  ctx.strokeStyle = p.onBrand;
+  ctx.strokeStyle = p.accentForeground;
   ctx.lineWidth = r * 0.26;
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
@@ -103,7 +103,7 @@ function spacing(ctx: Ctx, px: number) {
 }
 function label(ctx: Ctx, f: ScreenFonts, p: BrandPalette, text: string, x: number, y: number) {
   ctx.font = `500 13px ${f.mono}`;
-  ctx.fillStyle = rgba(p.ink, 0.5);
+  ctx.fillStyle = rgba(p.foreground, 0.5);
   ctx.textAlign = "left";
   spacing(ctx, 2.5);
   ctx.fillText(text.toUpperCase(), x, y);
@@ -123,18 +123,18 @@ function drawDiscovery(ctx: Ctx, step: ProcessStep, p: BrandPalette, f: ScreenFo
   card(ctx, p, 348, 216, 884, 196);
   label(ctx, f, p, "Roadmap", 376, 252);
   const xs = [420, 680, 940, 1190];
-  bar(ctx, xs[0], 300, xs[3] - xs[0], 6, p.line);
-  bar(ctx, xs[0], 300, xs[1] - xs[0], 6, p.brand);
+  bar(ctx, xs[0], 300, xs[3] - xs[0], 6, p.border);
+  bar(ctx, xs[0], 300, xs[1] - xs[0], 6, p.accent);
   xs.forEach((x, k) => {
     if (k === 0) {
-      circle(ctx, x, 303, 24, rgba(p.brand, 0.16));
-      circle(ctx, x, 303, 13, p.brand);
+      circle(ctx, x, 303, 24, rgba(p.accent, 0.16));
+      circle(ctx, x, 303, 13, p.accent);
     } else {
-      circle(ctx, x, 303, 13, p.bg);
-      ring(ctx, x, 303, 13, k === 1 ? p.brand : p.line, 4);
+      circle(ctx, x, 303, 13, p.surface);
+      ring(ctx, x, 303, 13, k === 1 ? p.accent : p.border, 4);
     }
     ctx.font = `500 16px ${f.sans}`;
-    ctx.fillStyle = rgba(p.ink, k < 2 ? 0.85 : 0.5);
+    ctx.fillStyle = rgba(p.foreground, k < 2 ? 0.85 : 0.5);
     ctx.textAlign = k === 0 ? "left" : k === xs.length - 1 ? "right" : "center";
     const tx = k === 0 ? x - 13 : k === xs.length - 1 ? x + 13 : x;
     ctx.fillText(step.deliverables[k] ?? "", tx, 358);
@@ -148,52 +148,52 @@ function drawDiscovery(ctx: Ctx, step: ProcessStep, p: BrandPalette, f: ScreenFo
   widths.forEach((w, k) => {
     const y = 522 + k * 54;
     if (k < 2) check(ctx, 390, y, 14, p);
-    else strokeRR(ctx, 376, y - 14, 28, 28, 8, p.line, 3);
-    bar(ctx, 422, y - 7, w, 14, rgba(p.ink, k < 2 ? 0.2 : 0.1));
+    else strokeRR(ctx, 376, y - 14, 28, 28, 8, p.border, 3);
+    bar(ctx, 422, y - 7, w, 14, rgba(p.foreground, k < 2 ? 0.2 : 0.1));
   });
 
   // Scope
-  card(ctx, p, 912, 436, 320, 352, rgba(p.soft, 1));
+  card(ctx, p, 912, 436, 320, 352, rgba(p.accentSoft, 1));
   label(ctx, f, p, "Scope", 940, 472);
-  ring(ctx, 1072, 596, 70, rgba(p.bg, 1), 26);
+  ring(ctx, 1072, 596, 70, rgba(p.surface, 1), 26);
   ctx.beginPath();
   ctx.arc(1072, 596, 70, -Math.PI / 2, Math.PI * 0.85);
-  ctx.strokeStyle = p.brand;
+  ctx.strokeStyle = p.accent;
   ctx.lineWidth = 26;
   ctx.lineCap = "round";
   ctx.stroke();
-  bar(ctx, 952, 712, 240, 12, rgba(p.brandInk, 0.25));
-  bar(ctx, 952, 740, 160, 12, rgba(p.brandInk, 0.15));
+  bar(ctx, 952, 712, 240, 12, rgba(p.accentInk, 0.25));
+  bar(ctx, 952, 740, 160, 12, rgba(p.accentInk, 0.15));
 }
 
 function drawDesign(ctx: Ctx, p: BrandPalette, f: ScreenFonts) {
   // Wireframe
   card(ctx, p, 348, 216, 600, 572);
-  fillRR(ctx, 372, 240, 552, 38, 10, rgba(p.line, 0.7));
-  bar(ctx, 388, 252, 64, 14, p.brand);
-  [0, 1, 2].forEach((k) => bar(ctx, 720 + k * 64, 254, 48, 10, rgba(p.ink, 0.2)));
-  fillRR(ctx, 372, 294, 552, 204, 14, p.soft);
-  bar(ctx, 400, 332, 300, 26, rgba(p.ink, 0.75));
-  bar(ctx, 400, 374, 250, 14, rgba(p.ink, 0.25));
-  bar(ctx, 400, 398, 210, 14, rgba(p.ink, 0.25));
+  fillRR(ctx, 372, 240, 552, 38, 10, rgba(p.border, 0.7));
+  bar(ctx, 388, 252, 64, 14, p.accent);
+  [0, 1, 2].forEach((k) => bar(ctx, 720 + k * 64, 254, 48, 10, rgba(p.foreground, 0.2)));
+  fillRR(ctx, 372, 294, 552, 204, 14, p.accentSoft);
+  bar(ctx, 400, 332, 300, 26, rgba(p.foreground, 0.75));
+  bar(ctx, 400, 374, 250, 14, rgba(p.foreground, 0.25));
+  bar(ctx, 400, 398, 210, 14, rgba(p.foreground, 0.25));
   fillRR(ctx, 400, 436, 136, 40, 20, gradient(ctx, p, 400, 436, 536, 476));
-  strokeRR(ctx, 732, 318, 168, 156, 12, rgba(p.brandInk, 0.55), 2, [9, 7]);
+  strokeRR(ctx, 732, 318, 168, 156, 12, rgba(p.accentInk, 0.55), 2, [9, 7]);
   ctx.beginPath();
   ctx.moveTo(732, 318);
   ctx.lineTo(900, 474);
   ctx.moveTo(900, 318);
   ctx.lineTo(732, 474);
-  ctx.strokeStyle = rgba(p.brandInk, 0.25);
+  ctx.strokeStyle = rgba(p.accentInk, 0.25);
   ctx.lineWidth = 2;
   ctx.stroke();
   [0, 1, 2].forEach((k) => {
     const x = 372 + k * 188;
-    fillRR(ctx, x, 518, 176, 246, 14, p.bg);
-    strokeRR(ctx, x, 518, 176, 246, 14, k === 1 ? p.brand : p.line, k === 1 ? 3 : 2);
-    fillRR(ctx, x + 14, 532, 148, 98, 10, rgba(p.line, 0.7));
-    bar(ctx, x + 14, 648, 120, 14, rgba(p.ink, 0.5));
-    bar(ctx, x + 14, 672, 140, 10, rgba(p.ink, 0.18));
-    bar(ctx, x + 14, 690, 100, 10, rgba(p.ink, 0.18));
+    fillRR(ctx, x, 518, 176, 246, 14, p.surface);
+    strokeRR(ctx, x, 518, 176, 246, 14, k === 1 ? p.accent : p.border, k === 1 ? 3 : 2);
+    fillRR(ctx, x + 14, 532, 148, 98, 10, rgba(p.border, 0.7));
+    bar(ctx, x + 14, 648, 120, 14, rgba(p.foreground, 0.5));
+    bar(ctx, x + 14, 672, 140, 10, rgba(p.foreground, 0.18));
+    bar(ctx, x + 14, 690, 100, 10, rgba(p.foreground, 0.18));
     if (k === 1) {
       // Selection handles: the component being designed.
       [
@@ -202,8 +202,8 @@ function drawDesign(ctx: Ctx, p: BrandPalette, f: ScreenFonts) {
         [x, 764],
         [x + 176, 764],
       ].forEach(([hx, hy]) => {
-        fillRR(ctx, hx - 6, hy - 6, 12, 12, 2, p.bg);
-        strokeRR(ctx, hx - 6, hy - 6, 12, 12, 2, p.brand, 2.5);
+        fillRR(ctx, hx - 6, hy - 6, 12, 12, 2, p.surface);
+        strokeRR(ctx, hx - 6, hy - 6, 12, 12, 2, p.accent, 2.5);
       });
     }
   });
@@ -211,24 +211,24 @@ function drawDesign(ctx: Ctx, p: BrandPalette, f: ScreenFonts) {
   // Design system
   card(ctx, p, 972, 216, 260, 572);
   label(ctx, f, p, "Design system", 996, 252);
-  fillRR(ctx, 996, 274, 100, 72, 12, p.brand);
-  fillRR(ctx, 1112, 274, 100, 72, 12, p.brandInk);
-  fillRR(ctx, 996, 358, 100, 72, 12, p.soft);
-  strokeRR(ctx, 996, 358, 100, 72, 12, p.line, 2);
-  fillRR(ctx, 1112, 358, 100, 72, 12, p.ink);
+  fillRR(ctx, 996, 274, 100, 72, 12, p.accent);
+  fillRR(ctx, 1112, 274, 100, 72, 12, p.accentInk);
+  fillRR(ctx, 996, 358, 100, 72, 12, p.accentSoft);
+  strokeRR(ctx, 996, 358, 100, 72, 12, p.border, 2);
+  fillRR(ctx, 1112, 358, 100, 72, 12, p.foreground);
   ctx.font = `600 72px ${f.display}`;
-  ctx.fillStyle = p.ink;
+  ctx.fillStyle = p.foreground;
   ctx.textAlign = "left";
   ctx.fillText("Aa", 996, 528);
-  bar(ctx, 996, 552, 200, 12, rgba(p.ink, 0.3));
-  bar(ctx, 996, 574, 150, 12, rgba(p.ink, 0.18));
-  fillRR(ctx, 996, 620, 72, 38, 19, p.brand);
-  circle(ctx, 1049, 639, 14, p.onBrand);
-  strokeRR(ctx, 1082, 620, 130, 38, 19, p.brand, 2.5);
-  bar(ctx, 1106, 634, 82, 10, rgba(p.brandInk, 0.5));
-  fillRR(ctx, 996, 682, 216, 76, 14, rgba(p.soft, 1));
-  bar(ctx, 1014, 704, 120, 12, rgba(p.brandInk, 0.45));
-  bar(ctx, 1014, 728, 170, 10, rgba(p.brandInk, 0.22));
+  bar(ctx, 996, 552, 200, 12, rgba(p.foreground, 0.3));
+  bar(ctx, 996, 574, 150, 12, rgba(p.foreground, 0.18));
+  fillRR(ctx, 996, 620, 72, 38, 19, p.accent);
+  circle(ctx, 1049, 639, 14, p.accentForeground);
+  strokeRR(ctx, 1082, 620, 130, 38, 19, p.accent, 2.5);
+  bar(ctx, 1106, 634, 82, 10, rgba(p.accentInk, 0.5));
+  fillRR(ctx, 996, 682, 216, 76, 14, rgba(p.accentSoft, 1));
+  bar(ctx, 1014, 704, 120, 12, rgba(p.accentInk, 0.45));
+  bar(ctx, 1014, 728, 170, 10, rgba(p.accentInk, 0.22));
 }
 
 /** Code lines: [indent, [width, kind]...] — kind 0 plain, 1 keyword, 2 string. */
@@ -251,19 +251,19 @@ const CODE: [number, [number, number][]][] = [
 
 function drawBuild(ctx: Ctx, p: BrandPalette, f: ScreenFonts) {
   // Editor (dark)
-  fillRR(ctx, 348, 216, 560, 572, 20, p.ink);
-  fillRR(ctx, 348, 216, 560, 50, 20, rgba(p.bg, 0.06));
-  fillRR(ctx, 368, 226, 150, 30, 8, rgba(p.bg, 0.1));
-  bar(ctx, 384, 237, 100, 8, rgba(p.bg, 0.55));
+  fillRR(ctx, 348, 216, 560, 572, 20, p.foreground);
+  fillRR(ctx, 348, 216, 560, 50, 20, rgba(p.surface, 0.06));
+  fillRR(ctx, 368, 226, 150, 30, 8, rgba(p.surface, 0.1));
+  bar(ctx, 384, 237, 100, 8, rgba(p.surface, 0.55));
   CODE.forEach(([indent, tokens], k) => {
     const y = 300 + k * 33;
     ctx.font = `400 15px ${f.mono}`;
-    ctx.fillStyle = rgba(p.bg, 0.28);
+    ctx.fillStyle = rgba(p.surface, 0.28);
     ctx.textAlign = "right";
     ctx.fillText(String(k + 1), 396, y + 5);
     let x = 420 + indent * 28;
     tokens.forEach(([w, kind]) => {
-      const color = kind === 1 ? p.glow : kind === 2 ? rgba(p.soft, 0.85) : rgba(p.bg, 0.4);
+      const color = kind === 1 ? p.glow : kind === 2 ? rgba(p.accentSoft, 0.85) : rgba(p.surface, 0.4);
       bar(ctx, x, y - 5, Math.min(w, 880 - x), 11, color);
       x += w + 12;
     });
@@ -277,12 +277,12 @@ function drawBuild(ctx: Ctx, p: BrandPalette, f: ScreenFonts) {
   [170, 130, 186, 150, 118, 162].forEach((w, k) => {
     const y = 298 + k * 58;
     check(ctx, 972, y, 14, p);
-    bar(ctx, 1000, y - 6, w, 12, rgba(p.ink, 0.16));
+    bar(ctx, 1000, y - 6, w, 12, rgba(p.foreground, 0.16));
   });
-  fillRR(ctx, 956, 680, 252, 84, 16, p.soft);
-  bar(ctx, 978, 704, 208, 12, rgba(p.brandInk, 0.2));
+  fillRR(ctx, 956, 680, 252, 84, 16, p.accentSoft);
+  bar(ctx, 978, 704, 208, 12, rgba(p.accentInk, 0.2));
   bar(ctx, 978, 704, 208, 12, gradient(ctx, p, 978, 0, 1186, 0));
-  bar(ctx, 978, 732, 130, 10, rgba(p.brandInk, 0.35));
+  bar(ctx, 978, 732, 130, 10, rgba(p.accentInk, 0.35));
 }
 
 const GRAPH = [0.1, 0.16, 0.13, 0.22, 0.2, 0.3, 0.27, 0.36, 0.42, 0.39, 0.5, 0.48, 0.58, 0.55, 0.64, 0.7, 0.67, 0.76, 0.8, 0.78, 0.86, 0.9];
@@ -294,27 +294,27 @@ function drawLaunch(ctx: Ctx, p: BrandPalette, f: ScreenFonts) {
   const stages = ["Build", "Test", "Deploy"];
   stages.forEach((s, k) => {
     const x = 376 + k * 290;
-    fillRR(ctx, x, 270, 244, 48, 24, p.soft);
+    fillRR(ctx, x, 270, 244, 48, 24, p.accentSoft);
     check(ctx, x + 26, 294, 13, p);
     ctx.font = `600 18px ${f.sans}`;
-    ctx.fillStyle = p.ink;
+    ctx.fillStyle = p.foreground;
     ctx.textAlign = "left";
     ctx.fillText(s, x + 52, 300);
     if (k < stages.length - 1) {
-      bar(ctx, x + 252, 292, 30, 4, rgba(p.brand, 0.6));
+      bar(ctx, x + 252, 292, 30, 4, rgba(p.accent, 0.6));
     }
   });
 
   // Live graph
   card(ctx, p, 348, 364, 884, 424);
   label(ctx, f, p, "Uptime", 376, 400);
-  fillRR(ctx, 1112, 380, 96, 36, 18, p.soft);
-  circle(ctx, 1134, 398, 6, p.brand);
-  circle(ctx, 1134, 398, 11, rgba(p.brand, 0.2));
+  fillRR(ctx, 1112, 380, 96, 36, 18, p.accentSoft);
+  circle(ctx, 1134, 398, 6, p.accent);
+  circle(ctx, 1134, 398, 11, rgba(p.accent, 0.2));
   ctx.font = `600 16px ${f.sans}`;
-  ctx.fillStyle = p.brandInk;
+  ctx.fillStyle = p.accentInk;
   ctx.fillText("Live", 1150, 404);
-  [470, 540, 610, 680].forEach((y) => bar(ctx, 380, y, 820, 2, p.line));
+  [470, 540, 610, 680].forEach((y) => bar(ctx, 380, y, 820, 2, p.border));
   const x0 = 380;
   const x1 = 1200;
   const yTop = 450;
@@ -326,20 +326,20 @@ function drawLaunch(ctx: Ctx, p: BrandPalette, f: ScreenFonts) {
   ctx.lineTo(x1, yBot);
   ctx.closePath();
   const area = ctx.createLinearGradient(0, yTop, 0, yBot);
-  area.addColorStop(0, rgba(p.brand, 0.3));
-  area.addColorStop(1, rgba(p.brand, 0));
+  area.addColorStop(0, rgba(p.accent, 0.3));
+  area.addColorStop(1, rgba(p.accent, 0));
   ctx.fillStyle = area;
   ctx.fill();
   ctx.beginPath();
   pts.forEach(([x, y], k) => (k ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
-  ctx.strokeStyle = p.brand;
+  ctx.strokeStyle = p.accent;
   ctx.lineWidth = 4;
   ctx.lineJoin = "round";
   ctx.lineCap = "round";
   ctx.stroke();
   const [lx, ly] = pts[pts.length - 1];
-  circle(ctx, lx, ly, 16, rgba(p.brand, 0.18));
-  circle(ctx, lx, ly, 8, p.brand);
+  circle(ctx, lx, ly, 16, rgba(p.accent, 0.18));
+  circle(ctx, lx, ly, 8, p.accent);
 }
 
 /* ── The whole screen ───────────────────────────────────────────────────── */
@@ -359,57 +359,57 @@ export function drawScreen(
   ctx.textBaseline = "alphabetic";
 
   // Ground
-  ctx.fillStyle = p.bg;
+  ctx.fillStyle = p.surface;
   ctx.fillRect(0, 0, W, H);
 
   // Window chrome
-  ctx.fillStyle = rgba(p.line, 0.6);
+  ctx.fillStyle = rgba(p.border, 0.6);
   ctx.fillRect(0, 0, W, 56);
-  ctx.fillStyle = p.line;
+  ctx.fillStyle = p.border;
   ctx.fillRect(0, 56, W, 2);
-  [0, 1, 2].forEach((k) => circle(ctx, 32 + k * 24, 28, 7, k === 0 ? p.brand : rgba(p.ink, 0.15)));
-  fillRR(ctx, W / 2 - 170, 13, 340, 30, 15, p.bg);
+  [0, 1, 2].forEach((k) => circle(ctx, 32 + k * 24, 28, 7, k === 0 ? p.accent : rgba(p.foreground, 0.15)));
+  fillRR(ctx, W / 2 - 170, 13, 340, 30, 15, p.surface);
   ctx.font = `500 14px ${f.mono}`;
-  ctx.fillStyle = rgba(p.ink, 0.55);
+  ctx.fillStyle = rgba(p.foreground, 0.55);
   ctx.textAlign = "center";
   spacing(ctx, 1.5);
   ctx.fillText(`STAGE ${step.index} / ${String(steps.length).padStart(2, "0")}`, W / 2, 33);
   spacing(ctx, 0);
 
   // Sidebar: the four stages, this one highlighted.
-  ctx.fillStyle = rgba(p.bg, 0.9);
+  ctx.fillStyle = rgba(p.surface, 0.9);
   ctx.fillRect(0, 58, 300, H - 58);
-  ctx.fillStyle = p.line;
+  ctx.fillStyle = p.border;
   ctx.fillRect(300, 58, 2, H - 58);
   label(ctx, f, p, "Process", 32, 104);
   steps.forEach((s, k) => {
     const y = 128 + k * 62;
     const on = k === i;
     if (on) {
-      fillRR(ctx, 18, y, 266, 48, 12, p.soft);
-      fillRR(ctx, 18, y + 10, 4, 28, 2, p.brand);
+      fillRR(ctx, 18, y, 266, 48, 12, p.accentSoft);
+      fillRR(ctx, 18, y + 10, 4, 28, 2, p.accent);
     }
     ctx.textAlign = "left";
     ctx.font = `500 15px ${f.mono}`;
-    ctx.fillStyle = on ? p.brandInk : rgba(p.ink, 0.4);
+    ctx.fillStyle = on ? p.accentInk : rgba(p.foreground, 0.4);
     ctx.fillText(s.index, 38, y + 30);
     ctx.font = `${on ? 600 : 500} 17px ${f.sans}`;
-    ctx.fillStyle = on ? p.ink : rgba(p.ink, 0.55);
+    ctx.fillStyle = on ? p.foreground : rgba(p.foreground, 0.55);
     ctx.fillText(s.title, 74, y + 30);
   });
   label(ctx, f, p, "Progress", 32, H - 84);
-  bar(ctx, 32, H - 64, 236, 10, p.line);
+  bar(ctx, 32, H - 64, 236, 10, p.border);
   bar(ctx, 32, H - 64, (236 * (i + 1)) / steps.length, 10, gradient(ctx, p, 32, 0, 268, 0));
 
   // Header
   ctx.textAlign = "left";
   ctx.font = `500 16px ${f.mono}`;
-  ctx.fillStyle = p.brandInk;
+  ctx.fillStyle = p.accentInk;
   spacing(ctx, 3);
   ctx.fillText(`STAGE ${step.index}`, 348, 122);
   spacing(ctx, 0);
   ctx.font = `700 44px ${f.sans}`;
-  ctx.fillStyle = p.ink;
+  ctx.fillStyle = p.foreground;
   ctx.fillText(step.title, 348, 178);
 
   if (step.id === "discovery") drawDiscovery(ctx, step, p, f);

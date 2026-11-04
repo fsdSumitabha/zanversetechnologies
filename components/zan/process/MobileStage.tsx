@@ -143,7 +143,7 @@ export function MobileStage({ webgl }: { webgl: boolean }) {
     <div ref={rootRef}>
       <div
         ref={pinRef}
-        className="relative flex h-svh w-full flex-col overflow-hidden bg-surface pb-4 pt-nav landscape:grid landscape:grid-cols-2 landscape:items-center landscape:gap-6 landscape:pb-0"
+        className="relative flex h-svh w-full flex-col overflow-hidden bg-surface-muted pb-4 pt-nav landscape:grid landscape:grid-cols-2 landscape:items-center landscape:gap-6 landscape:pb-0"
       >
         {/* The laptop: whatever height the card row leaves. */}
         <div aria-hidden="true" className="relative min-h-0 flex-1 landscape:h-full">
@@ -165,17 +165,17 @@ export function MobileStage({ webgl }: { webgl: boolean }) {
 
         <div className="container-zan shrink-0 landscape:pl-0">
           <div aria-hidden="true" className="mb-3 flex items-center justify-center gap-3 sm:mb-4">
-            <span className="font-mono text-eyebrow text-brand-ink">{current.index}</span>
+            <span className="font-mono text-eyebrow text-accent-ink">{current.index}</span>
             {processSteps.map((s, i) => (
               <span
                 key={s.id}
                 className={cn(
                   "h-1.5 rounded-full transition-[width,background-color] duration-500 ease-out-expo",
-                  i === active ? "w-6 bg-brand" : i < active ? "w-1.5 bg-brand/50" : "w-1.5 bg-line-strong",
+                  i === active ? "w-6 bg-action" : i < active ? "w-1.5 bg-action/50" : "w-1.5 bg-border-strong",
                 )}
               />
             ))}
-            <span className="font-mono text-eyebrow text-muted">{String(STEPS).padStart(2, "0")}</span>
+            <span className="font-mono text-eyebrow text-subtle">{String(STEPS).padStart(2, "0")}</span>
           </div>
 
           <ol aria-label="Our process, in four stages" className="mx-auto grid max-w-xl">

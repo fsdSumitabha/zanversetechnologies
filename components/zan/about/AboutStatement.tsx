@@ -99,7 +99,7 @@ export function AboutStatement() {
       </div>
 
       <motion.dl
-        className="mt-[clamp(4rem,8vw,7rem)] grid grid-cols-2 border-y border-line lg:grid-cols-4"
+        className="mt-[clamp(4rem,8vw,7rem)] grid grid-cols-2 border-y border-border lg:grid-cols-4"
         initial="hidden"
         whileInView="shown"
         viewport={{ once: true, margin: "0px 0px -10% 0px" }}
@@ -114,14 +114,14 @@ export function AboutStatement() {
               shown: { opacity: 1, y: 0, transition: { duration: 0.8, ease: EASE } },
             }}
             className={cn(
-              "border-line py-7 pr-4 lg:py-9 lg:pr-6",
+              "border-border py-7 pr-4 lg:py-9 lg:pr-6",
               i % 2 === 1 && "border-l pl-5",
               i >= 2 && "border-t lg:border-t-0",
               i > 0 && "lg:border-l lg:pl-6",
             )}
           >
-            <dt className="font-mono text-eyebrow text-muted uppercase">{p.label}</dt>
-            <dd className="mt-3 text-h3 text-ink">{p.value}</dd>
+            <dt className="font-mono text-eyebrow text-subtle uppercase">{p.label}</dt>
+            <dd className="mt-3 text-h3 text-foreground">{p.value}</dd>
           </motion.div>
         ))}
       </motion.dl>

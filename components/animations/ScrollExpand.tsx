@@ -72,7 +72,7 @@ export function ScrollExpand({
   return (
     <div ref={root} className={cn("zan-expand relative", className)}>
       <div aria-hidden="true" className="zan-expand-shadow" />
-      <div className={cn("zan-expand-panel relative bg-bg", panelClassName)}>{children}</div>
+      <div className={cn("zan-expand-panel relative bg-canvas", panelClassName)}>{children}</div>
       <div aria-hidden="true" className="zan-expand-outline" />
     </div>
   );

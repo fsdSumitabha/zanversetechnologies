@@ -77,10 +77,10 @@ export const MegaMenu = forwardRef<
           onPointerEnter={onPointerEnter}
           onPointerLeave={onPointerLeave}
           onKeyDown={onKeyDown}
-          className="absolute inset-x-0 top-full hidden border-b border-line bg-bg shadow-nav xl:block"
+          className="absolute inset-x-0 top-full hidden border-b border-border bg-surface-raised shadow-nav xl:block"
         >
           <div className="container-zan">
-            <div className="grid grid-cols-[1.35fr_1fr_1fr] gap-x-10 border-t border-line pt-8 pb-6">
+            <div className="grid grid-cols-[1.35fr_1fr_1fr] gap-x-10 border-t border-border pt-8 pb-6">
               {serviceNav.map((section, i) => {
                 const practice = practices[i];
                 const twoCol = section.items.length > 4;
@@ -89,13 +89,13 @@ export const MegaMenu = forwardRef<
                     <SiteLink
                       href={section.href}
                       onClick={onChoose}
-                      className="group/head mb-3 flex items-baseline gap-3 rounded-lg px-3 py-1.5 transition-colors duration-300 hover:bg-surface"
+                      className="group/head mb-3 flex items-baseline gap-3 rounded-lg px-3 py-1.5 transition-colors duration-300 hover:bg-surface-muted"
                     >
-                      <span className="font-mono text-eyebrow text-brand-ink">{practice?.index}</span>
-                      <span className="font-display text-h3 font-semibold text-ink">{section.title}</span>
+                      <span className="font-mono text-eyebrow text-accent-ink">{practice?.index}</span>
+                      <span className="font-display text-h3 font-semibold text-foreground">{section.title}</span>
                       <ArrowUpRight
                         aria-hidden="true"
-                        className="size-4 shrink-0 self-center text-brand-ink opacity-0 transition-[opacity,transform] duration-300 ease-out-expo group-hover/head:translate-x-0.5 group-hover/head:-translate-y-0.5 group-hover/head:opacity-100"
+                        className="size-4 shrink-0 self-center text-accent-ink opacity-0 transition-[opacity,transform] duration-300 ease-out-expo group-hover/head:translate-x-0.5 group-hover/head:-translate-y-0.5 group-hover/head:opacity-100"
                       />
                     </SiteLink>
                     <ul className={cn("grid gap-x-4 gap-y-0.5", twoCol ? "grid-cols-2" : "grid-cols-1")}>
@@ -104,17 +104,17 @@ export const MegaMenu = forwardRef<
                           <SiteLink
                             href={leaf.href}
                             onClick={onChoose}
-                            className="group/leaf block rounded-xl px-3 py-2.5 transition-colors duration-300 hover:bg-surface focus-visible:bg-surface"
+                            className="group/leaf block rounded-xl px-3 py-2.5 transition-colors duration-300 hover:bg-surface-muted focus-visible:bg-surface-muted"
                           >
-                            <span className="flex items-center gap-1.5 text-small font-medium text-ink">
+                            <span className="flex items-center gap-1.5 text-small font-medium text-foreground">
                               <span className="truncate">{leaf.label}</span>
                               <ArrowUpRight
                                 aria-hidden="true"
-                                className="size-3.5 shrink-0 text-brand-ink opacity-0 transition-[opacity,transform] duration-300 ease-out-expo group-hover/leaf:translate-x-0.5 group-hover/leaf:-translate-y-0.5 group-hover/leaf:opacity-100"
+                                className="size-3.5 shrink-0 text-accent-ink opacity-0 transition-[opacity,transform] duration-300 ease-out-expo group-hover/leaf:translate-x-0.5 group-hover/leaf:-translate-y-0.5 group-hover/leaf:opacity-100"
                               />
                             </span>
                             {leaf.description && (
-                              <span className="mt-0.5 block truncate text-[0.8125rem] leading-snug text-muted">
+                              <span className="mt-0.5 block truncate text-[0.8125rem] leading-snug text-subtle">
                                 {leaf.description}
                               </span>
                             )}
@@ -129,26 +129,26 @@ export const MegaMenu = forwardRef<
 
             <motion.div
               variants={column}
-              className="flex items-center justify-between gap-6 border-t border-line py-4"
+              className="flex items-center justify-between gap-6 border-t border-border py-4"
             >
               <div className="flex items-center gap-2">
                 <a
                   href={`tel:${office.phoneTel}`}
                   data-analytics-label={office.phoneDisplay}
-                  className="inline-flex items-center gap-2.5 rounded-full px-3 py-2 text-small text-ink-2 transition-colors duration-300 hover:text-brand-ink"
+                  className="inline-flex items-center gap-2.5 rounded-full px-3 py-2 text-small text-muted transition-colors duration-300 hover:text-accent-ink"
                 >
-                  <Phone aria-hidden="true" className="size-4 shrink-0 text-brand-ink" />
+                  <Phone aria-hidden="true" className="size-4 shrink-0 text-accent-ink" />
                   <span>{office.city}</span>
-                  <span aria-hidden="true" className="text-line-strong">
+                  <span aria-hidden="true" className="text-border-strong">
                     /
                   </span>
-                  <span className="font-medium text-ink tabular-nums">{office.phoneDisplay}</span>
+                  <span className="font-medium text-foreground tabular-nums">{office.phoneDisplay}</span>
                 </a>
-                <span aria-hidden="true" className="h-4 w-px bg-line" />
+                <span aria-hidden="true" className="h-4 w-px bg-border" />
                 <SiteLink
                   href={SERVICES_HREF}
                   onClick={onChoose}
-                  className="group/all inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-small font-medium text-ink transition-colors duration-300 hover:text-brand-ink"
+                  className="group/all inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-small font-medium text-foreground transition-colors duration-300 hover:text-accent-ink"
                 >
                   All services
                   <ArrowUpRight

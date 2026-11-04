@@ -8,15 +8,15 @@ import "./work.css";
    and `pattern`. Every case study carries a photograph today, so this is the
    fallback a new one gets until it has its own. Abstract on purpose — it
    never pretends to be a capture of the product. Deterministic: seeded from
-   indices, no randomness. Colours are the brand gold turned by the project's
+   indices, no randomness. Colours are the brand cyan turned by the project's
    hue offset (see .zan-art in work.css).
    ─────────────────────────────────────────────────────────────────────────── */
 
 /**
  * The HSL hue the `hue` values in constants/zan.ts were chosen against. Only a
- * project's offset from it is used: the art turns the gold (about 46°) by that
- * many degrees, so 236 lands on an orange near 20° and 300 on a yellow-green
- * near 84°, with the rest in between.
+ * project's offset from it is used: the art turns the cyan (about 191°) by that
+ * many degrees, so 236 lands on a teal near 165° and 300 on a blue
+ * near 229°, with the rest in between.
  */
 const HUE_ORIGIN = 262;
 
@@ -171,7 +171,7 @@ export function ProjectArt({
       <div
         className="absolute inset-0"
         style={{
-          background: "linear-gradient(160deg, var(--art-soft) 0%, var(--color-bg) 100%)",
+          background: "linear-gradient(160deg, var(--art-soft) 0%, var(--color-surface) 100%)",
         }}
       />
       <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid slice" className="absolute inset-0 size-full">

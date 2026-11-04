@@ -50,7 +50,7 @@ import { cn } from "@/lib/utils";
 const DWELL = { phone: "40svh", desktop: "30svh" } as const;
 
 /** The incoming slab's edge on a straight slide: a hairline and a soft shadow. */
-const SLIDE_EDGE = "0 -1px 0 rgb(17 16 22 / 0.08), 0 -22px 44px -18px rgb(17 16 22 / 0.28)";
+const SLIDE_EDGE = "0 -1px 0 color-mix(in oklab, var(--color-shadow) 8%, transparent), 0 -22px 44px -18px color-mix(in oklab, var(--color-shadow) 28%, transparent)";
 
 export interface FlowSectionProps {
   /** Anchor id. Placed on a wrapper that never pins. */

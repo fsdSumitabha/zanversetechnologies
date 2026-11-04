@@ -13,15 +13,15 @@ export function CaseStudies() {
     <section
       id="case-studies"
       aria-labelledby="case-studies-title"
-      className="relative bg-surface pt-[clamp(2.5rem,5vw,5rem)]"
+      className="relative bg-surface-muted pt-[clamp(2.5rem,5vw,5rem)]"
     >
       <ScrollExpand>
         <div className="mx-auto w-full max-w-[72rem] px-6 pb-section pt-[clamp(3rem,6vw,5.5rem)] sm:px-10 lg:px-16">
           <div className="mb-8 flex flex-wrap items-end justify-between gap-x-8 gap-y-3 lg:mb-12">
-            <h2 id="case-studies-title" className="font-display text-h1 text-ink">
+            <h2 id="case-studies-title" className="font-display text-h1 text-foreground">
               Case studies
             </h2>
-            <p className="pb-2 font-mono text-eyebrow uppercase text-muted">
+            <p className="pb-2 font-mono text-eyebrow uppercase text-subtle">
               Challenge · Solution · Results
             </p>
           </div>

@@ -53,10 +53,10 @@ export default function ThankYouPage() {
           <HeroPanel title="What happens next">
             <ol className="space-y-5">
               {NEXT_STEPS.map((step, i) => (
-                <li key={step} className="flex items-start gap-4 text-body text-ink">
+                <li key={step} className="flex items-start gap-4 text-body text-foreground">
                   <span
                     aria-hidden="true"
-                    className="grid size-7 shrink-0 place-items-center rounded-full border border-line-strong font-mono text-[0.75rem] text-brand-ink"
+                    className="grid size-7 shrink-0 place-items-center rounded-full border border-border-strong font-mono text-[0.75rem] text-accent-ink"
                   >
                     {i + 1}
                   </span>

@@ -10,7 +10,7 @@
    itself wherever it is named rather than shipping a second file for a
    thumbnail. The homepage deck is the one place that does not: it keeps the
    hand-drawn SVG plates that live in that same file, because a drawing can be
-   multiplied into a plate tinted with the brand's gold and a photograph
+   multiplied into a plate tinted with the brand's cyan and a photograph
    cannot.
 
    Every picture has to be OF the service, not near it. The SEO page shows a

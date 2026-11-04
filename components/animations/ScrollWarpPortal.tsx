@@ -15,7 +15,7 @@ import "@/components/zan/work/work.css";
    section below.
 
    Colours are tokens mixed with transparency (color-mix), so the tunnel is
-   drawn in the palette's own gold and brand-ink with no hex of its own. The
+   drawn in the palette's own accent and accent-ink with no hex of its own. The
    scene builds inside gsap.matchMedia(MQ.motion):
    for reduced motion nothing is pinned and the CSS default — a static band
    with the tunnel held mid-way and the label at rest — is what shows.
@@ -177,9 +177,9 @@ export function ScrollWarpPortal({
       ref={sectionRef}
       aria-label={ariaLabel}
       data-section="chapter-work"
-      className={cn("relative w-full bg-surface", className)}
+      className={cn("relative w-full bg-surface-muted", className)}
     >
-      <div ref={stageRef} className="zan-warp-stage relative isolate w-full overflow-hidden bg-surface">
+      <div ref={stageRef} className="zan-warp-stage relative isolate w-full overflow-hidden bg-surface-muted">
         {/* Vertical beams: hairlines, fading out at both ends */}
         <div ref={beamsRef} aria-hidden="true" className="zan-warp-beams pointer-events-none absolute inset-0">
           {[0, 1, 2, 3].map((i) => (
@@ -188,7 +188,7 @@ export function ScrollWarpPortal({
               className="absolute top-1/2 h-[120vh] w-px -translate-y-1/2"
               style={{
                 left: `${20 + i * 20}%`,
-                background: `linear-gradient(to bottom, transparent 0%, ${mix("--color-brand-ink", 18)} 50%, transparent 100%)`,
+                background: `linear-gradient(to bottom, transparent 0%, ${mix("--color-accent-ink", 18)} 50%, transparent 100%)`,
               }}
             />
           ))}
@@ -199,16 +199,16 @@ export function ScrollWarpPortal({
           ref={vignetteRef}
           aria-hidden="true"
           className="pointer-events-none absolute inset-0"
-          style={{ background: "radial-gradient(ellipse at center, transparent 35%, var(--color-surface) 88%)" }}
+          style={{ background: "radial-gradient(ellipse at center, transparent 35%, var(--color-surface-muted) 88%)" }}
         />
 
         {/* Halo: two thin rings that open out behind the label */}
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 grid place-items-center">
           <div ref={haloRef} className="relative size-[56vmin] will-change-transform">
-            <span className="absolute inset-0 rounded-full" style={{ border: `1px solid ${mix("--color-brand-ink", 22)}` }} />
+            <span className="absolute inset-0 rounded-full" style={{ border: `1px solid ${mix("--color-accent-ink", 22)}` }} />
             <span
               className="absolute inset-[14%] rounded-full"
-              style={{ border: `1px solid ${mix("--color-brand-ink", 12)}` }}
+              style={{ border: `1px solid ${mix("--color-accent-ink", 12)}` }}
             />
           </div>
         </div>
@@ -229,8 +229,8 @@ export function ScrollWarpPortal({
                   zIndex: DEPTH_FRAMES - i,
                   transform: `scale(${s1})`,
                   opacity: o1,
-                  border: `1px solid ${mix("--color-brand-ink", 30)}`,
-                  background: `linear-gradient(135deg, ${mix("--color-brand", 4)} 0%, transparent 60%)`,
+                  border: `1px solid ${mix("--color-accent-ink", 30)}`,
+                  background: `linear-gradient(135deg, ${mix("--color-accent", 4)} 0%, transparent 60%)`,
                 }}
               />
             );
@@ -245,7 +245,7 @@ export function ScrollWarpPortal({
         </div>
 
         {/* Flash to the page ground */}
-        <div ref={flashRef} aria-hidden="true" className="zan-warp-flash pointer-events-none absolute inset-0 z-20 bg-bg opacity-0" />
+        <div ref={flashRef} aria-hidden="true" className="zan-warp-flash pointer-events-none absolute inset-0 z-20 bg-canvas opacity-0" />
       </div>
     </section>
   );

@@ -22,8 +22,8 @@ export function HeroPanel({
   className?: string;
 }) {
   return (
-    <div className={cn("rounded-3xl border border-line bg-bg p-6 shadow-lift sm:p-7", className)}>
-      <h2 className="font-mono text-eyebrow text-muted uppercase">{title}</h2>
+    <div className={cn("rounded-3xl border border-border bg-surface p-6 shadow-lift sm:p-7", className)}>
+      <h2 className="font-mono text-eyebrow text-subtle uppercase">{title}</h2>
       <div className="mt-5">{children}</div>
     </div>
   );
@@ -34,8 +34,8 @@ export function HeroList({ items }: { items: readonly string[] }) {
   return (
     <ul className="space-y-3">
       {items.map((item) => (
-        <li key={item} className="flex items-start gap-3 text-body text-ink">
-          <Check aria-hidden="true" className="mt-0.5 size-4.5 shrink-0 text-brand-ink" strokeWidth={2.2} />
+        <li key={item} className="flex items-start gap-3 text-body text-foreground">
+          <Check aria-hidden="true" className="mt-0.5 size-4.5 shrink-0 text-accent-ink" strokeWidth={2.2} />
           {item}
         </li>
       ))}
@@ -55,17 +55,17 @@ export function HeroLinks({
         <li key={item.href}>
           <SiteLink
             href={item.href}
-            className="group/row flex items-center justify-between gap-4 rounded-xl py-2.5 transition-colors duration-300 hover:text-brand-ink"
+            className="group/row flex items-center justify-between gap-4 rounded-xl py-2.5 transition-colors duration-300 hover:text-accent-ink"
           >
             <span className="min-w-0">
-              <span className="block text-body font-medium text-ink transition-colors duration-300 group-hover/row:text-brand-ink">
+              <span className="block text-body font-medium text-foreground transition-colors duration-300 group-hover/row:text-accent-ink">
                 {item.label}
               </span>
-              {item.note && <span className="mt-0.5 block text-small text-muted">{item.note}</span>}
+              {item.note && <span className="mt-0.5 block text-small text-subtle">{item.note}</span>}
             </span>
             <ArrowUpRight
               aria-hidden="true"
-              className="size-4 shrink-0 text-brand-ink transition-transform duration-300 ease-out-expo group-hover/row:translate-x-0.5 group-hover/row:-translate-y-0.5"
+              className="size-4 shrink-0 text-accent-ink transition-transform duration-300 ease-out-expo group-hover/row:translate-x-0.5 group-hover/row:-translate-y-0.5"
             />
           </SiteLink>
         </li>
@@ -80,8 +80,8 @@ export function HeroFacts({ items }: { items: readonly { label: string; value: s
     <dl className="grid gap-x-6 gap-y-4 sm:grid-cols-2">
       {items.map((item) => (
         <div key={item.label}>
-          <dt className="font-mono text-eyebrow text-muted uppercase">{item.label}</dt>
-          <dd className="mt-1.5 text-body font-medium text-ink">{item.value}</dd>
+          <dt className="font-mono text-eyebrow text-subtle uppercase">{item.label}</dt>
+          <dd className="mt-1.5 text-body font-medium text-foreground">{item.value}</dd>
         </div>
       ))}
     </dl>

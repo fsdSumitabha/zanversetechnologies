@@ -103,9 +103,9 @@ function messageFor(el: Control): string | undefined {
 }
 
 const control =
-  "w-full rounded-xl border border-line-strong bg-bg px-4 text-body text-ink placeholder:text-muted " +
-  "transition-[border-color,box-shadow] duration-200 hover:border-ink/40 " +
-  "focus-visible:border-brand-ink focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand/20 " +
+  "w-full rounded-xl border border-border-field bg-surface px-4 text-body text-foreground placeholder:text-subtle " +
+  "transition-[border-color,box-shadow] duration-200 hover:border-foreground/40 " +
+  "focus-visible:border-focus focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-focus/25 " +
   "aria-invalid:border-danger aria-invalid:focus-visible:ring-danger/15 " +
   "disabled:cursor-not-allowed disabled:opacity-60";
 
@@ -126,13 +126,13 @@ function FieldShell({
 }) {
   return (
     <div className={cn("flex min-w-0 flex-col gap-2", className)}>
-      <label htmlFor={id} className="flex items-baseline justify-between gap-3 text-small font-medium text-ink">
+      <label htmlFor={id} className="flex items-baseline justify-between gap-3 text-small font-medium text-foreground">
         {label}
-        {optional && <span className="font-mono text-[0.6875rem] tracking-[0.12em] text-muted uppercase">Optional</span>}
+        {optional && <span className="font-mono text-[0.6875rem] tracking-[0.12em] text-subtle uppercase">Optional</span>}
       </label>
       {children}
       {error && (
-        <p id={`${id}-error`} className="text-small text-danger">
+        <p id={`${id}-error`} className="text-small text-danger-ink">
           {error}
         </p>
       )}
@@ -143,14 +143,14 @@ function FieldShell({
 /** Nothing to send to: the address, rather than a form that cannot work. */
 function EmailFallback({ className }: { className?: string }) {
   return (
-    <div className={cn("rounded-3xl border border-line bg-bg p-5 shadow-lift sm:p-8", className)}>
-      <h3 className="text-h3 text-ink">Email us directly</h3>
-      <p className="mt-3 max-w-[46ch] text-body text-ink-2">
+    <div className={cn("rounded-3xl border border-border bg-surface p-5 shadow-lift sm:p-8", className)}>
+      <h3 className="text-h3 text-foreground">Email us directly</h3>
+      <p className="mt-3 max-w-[46ch] text-body text-muted">
         Tell us what you are building and we will come back within 24 hours.
       </p>
       <a
         href={`mailto:${site.email}`}
-        className="mt-5 inline-block text-lead font-medium text-brand-ink underline decoration-current/40 underline-offset-4 hover:decoration-current"
+        className="mt-5 inline-block text-lead font-medium text-accent-ink underline decoration-current/40 underline-offset-4 hover:decoration-current"
       >
         {site.email}
       </a>
@@ -297,14 +297,14 @@ export function EnquiryForm({
       data-enquiry-form=""
       className={cn(
         "relative",
-        !compact && "rounded-3xl border border-line bg-bg p-5 shadow-lift sm:p-8",
+        !compact && "rounded-3xl border border-border bg-surface p-5 shadow-lift sm:p-8",
         fill && "lg:flex lg:min-h-full lg:flex-col",
         className,
       )}
     >
       {/* Set like the city on the office card it stands beside (the homepage,
           /contact-us), so the main action is never the smaller title. */}
-      <h3 id={`${uid}-title`} className={compact ? "sr-only" : "font-display text-h2 text-ink"}>
+      <h3 id={`${uid}-title`} className={compact ? "sr-only" : "font-display text-h2 text-foreground"}>
         Project enquiry
       </h3>
 
@@ -392,7 +392,7 @@ export function EnquiryForm({
             </select>
             <ChevronDown
               aria-hidden="true"
-              className="pointer-events-none absolute top-1/2 right-4 size-4 -translate-y-1/2 text-muted"
+              className="pointer-events-none absolute top-1/2 right-4 size-4 -translate-y-1/2 text-subtle"
               strokeWidth={2}
             />
           </div>
@@ -432,7 +432,7 @@ export function EnquiryForm({
           compact ? "mt-5" : "mt-7",
         )}
       >
-        <p className="text-small text-muted">We reply within 24 hours.</p>
+        <p className="text-small text-subtle">We reply within 24 hours.</p>
         <Button
           type="submit"
           size="lg"
@@ -447,13 +447,13 @@ export function EnquiryForm({
 
       <div ref={alertRef} role="alert" className="empty:hidden">
         {state === "error" && (
-          <p className="mt-5 flex items-start gap-2.5 rounded-2xl border border-danger/30 bg-danger/5 px-4 py-3 text-small text-ink-2">
+          <p className="mt-5 flex items-start gap-2.5 rounded-2xl border border-danger/30 bg-danger/5 px-4 py-3 text-small text-muted">
             <TriangleAlert aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-danger" strokeWidth={2} />
             <span>
               That did not send. Please try again, or email us directly at{" "}
               <a
                 href={`mailto:${site.email}`}
-                className="font-medium text-brand-ink underline decoration-current/40 underline-offset-4 hover:decoration-current"
+                className="font-medium text-accent-ink underline decoration-current/40 underline-offset-4 hover:decoration-current"
               >
                 {site.email}
               </a>

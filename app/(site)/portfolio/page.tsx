@@ -58,7 +58,7 @@ export default function PortfolioPage() {
           {clients.map((client, i) => (
             <li key={client.name}>
               <Reveal delay={Math.min(i, 3) * 0.05}>
-                <figure className="overflow-hidden rounded-3xl border border-line bg-white">
+                <figure className="overflow-hidden rounded-3xl border border-border bg-plate">
                   {/* The mark exactly as supplied, on the white plate it was
                       drawn for. Never tinted, greyscaled or cropped. */}
                   <div className="relative aspect-[4/3]">
@@ -70,9 +70,9 @@ export default function PortfolioPage() {
                       className="object-contain p-6"
                     />
                   </div>
-                  <figcaption className="border-t border-line bg-bg px-4 py-3 text-center">
-                    <span className="block text-small font-medium text-ink">{client.name}</span>
-                    <span className="mt-0.5 block text-[0.8125rem] text-muted">{client.sector}</span>
+                  <figcaption className="border-t border-border bg-surface px-4 py-3 text-center">
+                    <span className="block text-small font-medium text-foreground">{client.name}</span>
+                    <span className="mt-0.5 block text-[0.8125rem] text-subtle">{client.sector}</span>
                   </figcaption>
                 </figure>
               </Reveal>

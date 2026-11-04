@@ -5,59 +5,138 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   ZAN VERSE TECHNOLOGIES — company site. LIGHT THEME ONLY.
+   ZAN VERSE TECHNOLOGIES — the colour system. This file is the one source of
+   truth for colour on the site.
 
-   One palette: the gold the UAE pages of the previous Zan build were already
-   in, so this site and the brand that traded on those pages read as one.
+   Three layers:
+     1. Scales        the brand's navy and cyan. --color-navy-900 (#172554) and
+                      --color-cyan-400 (#44d9f8) are the logo's two colours and
+                      are fixed. Slate, violet, emerald, amber and rose are
+                      Tailwind's own.
+     2. Semantic      what components use: bg-canvas, text-muted, bg-action …
+                      Components never name a scale step or hold a hex.
+     3. Dark theme    the same semantic names with dark values, in .dark below.
+                      Add the class "dark" to <html> and every token follows.
+                      There is no switch in the UI; light is the default.
 
-   The accent is deliberately split in two:
-     --color-brand      the FILL — as bright as the brand really is. Never text.
-     --color-brand-ink  the same hue, taken down until it reads on white.
-   Anything sitting ON a brand fill uses --color-on-brand, which is near-black:
-   a hard-coded #fff there fails contrast on gold.
+   Rules that keep the contrast right (figures are WCAG ratios):
+     --color-accent        the cyan FILL. Never text on a light ground (1.77:1 on
+                           white). Text on it is --color-accent-foreground.
+     --color-accent-ink    the cyan for TEXT: cyan-800, 6.44:1 on white. cyan-700
+                           falls just short at 4.46:1.
+     --color-action        the main action: navy with white text in light, cyan
+                           with navy text in dark. Always pair it with
+                           --color-action-foreground, never with a fixed white.
+     --color-success, -warning, -danger   FILLS and icons. Their text partners
+                           are the -ink tokens: emerald-600 is only 3.77:1 and
+                           amber-600 3.19:1 on white.
 
-   Components use tokens only. For translucency use Tailwind's modifier
-   (bg-brand/20) or color-mix(in oklab, var(--color-brand) 20%, transparent) —
-   never `${hex}55`, which is invalid CSS once the colour is a variable.
-   WebGL and canvas cannot read var(): use brandPalette from @/lib/brand, which
-   holds these same values as hex and must be changed alongside them.
+   For translucency use Tailwind's modifier (bg-accent/20) or
+   color-mix(in oklab, var(--color-accent) 20%, transparent) — never `${hex}55`,
+   which is invalid CSS once the colour is a variable. WebGL and canvas cannot
+   read var(): use brandPalette from @/lib/brand, which holds these same light
+   values as hex and must be changed alongside them.
    ═══════════════════════════════════════════════════════════════════════════ */
 
-@theme {
-  /* Neutrals: warm, to sit under the gold. The contrast figures are the
-     production site's, measured there. */
-  --color-bg: #ffffff;
-  --color-surface: #fbf9f3;
-  --color-surface-2: #f5f1e5;
-  --color-ink: #17130a;
-  --color-ink-2: #6c6552;
-  --color-muted: #756d5a;
-  --color-line: #ece6d5;
-  --color-line-strong: #ded4bd;
+/* `static` emits every token even when no utility uses it: component CSS files
+   read them with var(), and .dark overrides them by name. */
+@theme static {
+  /* ── Scales ─────────────────────────────────────────────────────────────── */
+  --color-navy-50: #eff4ff;
+  --color-navy-100: #dce7ff;
+  --color-navy-200: #b9ceff;
+  --color-navy-300: #8aaeff;
+  --color-navy-400: #5c89f0;
+  --color-navy-500: #3b64c6;
+  --color-navy-600: #2b4a9a;
+  --color-navy-700: #223a75;
+  --color-navy-800: #1b2e5b;
+  --color-navy-900: #172554; /* the logo's navy */
+  --color-navy-950: #0b1535;
 
-  /* Accent */
-  --color-brand: #ffc400; /* fill. ink on it = 11.59:1 */
-  --color-brand-ink: #8b6904; /* 5.10:1 on white */
-  --color-brand-ink-2: #5f4802; /* text-gradient far stop */
-  --color-brand-from: #ffd60a;
-  --color-brand-to: #f59e0b;
-  --color-brand-glow: #ffd60a;
-  --color-brand-dark: #8b6904;
-  --color-brand-soft: #fff4cc;
-  --color-on-brand: #17130a;
+  /* Replaces Tailwind's default cyan, so no default shade can slip in. */
+  --color-cyan-50: #ecfcff;
+  --color-cyan-100: #d3f7fe;
+  --color-cyan-200: #a9eefd;
+  --color-cyan-300: #78e5fb;
+  --color-cyan-400: #44d9f8; /* the logo's cyan */
+  --color-cyan-500: #20c6ea;
+  --color-cyan-600: #0ea5c6;
+  --color-cyan-700: #0c829f;
+  --color-cyan-800: #11677d;
+  --color-cyan-900: #124f63;
+  --color-cyan-950: #0b3445;
 
-  /* The paper panel carried over from the reference deck. It is paper, not
-     accent. */
-  --color-paper: #f5f0e8;
+  /* ── Semantic tokens: the light theme ───────────────────────────────────── */
 
-  --color-danger: #c02617;
-  --color-success: #1c6f4c;
+  /* Grounds, lowest to highest. */
+  --color-canvas: #f8fafc; /* the page */
+  --color-surface: #ffffff; /* cards, panels, inputs */
+  --color-surface-raised: #ffffff; /* what floats: bars, menus, modals */
+  --color-surface-muted: #f1f5f9; /* alternate bands, chips, hover fills */
+  --color-surface-tint: var(--color-navy-50); /* a band with the brand in it */
 
-  /* WhatsApp buttons. Third-party brand green, taken down from #25d366 (white
-     on it is 1.98:1) to a shade white text passes on: 5.02:1. */
+  /* Text. */
+  --color-foreground: #0f172a;
+  --color-muted: #475569; /* 7.58:1 on white */
+  --color-subtle: #64748b; /* 4.76:1 on white. See the override under Base. */
+
+  /* Lines. */
+  --color-border: #e2e8f0;
+  --color-border-strong: #cbd5e1;
+  --color-border-field: #64748b; /* input outlines: 4.76:1, over the 3:1 needed */
+
+  /* The main action. */
+  --color-action: #172554;
+  --color-action-hover: var(--color-navy-700);
+  --color-action-foreground: #ffffff; /* 14.69:1 on navy-900, 10.88:1 on navy-700 */
+  --color-action-from: var(--color-navy-900);
+  --color-action-to: var(--color-navy-700);
+
+  /* The highlight. */
+  --color-accent: #44d9f8;
+  --color-accent-foreground: #08204a; /* 9.52:1 on the accent */
+  --color-accent-ink: var(--color-cyan-800);
+  --color-accent-soft: var(--color-cyan-50);
+  /* A fill that takes --color-foreground text in both themes. */
+  --color-accent-fill: var(--color-cyan-300);
+  /* Thin rules and bars that carry no text. */
+  --color-accent-from: var(--color-navy-900);
+  --color-accent-to: var(--color-cyan-400);
+  /* Headline gradient. Large type only: cyan-700 is 4.26:1 on the canvas. */
+  --color-heading-from: var(--color-navy-900);
+  --color-heading-to: var(--color-cyan-700);
+
+  --color-focus: #0891b2; /* 3.68:1 on white, over the 3:1 needed */
+
+  /* Constant in both themes. */
+  --color-inverse: var(--color-navy-950); /* a dark plate, e.g. a white logo */
+  --color-inverse-foreground: #f1f5f9;
+  --color-plate: #ffffff; /* a white plate: client and tool logos as supplied */
+  --color-scrim: var(--color-navy-950); /* behind modals */
+  --color-shadow: var(--color-navy-950);
+
+  /* AI and blockchain only. */
+  --color-ai: var(--color-violet-600);
+
+  /* Status. */
+  --color-success: var(--color-emerald-600);
+  --color-success-ink: var(--color-emerald-700);
+  --color-warning: var(--color-amber-600);
+  --color-warning-ink: var(--color-amber-700);
+  --color-danger: var(--color-rose-600);
+  --color-danger-ink: var(--color-rose-700);
+  --color-danger-foreground: #ffffff; /* 4.70:1 on rose-600 */
+
+  /* WhatsApp buttons. A third party's green, not a brand colour. Taken down from
+     #25d366 (white on it is 1.98:1) to a shade white text passes on: 5.02:1. */
   --color-whatsapp: #15803d;
   --color-whatsapp-hover: #166534;
+  /* WhatsApp as icon or text colour. */
+  --color-whatsapp-ink: #15803d;
+}
 
+@theme {
   --font-sans:
     var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
@@ -111,29 +190,31 @@
   --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-cinema: cubic-bezier(0.76, 0, 0.24, 1);
 
-  --shadow-lift: 0 1px 2px rgb(17 16 22 / 0.04), 0 8px 24px -8px rgb(17 16 22 / 0.08);
-  --shadow-nav: 0 1px 0 rgb(17 16 22 / 0.04), 0 8px 32px -16px rgb(17 16 22 / 0.12);
+  --shadow-lift:
+    0 1px 2px color-mix(in oklab, var(--color-shadow) 5%, transparent),
+    0 8px 24px -8px color-mix(in oklab, var(--color-shadow) 9%, transparent);
+  --shadow-nav:
+    0 1px 0 color-mix(in oklab, var(--color-shadow) 5%, transparent),
+    0 8px 32px -16px color-mix(in oklab, var(--color-shadow) 14%, transparent);
   --shadow-float:
-    0 2px 4px rgb(17 16 22 / 0.04), 0 24px 48px -12px rgb(17 16 22 / 0.14),
-    0 64px 120px -40px rgb(17 16 22 / 0.2);
+    0 2px 4px color-mix(in oklab, var(--color-shadow) 5%, transparent),
+    0 24px 48px -12px color-mix(in oklab, var(--color-shadow) 16%, transparent),
+    0 64px 120px -40px color-mix(in oklab, var(--color-shadow) 22%, transparent);
 
   /* py-section, pt-nav, top-nav, scroll-mt-nav … */
   --spacing-section: clamp(5rem, 3.5rem + 7vw, 10rem);
   --spacing-nav: 4.5rem;
 }
 
-/* shadcn tokens, pointed at the Zan palette so any leftover primitive renders
-   on-brand. `--color-muted` is NOT remapped: here it is Zan's text grey. */
+/* shadcn's token names, pointed at the semantic tokens, so any primitive added
+   later renders on-brand. --color-foreground, --color-accent, --color-border and
+   --color-muted are this site's own (see above), so they are not remapped here. */
 @theme inline {
   --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-heading: var(--font-display);
   --color-ring: var(--ring);
   --color-input: var(--input);
-  --color-border: var(--border);
   --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-secondary: var(--secondary);
@@ -152,25 +233,89 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-:root {
-  --background: var(--color-bg);
-  --foreground: var(--color-ink);
-  --card: var(--color-bg);
-  --card-foreground: var(--color-ink);
-  --popover: var(--color-bg);
-  --popover-foreground: var(--color-ink);
-  --primary: var(--color-brand);
-  --primary-foreground: var(--color-on-brand);
-  --secondary: var(--color-surface);
-  --secondary-foreground: var(--color-ink);
+:root,
+.dark {
+  --background: var(--color-canvas);
+  --foreground: var(--color-foreground);
+  --card: var(--color-surface);
+  --card-foreground: var(--color-foreground);
+  --popover: var(--color-surface-raised);
+  --popover-foreground: var(--color-foreground);
+  --primary: var(--color-action);
+  --primary-foreground: var(--color-action-foreground);
+  --secondary: var(--color-surface-muted);
+  --secondary-foreground: var(--color-foreground);
   --muted-foreground: var(--color-muted);
-  --accent: var(--color-brand-soft);
-  --accent-foreground: var(--color-brand-ink);
+  --accent: var(--color-accent-soft);
+  --accent-foreground: var(--color-accent-ink);
   --destructive: var(--color-danger);
-  --border: var(--color-line);
-  --input: var(--color-line-strong);
-  --ring: var(--color-brand-ink);
+  --border: var(--color-border);
+  --input: var(--color-border-field);
+  --ring: var(--color-focus);
   --radius: 0.75rem;
+}
+
+/* ── Dark theme ───────────────────────────────────────────────────────────────
+   The same tokens with dark values: a deep navy foundation, never pure black.
+   Every text token below passes 4.5:1 on all the grounds. */
+
+.dark {
+  color-scheme: dark;
+
+  --color-canvas: #07142f;
+  --color-surface: #102142;
+  --color-surface-raised: #14294c;
+  --color-surface-muted: #172b4d;
+  --color-surface-tint: #16305a;
+
+  --color-foreground: #f1f5f9;
+  --color-muted: #b6c4d8;
+  --color-subtle: #9bafcb;
+
+  --color-border: #263a5c;
+  --color-border-strong: #3a5178;
+  --color-border-field: #6f87ab; /* 3.57:1 or better on every ground */
+
+  --color-action: #44d9f8;
+  --color-action-hover: var(--color-cyan-300);
+  --color-action-foreground: #08204a;
+  --color-action-from: var(--color-cyan-400);
+  --color-action-to: var(--color-cyan-300);
+
+  --color-accent: #44d9f8;
+  --color-accent-foreground: #08204a;
+  --color-accent-ink: var(--color-cyan-300);
+  --color-accent-soft: var(--color-cyan-950);
+  --color-accent-fill: var(--color-cyan-800);
+  --color-accent-from: var(--color-cyan-700);
+  --color-accent-to: var(--color-cyan-300);
+  --color-heading-from: var(--color-cyan-200);
+  --color-heading-to: var(--color-cyan-400);
+
+  --color-focus: #67e8f9;
+
+  --color-shadow: var(--color-slate-950);
+
+  --color-ai: var(--color-violet-400);
+
+  --color-success: var(--color-emerald-400);
+  --color-success-ink: var(--color-emerald-400);
+  --color-warning: var(--color-amber-400);
+  --color-warning-ink: var(--color-amber-400);
+  --color-danger: var(--color-rose-400);
+  --color-danger-ink: var(--color-rose-400);
+  --color-danger-foreground: var(--color-rose-950);
+  --color-whatsapp-ink: var(--color-green-400);
+}
+
+/* The logo's navy parts measure about 1.1:1 on these grounds, so on dark the
+   lockup and the mark swap to a reversed file: the same vector with the navy
+   turned slate-100 and the cyans as drawn. The light files are untouched. */
+.dark .zan-logo {
+  content: url("/images/brand/zan-verse-technologies-logo-on-dark.svg");
+}
+.dark .zan-mark {
+  content: url("/images/brand/zan-verse-technologies-mark-on-dark.svg");
 }
 
 /* ── Base ─────────────────────────────────────────────────────────────────── */
@@ -179,7 +324,7 @@
   *,
   ::before,
   ::after {
-    border-color: var(--color-line);
+    border-color: var(--color-border);
   }
 
   html {
@@ -195,8 +340,8 @@
   }
 
   body {
-    background-color: var(--color-bg);
-    color: var(--color-ink);
+    background-color: var(--color-canvas);
+    color: var(--color-foreground);
     font-family: var(--font-sans);
     /* clip, not hidden: `hidden` makes body a scroll container on some
        engines and silently breaks position: sticky underneath it. */
@@ -204,12 +349,12 @@
   }
 
   ::selection {
-    background: var(--color-brand-soft);
-    color: var(--color-brand-ink);
+    background: var(--color-accent);
+    color: var(--color-accent-foreground);
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-brand-ink);
+    outline: 2px solid var(--color-focus);
     outline-offset: 3px;
   }
 }
@@ -248,12 +393,25 @@ body::-webkit-scrollbar {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
 }
 
-.bg-brand-gradient {
+/* #64748b measures 4.34:1 on the muted ground and 4.32:1 on the tint, under the
+   4.5:1 small text needs, so inside those grounds subtle text takes the muted
+   shade. One rule here, instead of a case in every component on such a band. */
+.bg-surface-muted,
+.bg-surface-tint,
+.bg-accent-soft,
+.bg-accent-wash,
+.bg-accent-veil {
+  --color-subtle: var(--color-muted);
+}
+
+/* The action fill: navy to a lighter navy in light, cyan to a lighter cyan in
+   dark. Takes text-action-foreground, which passes on both stops. */
+.bg-action-gradient {
   background-image: linear-gradient(
     115deg,
-    var(--color-brand-from) 0%,
-    var(--color-brand-to) 55%,
-    var(--color-brand-from) 100%
+    var(--color-action-from) 0%,
+    var(--color-action-to) 55%,
+    var(--color-action-from) 100%
   );
   /* Oversized so the wash can travel on hover. Both stops are the same two
      colours, so nothing slides to an illegible value mid-transition. */
@@ -263,54 +421,56 @@ body::-webkit-scrollbar {
 /* The travelling wash is a button affordance. Scoped to interactive
    elements: on a full-screen panel or curtain it would shift the whole
    screen's colour whenever the pointer rested on it. */
-:is(a, button, [role="button"]).bg-brand-gradient {
+:is(a, button, [role="button"]).bg-action-gradient {
   transition: background-position 0.6s var(--ease-smooth);
 }
-:is(a, button, [role="button"]).bg-brand-gradient:hover {
+:is(a, button, [role="button"]).bg-action-gradient:hover {
   background-position: 100% 0;
 }
 
-/* Text gradient between the two TEXT-SAFE stops. The fill stops measure
-   ~1.4:1 on white in the UAE, so they are never used for type. */
-.text-brand-gradient {
-  color: var(--color-brand-ink);
+/* Navy into cyan, for thin rules and progress bars. Never under text: no one
+   foreground colour passes on both ends. */
+.bg-accent-gradient {
+  background-image: linear-gradient(90deg, var(--color-accent-from) 0%, var(--color-accent-to) 100%);
+}
+
+/* Text gradient between two text-safe stops, for headlines. The accent fill is
+   about 1.7:1 on white, so it is never used for type. */
+.text-accent-gradient {
+  color: var(--color-accent-ink);
 }
 @supports (background-clip: text) or (-webkit-background-clip: text) {
-  .text-brand-gradient {
-    background-image: linear-gradient(
-      135deg,
-      var(--color-brand-ink-2) 0%,
-      var(--color-brand-ink) 100%
-    );
+  .text-accent-gradient {
+    background-image: linear-gradient(135deg, var(--color-heading-from) 0%, var(--color-heading-to) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
 }
 
-.bg-brand-wash {
+.bg-accent-wash {
   background-image: linear-gradient(
     160deg,
-    color-mix(in oklab, var(--color-brand-from) 7%, var(--color-bg)) 0%,
-    color-mix(in oklab, var(--color-brand-to) 4%, var(--color-bg)) 100%
+    color-mix(in oklab, var(--color-accent) 7%, var(--color-canvas)) 0%,
+    color-mix(in oklab, var(--color-navy-400) 4%, var(--color-canvas)) 100%
   );
 }
 
-.bg-brand-veil {
+.bg-accent-veil {
   background-image: linear-gradient(
     160deg,
-    color-mix(in oklab, var(--color-brand-from) 16%, var(--color-bg)) 0%,
-    color-mix(in oklab, var(--color-brand-to) 9%, var(--color-bg)) 100%
+    color-mix(in oklab, var(--color-accent) 16%, var(--color-canvas)) 0%,
+    color-mix(in oklab, var(--color-navy-400) 9%, var(--color-canvas)) 100%
   );
 }
 
-.border-brand-gradient-t {
+.border-accent-gradient-t {
   border-top: 1px solid transparent;
   border-image: linear-gradient(
       90deg,
       transparent 0%,
-      var(--color-brand-from) 22%,
-      var(--color-brand-to) 78%,
+      var(--color-accent-from) 22%,
+      var(--color-accent-to) 78%,
       transparent 100%
     )
     1;

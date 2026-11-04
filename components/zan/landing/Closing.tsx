@@ -15,7 +15,7 @@ export function Closing({ page }: { page: LandingPage }) {
   return (
     <section
       id="enquiry-bottom"
-      className="relative isolate scroll-mt-nav overflow-hidden border-t border-line bg-brand-wash pt-[clamp(4rem,2.8rem+4.6vw,7rem)]"
+      className="relative isolate scroll-mt-nav overflow-hidden border-t border-border bg-accent-wash pt-[clamp(4rem,2.8rem+4.6vw,7rem)]"
     >
       <div className="container-zan relative z-10 grid items-start gap-x-16 gap-y-10 lg:grid-cols-12">
         <div className="min-w-0 lg:col-span-6">
@@ -27,30 +27,30 @@ export function Closing({ page }: { page: LandingPage }) {
           />
 
           <Reveal>
-            <dl className="mt-9 grid max-w-xl grid-cols-2 gap-px overflow-hidden rounded-3xl border border-line bg-line sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
+            <dl className="mt-9 grid max-w-xl grid-cols-2 gap-px overflow-hidden rounded-3xl border border-border bg-border sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4">
               {closingStats.map((stat) => (
-                <div key={stat.id} className="flex flex-col-reverse justify-end bg-bg px-4 py-4">
-                  <dt className="mt-1.5 text-[0.75rem] leading-snug text-muted">{stat.label}</dt>
+                <div key={stat.id} className="flex flex-col-reverse justify-end bg-surface px-4 py-4">
+                  <dt className="mt-1.5 text-[0.75rem] leading-snug text-subtle">{stat.label}</dt>
                   <dd>
                     <CountFigure
                       value={stat.value}
-                      className="block font-hero text-[1.5rem] leading-none font-bold tracking-[-0.03em] text-ink tabular-nums [font-stretch:92%]"
+                      className="block font-hero text-[1.5rem] leading-none font-bold tracking-[-0.03em] text-foreground tabular-nums [font-stretch:92%]"
                     />
                   </dd>
                 </div>
               ))}
             </dl>
-            <p className="mt-5 text-small text-ink-2">{closing.served}</p>
+            <p className="mt-5 text-small text-muted">{closing.served}</p>
           </Reveal>
         </div>
 
         <Reveal className="min-w-0 lg:col-span-6 xl:col-span-5 xl:col-start-8">
-          <div data-lp-form="" className="relative rounded-3xl border border-line bg-bg p-5 shadow-float sm:p-7">
-            <span aria-hidden="true" className="absolute inset-x-8 top-0 h-px bg-brand-gradient" />
-            <h3 className="font-display text-[1.625rem] leading-tight font-semibold tracking-[-0.012em] text-ink">
+          <div data-lp-form="" className="relative rounded-3xl border border-border bg-surface p-5 shadow-float sm:p-7">
+            <span aria-hidden="true" className="absolute inset-x-8 top-0 h-px bg-accent-gradient" />
+            <h3 className="font-display text-[1.625rem] leading-tight font-semibold tracking-[-0.012em] text-foreground">
               {closing.form.title}
             </h3>
-            <p className="mt-1.5 text-small text-ink-2">{closing.form.lead}</p>
+            <p className="mt-1.5 text-small text-muted">{closing.form.lead}</p>
             <LandingForm location="closing" submitLabel={cta.closing} className="mt-5" />
           </div>
         </Reveal>

@@ -51,11 +51,11 @@ const mix = (a: number, b: number, t: number) => a + (b - a) * t;
    Neutral, ink-tinted layers; never black, never a coloured glow. */
 const FRAME_STYLE = {
   "--edge": 1,
-  borderColor: "color-mix(in oklab, var(--color-line-strong) calc(var(--edge) * 100%), transparent)",
+  borderColor: "color-mix(in oklab, var(--color-border-strong) calc(var(--edge) * 100%), transparent)",
   boxShadow: [
-    "0 1px 2px color-mix(in oklab, var(--color-ink) calc(var(--edge) * 5%), transparent)",
-    "0 22px 44px -18px color-mix(in oklab, var(--color-ink) calc(var(--edge) * 16%), transparent)",
-    "0 60px 110px -44px color-mix(in oklab, var(--color-ink) calc(var(--edge) * 20%), transparent)",
+    "0 1px 2px color-mix(in oklab, var(--color-shadow) calc(var(--edge) * 5%), transparent)",
+    "0 22px 44px -18px color-mix(in oklab, var(--color-shadow) calc(var(--edge) * 16%), transparent)",
+    "0 60px 110px -44px color-mix(in oklab, var(--color-shadow) calc(var(--edge) * 20%), transparent)",
   ].join(", "),
 } as CSSProperties;
 
@@ -249,7 +249,7 @@ export function FrameToFullscreen({
 
   return (
     <ContainerScrollContext.Provider value={progress}>
-      <section ref={sectionRef} id={id} className={cn("relative isolate bg-bg", className)}>
+      <section ref={sectionRef} id={id} className={cn("relative isolate bg-canvas", className)}>
         <div
           ref={stageRef}
           className={cn(
@@ -273,7 +273,7 @@ export function FrameToFullscreen({
               data-frame
               style={FRAME_STYLE}
               className={cn(
-                "relative mx-auto w-full max-w-[1120px] overflow-hidden rounded-[20px] border bg-bg lg:rounded-[28px]",
+                "relative mx-auto w-full max-w-[1120px] overflow-hidden rounded-[20px] border bg-surface lg:rounded-[28px]",
                 "lg:motion-safe:h-svh lg:motion-safe:max-w-none lg:motion-safe:origin-bottom",
                 // The start pose before the scene is built, so the first paint
                 // already shows the tilted frame under the title.

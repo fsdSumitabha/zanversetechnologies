@@ -36,7 +36,7 @@ function contactLink(kind: "email" | "phone") {
   return (
     <a
       href={href}
-      className="underline decoration-line-strong underline-offset-2 transition-colors duration-300 hover:text-ink"
+      className="underline decoration-border-strong underline-offset-2 transition-colors duration-300 hover:text-foreground"
     >
       {label}
     </a>
@@ -55,10 +55,10 @@ function group(blocks: readonly LegalBlock[]): ReactNode[] {
   const flush = () => {
     if (!bullets.length) return;
     out.push(
-      <ul key={`ul-${out.length}`} className="mt-4 space-y-2.5 text-body text-ink-2">
+      <ul key={`ul-${out.length}`} className="mt-4 space-y-2.5 text-body text-muted">
         {bullets.map((node, i) => (
           <li key={i} className="flex gap-3">
-            <span aria-hidden="true" className="mt-[0.6em] size-1.5 shrink-0 rounded-full bg-brand" />
+            <span aria-hidden="true" className="mt-[0.6em] size-1.5 shrink-0 rounded-full bg-accent" />
             <span>{node}</span>
           </li>
         ))}
@@ -80,25 +80,25 @@ function group(blocks: readonly LegalBlock[]): ReactNode[] {
     flush();
     if (block.tag === "h2") {
       out.push(
-        <h2 key={out.length} className="mt-14 font-display text-h2 text-balance text-ink first:mt-0">
+        <h2 key={out.length} className="mt-14 font-display text-h2 text-balance text-foreground first:mt-0">
           {text}
         </h2>,
       );
     } else if (block.tag === "h3") {
       out.push(
-        <h3 key={out.length} className="mt-9 font-display text-h3 font-semibold text-ink">
+        <h3 key={out.length} className="mt-9 font-display text-h3 font-semibold text-foreground">
           {text}
         </h3>,
       );
     } else if (block.tag === "h4") {
       out.push(
-        <h4 key={out.length} className="mt-7 font-mono text-eyebrow text-muted uppercase">
+        <h4 key={out.length} className="mt-7 font-mono text-eyebrow text-subtle uppercase">
           {text}
         </h4>,
       );
     } else {
       out.push(
-        <p key={out.length} className="mt-4 text-body text-ink-2">
+        <p key={out.length} className="mt-4 text-body text-muted">
           {text}
         </p>,
       );
@@ -135,13 +135,13 @@ export function LegalDocumentView({ slug }: { slug: LegalSlug }) {
           </HeroPanel>
         }
       >
-        <p className="mt-8 inline-flex items-center gap-2 rounded-full border border-line-strong bg-bg px-4 py-2 text-small text-ink-2">
-          <span aria-hidden="true" className="size-1.5 rounded-full bg-brand" />
+        <p className="mt-8 inline-flex items-center gap-2 rounded-full border border-border-strong bg-surface px-4 py-2 text-small text-muted">
+          <span aria-hidden="true" className="size-1.5 rounded-full bg-accent" />
           Effective {doc.effective}
         </p>
       </PageHero>
 
-      <section className="border-t border-line bg-bg py-[clamp(3.5rem,2.6rem+3.8vw,6rem)]">
+      <section className="border-t border-border bg-canvas py-[clamp(3.5rem,2.6rem+3.8vw,6rem)]">
         <div className="container-zan">
           <Reveal className="max-w-[72ch]">{group(doc.blocks)}</Reveal>
         </div>
@@ -151,18 +151,18 @@ export function LegalDocumentView({ slug }: { slug: LegalSlug }) {
           work is used. It lives here rather than in the footer of every page:
           one quiet, findable place, outside the legally operative text above. */}
       {slug === "disclaimer" && credits.length > 0 && (
-        <section className="border-t border-line bg-surface py-[clamp(2.5rem,2rem+2vw,4rem)]">
+        <section className="border-t border-border bg-surface-muted py-[clamp(2.5rem,2rem+2vw,4rem)]">
           <div className="container-zan">
             <div className="max-w-[72ch]">
-              <h2 className="font-mono text-eyebrow text-muted uppercase">Third-party credits</h2>
-              <ul className="mt-4 space-y-2.5 text-small text-ink-2">
+              <h2 className="font-mono text-eyebrow text-subtle uppercase">Third-party credits</h2>
+              <ul className="mt-4 space-y-2.5 text-small text-muted">
                 {credits.map((c) => (
                   <li key={c.href}>
                     <a
                       href={c.href}
                       target="_blank"
                       rel="noopener"
-                      className="underline decoration-line-strong underline-offset-2 transition-colors duration-300 hover:text-ink"
+                      className="underline decoration-border-strong underline-offset-2 transition-colors duration-300 hover:text-foreground"
                     >
                       {c.work}
                     </a>{" "}
@@ -171,7 +171,7 @@ export function LegalDocumentView({ slug }: { slug: LegalSlug }) {
                       href={c.licenseHref}
                       target="_blank"
                       rel="noopener"
-                      className="whitespace-nowrap underline decoration-line-strong underline-offset-2 transition-colors duration-300 hover:text-ink"
+                      className="whitespace-nowrap underline decoration-border-strong underline-offset-2 transition-colors duration-300 hover:text-foreground"
                     >
                       {c.license}
                     </a>

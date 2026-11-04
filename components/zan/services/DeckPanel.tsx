@@ -48,16 +48,16 @@ interface ToneClasses {
 /* The edge a swinging slab shows against the panel under it: light on light
    would otherwise read as one sheet. At rest the shadow falls outside the
    panel and is clipped, so only the swing ever shows it. */
-const SLAB_EDGE = "shadow-[0_-28px_60px_-36px_rgb(17_16_22/0.3)]";
+const SLAB_EDGE = "shadow-[0_-28px_60px_-36px_color-mix(in_oklab,var(--color-shadow)_30%,transparent)]";
 
 export const DECK_TONES: Record<DeckTone, ToneClasses> = {
-  soft: { slab: `bg-brand-soft text-ink ${SLAB_EDGE}`, rule: "border-ink/15", index: "text-brand-ink", eyebrow: "brand" },
-  plain: { slab: `bg-bg text-ink ${SLAB_EDGE}`, rule: "border-line-strong", index: "text-brand-ink", eyebrow: "brand" },
-  surface2: { slab: `bg-surface-2 text-ink ${SLAB_EDGE}`, rule: "border-ink/15", index: "text-brand-ink", eyebrow: "brand" },
-  // Paper is a warm neutral, not an accent. Gold brand-ink measures only
-  // 4.49:1 on it, so its text accents stay ink; the plates keep the accent.
-  paper: { slab: `bg-paper text-ink ${SLAB_EDGE}`, rule: "border-ink/15", index: "text-ink", eyebrow: "current" },
-  surface: { slab: `bg-surface text-ink ${SLAB_EDGE}`, rule: "border-line-strong", index: "text-brand-ink", eyebrow: "brand" },
+  soft: { slab: `bg-accent-soft text-foreground ${SLAB_EDGE}`, rule: "border-foreground/15", index: "text-accent-ink", eyebrow: "brand" },
+  plain: { slab: `bg-surface text-foreground ${SLAB_EDGE}`, rule: "border-border-strong", index: "text-accent-ink", eyebrow: "brand" },
+  surface2: { slab: `bg-surface-muted text-foreground ${SLAB_EDGE}`, rule: "border-foreground/15", index: "text-ai", eyebrow: "brand" },
+  // Paper is a navy tint, not an accent, so its text accents stay foreground;
+  // the plates keep the accent.
+  paper: { slab: `bg-surface-tint text-foreground ${SLAB_EDGE}`, rule: "border-foreground/15", index: "text-foreground", eyebrow: "current" },
+  surface: { slab: `bg-surface-muted text-foreground ${SLAB_EDGE}`, rule: "border-border-strong", index: "text-accent-ink", eyebrow: "brand" },
 };
 
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -86,7 +86,7 @@ export function DeckPanelBody({
   srPrefix?: string;
   headline: readonly string[];
   lead?: string;
-  /** Set the last phrase in brand-ink: the panel's one accent word. */
+  /** Set the last phrase in accent-ink: the panel's one accent word. */
   accentLast?: boolean;
   /** A row between the headline and the grid, e.g. a stack of tools. */
   extra?: ReactNode;
@@ -107,7 +107,7 @@ export function DeckPanelBody({
           size (its own text-eyebrow class is lost inside cn()). */}
       <div className="flex items-center justify-between gap-6 text-eyebrow">
         <Eyebrow tone={t.eyebrow}>{eyebrow}</Eyebrow>
-        {meta && <p className="hidden font-mono text-ink-2 uppercase sm:block">{meta}</p>}
+        {meta && <p className="hidden font-mono text-muted uppercase sm:block">{meta}</p>}
       </div>
       <hr className={`zan-deck-rule border-t ${t.rule}`} />
 
@@ -117,12 +117,12 @@ export function DeckPanelBody({
             {srPrefix && <span className="sr-only">{srPrefix}: </span>}
             {headline.map((line, i) => (
               <span key={i} className="block">
-                {accentLast && i === headline.length - 1 ? <span className="text-brand-ink">{line}</span> : line}
+                {accentLast && i === headline.length - 1 ? <span className="text-accent-ink">{line}</span> : line}
               </span>
             ))}
           </h2>
         </div>
-        {lead && <p className="zan-deck-lead text-lead text-ink-2">{lead}</p>}
+        {lead && <p className="zan-deck-lead text-lead text-muted">{lead}</p>}
       </div>
 
       {extra}
@@ -135,14 +135,14 @@ export function DeckPanelBody({
 export function StackChips({ labelId, label, items }: { labelId: string; label: string; items: readonly string[] }) {
   return (
     <div className="zan-deck-chips flex flex-wrap items-center gap-x-5 gap-y-3">
-      <p id={labelId} className="font-mono text-eyebrow text-ink-2 uppercase">
+      <p id={labelId} className="font-mono text-eyebrow text-muted uppercase">
         {label}
       </p>
       <ul aria-labelledby={labelId} className="flex flex-wrap gap-2">
         {items.map((s) => (
           <li
             key={s}
-            className="rounded-full border border-ink/15 bg-bg px-3 py-1 text-small font-medium text-ink sm:px-3.5 sm:py-1.5"
+            className="rounded-full border border-foreground/15 bg-surface px-3 py-1 text-small font-medium text-foreground sm:px-3.5 sm:py-1.5"
           >
             {s}
           </li>
@@ -156,7 +156,7 @@ export function StackChips({ labelId, label, items }: { labelId: string; label: 
 const gridColumns = (count: number) =>
   ({ "--deck-cols-md": count > 4 ? 3 : 2, "--deck-cols-lg": count }) as CSSProperties;
 
-/** A drawing, on a plate tinted with the brand gold (deck.css). */
+/** A drawing, on a plate tinted with the brand cyan (deck.css). */
 function DeckPlate({ art }: { art?: ServiceArt }) {
   if (!art) return null;
   return (
@@ -203,11 +203,11 @@ export function PracticeGrid({ practice, tone }: { practice: Practice; tone: Dec
               <span aria-hidden="true" className={`zan-deck-index font-mono text-eyebrow ${t.index}`}>
                 {pad(i + 1)}
               </span>
-              <span className="font-medium text-ink">{item.tagline}</span>
+              <span className="font-medium text-foreground">{item.tagline}</span>
             </p>
             {practice.id === "development" && item.capabilities ? (
               <ul
-                className="zan-deck-note zan-deck-caps text-small text-ink-2"
+                className="zan-deck-note zan-deck-caps text-small text-muted"
                 aria-label={`${item.title} capabilities`}
               >
                 {item.capabilities.map((c) => (
@@ -215,7 +215,7 @@ export function PracticeGrid({ practice, tone }: { practice: Practice; tone: Dec
                 ))}
               </ul>
             ) : (
-              <p className="zan-deck-note text-small text-ink-2">{item.description}</p>
+              <p className="zan-deck-note text-small text-muted">{item.description}</p>
             )}
           </div>
         </li>
@@ -239,9 +239,9 @@ export function WhyUsGrid({ tone }: { tone: DeckTone }) {
                 <span aria-hidden="true" className={`zan-deck-index font-mono text-eyebrow ${t.index}`}>
                   {item.index}
                 </span>
-                <span className="font-medium text-ink">{item.tagline}</span>
+                <span className="font-medium text-foreground">{item.tagline}</span>
               </p>
-              <p className="zan-deck-note text-small text-ink-2">{item.description}</p>
+              <p className="zan-deck-note text-small text-muted">{item.description}</p>
             </div>
           </li>
         ))}

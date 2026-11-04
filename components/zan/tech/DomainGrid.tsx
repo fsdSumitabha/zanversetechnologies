@@ -18,20 +18,20 @@ export function DomainGrid() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "0px 0px -8% 0px" }}
           transition={{ duration: 0.7, ease: EASE, delay: (i % 4) * 0.06 }}
-          className="flex flex-col rounded-2xl border border-line bg-bg p-6 shadow-lift"
+          className="flex flex-col rounded-2xl border border-border bg-surface p-6 shadow-lift"
         >
           <div className="flex items-center gap-3">
-            <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-brand-soft text-brand-ink">
+            <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent-ink">
               <ZanIcon name={d.icon} className="size-5" />
             </span>
-            <h3 className="text-h3 text-ink">{d.label}</h3>
+            <h3 className="text-h3 text-foreground">{d.label}</h3>
           </div>
-          <p className="mt-4 text-small text-ink-2">{d.blurb}</p>
+          <p className="mt-4 text-small text-muted">{d.blurb}</p>
           <ul className="mt-5 flex flex-wrap gap-1.5" aria-label={`${d.label} stack`}>
             {d.stack.map((s) => (
               <li
                 key={s}
-                className="rounded-full border border-line bg-surface px-2.5 py-1 font-mono text-[0.6875rem] leading-none text-ink-2"
+                className="rounded-full border border-border bg-surface-muted px-2.5 py-1 font-mono text-[0.6875rem] leading-none text-muted"
               >
                 {s}
               </li>

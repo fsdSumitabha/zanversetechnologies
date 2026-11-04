@@ -16,10 +16,10 @@ const WHATSAPP_HREF = waLink(site.whatsapp, site.name);
 const YEAR = new Date().getFullYear();
 
 const contactRow =
-  "group/contact inline-flex min-h-11 items-center gap-3 text-body text-ink transition-colors duration-300 hover:text-brand-ink md:min-h-0";
+  "group/contact inline-flex min-h-11 items-center gap-3 text-body text-foreground transition-colors duration-300 hover:text-accent-ink md:min-h-0";
 const contactGlyph =
-  "grid size-9 shrink-0 place-items-center rounded-full border border-line bg-bg transition-colors duration-300 group-hover/contact:border-brand group-hover/contact:bg-brand group-hover/contact:text-on-brand";
-const legal = "inline-flex min-h-11 items-center transition-colors duration-300 hover:text-ink md:min-h-0";
+  "grid size-9 shrink-0 place-items-center rounded-full border border-border bg-surface transition-colors duration-300 group-hover/contact:border-accent group-hover/contact:bg-accent group-hover/contact:text-accent-foreground";
+const legal = "inline-flex min-h-11 items-center transition-colors duration-300 hover:text-foreground md:min-h-0";
 
 /**
  * A cut-down footer: who this is, the Dubai office and how to reach it, and the
@@ -31,20 +31,20 @@ const legal = "inline-flex min-h-11 items-center transition-colors duration-300 
  */
 export function LandingFooter() {
   return (
-    <footer className="border-t border-line bg-surface-2 text-ink">
+    <footer className="border-t border-border bg-surface-muted text-foreground">
       <div className="container-zan grid gap-x-8 gap-y-10 pt-14 pb-10 md:grid-cols-2 lg:grid-cols-12">
         <div className="md:col-span-2 lg:col-span-5">
           <ZanLogo className="h-9" />
-          <p className="mt-5 max-w-sm text-body text-ink-2">{landingCopy.footer.blurb}</p>
+          <p className="mt-5 max-w-sm text-body text-muted">{landingCopy.footer.blurb}</p>
         </div>
 
         <div className="lg:col-span-3">
-          <h2 className="flex items-center gap-2.5 font-mono text-eyebrow text-muted uppercase">
-            <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-brand" />
+          <h2 className="flex items-center gap-2.5 font-mono text-eyebrow text-subtle uppercase">
+            <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-accent" />
             {office.city} office
           </h2>
-          <address className="mt-4 flex gap-3 text-body text-ink-2 not-italic">
-            <MapPin aria-hidden="true" className="mt-1 size-4 shrink-0 text-brand-ink" />
+          <address className="mt-4 flex gap-3 text-body text-muted not-italic">
+            <MapPin aria-hidden="true" className="mt-1 size-4 shrink-0 text-accent-ink" />
             <span>
               {office.addressLines.map((line) => (
                 <span key={line} className="block">
@@ -57,7 +57,7 @@ export function LandingFooter() {
         </div>
 
         <div className="lg:col-span-4">
-          <h2 className="font-mono text-eyebrow text-muted uppercase">Contact</h2>
+          <h2 className="font-mono text-eyebrow text-subtle uppercase">Contact</h2>
           <ul className="mt-3 md:mt-4 md:space-y-2.5">
             <li>
               <a
@@ -65,7 +65,7 @@ export function LandingFooter() {
                 data-analytics-label={office.phoneDisplay}
                 className={cn(contactRow, "font-medium tabular-nums")}
               >
-                <span aria-hidden="true" className={cn(contactGlyph, "text-brand-ink")}>
+                <span aria-hidden="true" className={cn(contactGlyph, "text-accent-ink")}>
                   <Phone className="size-4" />
                 </span>
                 {office.phoneDisplay}
@@ -79,7 +79,7 @@ export function LandingFooter() {
                 onClick={() => trackWhatsAppClick("Landing Footer WhatsApp")}
                 className={contactRow}
               >
-                <span aria-hidden="true" className={cn(contactGlyph, "text-whatsapp")}>
+                <span aria-hidden="true" className={cn(contactGlyph, "text-whatsapp-ink")}>
                   <SocialIcon name="WhatsApp" className="size-4" />
                 </span>
                 WhatsApp
@@ -88,7 +88,7 @@ export function LandingFooter() {
             </li>
             <li>
               <a href={`mailto:${site.email}`} className={cn(contactRow, "break-all")}>
-                <span aria-hidden="true" className={cn(contactGlyph, "text-brand-ink")}>
+                <span aria-hidden="true" className={cn(contactGlyph, "text-accent-ink")}>
                   <Mail className="size-4" />
                 </span>
                 {site.email}
@@ -99,7 +99,7 @@ export function LandingFooter() {
       </div>
 
       <div className="container-zan">
-        <div className="flex flex-col gap-3 border-t border-line pt-6 pb-28 text-[0.8125rem] leading-relaxed text-muted lg:flex-row lg:items-start lg:justify-between lg:gap-8">
+        <div className="flex flex-col gap-3 border-t border-border pt-6 pb-28 text-[0.8125rem] leading-relaxed text-subtle lg:flex-row lg:items-start lg:justify-between lg:gap-8">
           <p>
             © <span suppressHydrationWarning>{YEAR}</span> {site.name}. All rights reserved.
           </p>
@@ -119,7 +119,7 @@ export function LandingFooter() {
               </button>
             </li>
             <li>
-              <Link href="/" className={cn(legal, "font-medium text-ink-2")}>
+              <Link href="/" className={cn(legal, "font-medium text-muted")}>
                 {landingCopy.footer.mainSite}
               </Link>
             </li>

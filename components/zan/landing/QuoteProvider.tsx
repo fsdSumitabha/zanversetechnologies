@@ -29,7 +29,7 @@ const INLINE_FORM = "[data-lp-form]";
  */
 const ON_SCREEN_MARGIN = "-14% 0px -14% 0px";
 
-/** How long the gold ring stays on a form a button has pointed at. */
+/** How long the cyan ring stays on a form a button has pointed at. */
 const ATTENTION_MS = 1400;
 
 export function QuoteProvider({ page, children }: { page: QuotePage; children: ReactNode }) {

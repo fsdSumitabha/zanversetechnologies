@@ -98,7 +98,7 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   // The page ground, so the browser chrome runs straight into it.
-  themeColor: brandPalette.bg,
+  themeColor: brandPalette.canvas,
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -139,10 +139,10 @@ export default function SiteLayout({ children }: Readonly<{ children: React.Reac
           <style>{`[data-reveal]{opacity:1!important;transform:none!important;clip-path:none!important}#zan-preloader{display:none!important}`}</style>
         </noscript>
       </head>
-      <body className="bg-bg text-ink antialiased" suppressHydrationWarning>
+      <body className="bg-canvas text-foreground antialiased" suppressHydrationWarning>
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[300] focus:rounded-full focus:bg-ink focus:px-5 focus:py-3 focus:text-small focus:text-bg"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[300] focus:rounded-full focus:bg-action focus:px-5 focus:py-3 focus:text-small focus:text-action-foreground"
         >
           Skip to content
         </a>

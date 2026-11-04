@@ -14,9 +14,9 @@ const REVEAL_MS = 1960;
 const DONE_MS = 2550;
 
 /**
- * The shutter: SLATS gold slats side by side, each one its own slice of a
+ * The shutter: SLATS navy slats side by side, each one its own slice of a
  * single gradient. The gradient is laid out twice the screen's width, as
- * .bg-brand-gradient lays it out on one box, and every slat shows the part
+ * .bg-action-gradient lays it out on one box, and every slat shows the part
  * that lies behind where it stands, so with all of them up there is one
  * continuous panel and no seam. A pixel of overlap on either side covers the
  * hairline a fractional width would otherwise leave between two moving
@@ -77,9 +77,9 @@ function whenAnimationEnds(el: Element, name: string, fallbackMs: number, fn: ()
 /**
  * The Zan Verse Technologies lockup, the three practices rising out of their
  * masks one after another, a brand hairline filling underneath — then five
- * gold slats rise over it all, left to right, meet as one panel and carry on
+ * navy slats rise over it all, left to right, meet as one panel and carry on
  * up and away in the same order, uncovering the page: the reference's black
- * page reveal, cut into a shutter, in the brand's gold.
+ * page reveal, cut into a shutter, in the brand's navy.
  *
  * The sequence is CSS (preloader.css). Until it starts, the stage holds the
  * first paint statically. This component starts it once a frame has been
@@ -168,17 +168,17 @@ export function PreloaderStage() {
     >
       <div
         ref={stageRef}
-        className="zan-pl-stage pointer-events-auto absolute inset-0 flex flex-col items-center justify-center bg-bg px-6"
+        className="zan-pl-stage pointer-events-auto absolute inset-0 flex flex-col items-center justify-center bg-canvas px-6"
       >
         <ZanLogo eager className="h-10 sm:h-12" />
 
-        <p className="mt-8 flex flex-col items-center gap-y-1.5 text-center font-display text-[clamp(1.375rem,0.9rem+1.6vw,2.25rem)] leading-[1.15] font-medium text-ink lg:flex-row lg:gap-x-6">
+        <p className="mt-8 flex flex-col items-center gap-y-1.5 text-center font-display text-[clamp(1.375rem,0.9rem+1.6vw,2.25rem)] leading-[1.15] font-medium text-foreground lg:flex-row lg:gap-x-6">
           {preloaderWords.map((word, i) => {
             const index = { "--zan-pl-i": i } as CSSProperties;
             return (
               <Fragment key={word}>
                 {i > 0 && (
-                  <span className="zan-pl-dot hidden size-1.5 shrink-0 rounded-full bg-brand lg:block" style={index} />
+                  <span className="zan-pl-dot hidden size-1.5 shrink-0 rounded-full bg-accent lg:block" style={index} />
                 )}
                 <span className="block overflow-hidden pb-[0.14em]">
                   <span className="zan-pl-word whitespace-nowrap" style={index}>
@@ -190,13 +190,13 @@ export function PreloaderStage() {
           })}
         </p>
 
-        <div className="absolute bottom-[max(12vh,4rem)] left-1/2 h-px w-[min(16rem,56vw)] -translate-x-1/2 overflow-hidden bg-line">
-          <span className="zan-pl-bar block h-full bg-brand-gradient" />
+        <div className="absolute bottom-[max(12vh,4rem)] left-1/2 h-px w-[min(16rem,56vw)] -translate-x-1/2 overflow-hidden bg-border">
+          <span className="zan-pl-bar block h-full bg-accent-gradient" />
         </div>
       </div>
 
       {SLAT_STYLES.map((style, i) => (
-        <div key={i} className="zan-pl-slat absolute inset-y-0 bg-brand-gradient" style={style} />
+        <div key={i} className="zan-pl-slat absolute inset-y-0 bg-action-gradient" style={style} />
       ))}
     </div>
   );

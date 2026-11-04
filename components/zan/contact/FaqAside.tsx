@@ -14,7 +14,7 @@ export function FaqAside() {
       </ButtonLink>
       <a
         href={`mailto:${site.email}`}
-        className="inline-flex min-h-11 items-center text-small text-ink-2 underline decoration-line-strong underline-offset-4 transition-colors md:min-h-0 hover:text-brand-ink hover:decoration-current"
+        className="inline-flex min-h-11 items-center text-small text-muted underline decoration-border-strong underline-offset-4 transition-colors md:min-h-0 hover:text-accent-ink hover:decoration-current"
       >
         {site.email}
       </a>
