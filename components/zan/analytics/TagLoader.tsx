@@ -14,7 +14,7 @@ const LINKEDIN_PARTNER_ID = "9756265";
 /* The one GTM container, on every page of the site and the landing pages. The
    company's main container, GTM-WKT2N6FF, stays off every UAE page (decided
    23 Oct 2026), and this site is UAE only, so it does not load here. */
-const GTM_ID = "GTM-KHWHV5DT";
+const GTM_ID = "GTM-PJ52WP8X";
 
 /* Because those are the LIVE accounts, they load on the production host and
    nowhere else. A tester who accepts on localhost, the staging build or a
