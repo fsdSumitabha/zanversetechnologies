@@ -12,7 +12,9 @@ import { pageMetadata } from "@/lib/metadata";
 
    Where the enquiry form goes on a send that resolved. It is not decoration:
    a lead the forms' script sent reaching this URL is the event Google Ads
-   counts as a conversion, and the only place the site fires `generate_lead`.
+   counts as a conversion, and the only place a form's lead fires
+   `generate_lead`. The WebMCP tool send_enquiry fires its own, with
+   conversion_type "webmcp_enquiry" (lib/analytics.ts).
    Sending the form's success state here rather than swapping a panel in place
    is what makes the conversion countable at all.
 

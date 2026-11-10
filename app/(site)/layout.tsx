@@ -85,6 +85,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
+    // Zan Services' X account. Zan Verse Technologies is its child company,
+    // and this is the account the site links to (socialLinks in
+    // constants/zan.ts), as the owner confirmed on 10 Nov 2026.
+    // pageMetadata (lib/metadata.ts) repeats it for every page.
     site: "@zanservices",
     title: HOME_TITLE,
     description: homeSeo.description,

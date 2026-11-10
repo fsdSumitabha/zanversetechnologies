@@ -3,8 +3,10 @@
 
    WCAG 2.2.2 asks for a way to stop anything that moves by itself for more than
    five seconds. This is that switch, for the visitor who asks for it. It changes
-   nothing until someone presses the control (components/zan/shell/
-   MotionPauseControl.tsx), which only shows on keyboard focus, like the skip link.
+   nothing until someone presses a control. Both are in components/zan/shell/
+   MotionPauseControl.tsx: a pill on every page that shows on keyboard focus,
+   like the skip link, and a round button anyone can see, at the foot of the
+   homepage hero (MotionPauseToggle). They read and set the same state.
 
    CSS loops stop through `html[data-motion-paused]` in app/globals.css. The
    things driven by script (the hero's typing, the Industries carousel's timer,

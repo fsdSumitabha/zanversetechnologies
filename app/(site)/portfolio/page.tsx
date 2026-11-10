@@ -8,7 +8,6 @@ import { Section } from "@/components/zan/page/Section";
 import { MetricRow } from "@/components/zan/page/cards";
 import { HeroFacts, HeroPanel } from "@/components/zan/page/HeroPanel";
 import { SiteButtonLink } from "@/components/zan/services/SiteLinks";
-import { pageUpdated } from "@/constants/freshness";
 import { labels, pageTrail, portfolioPage } from "@/constants/pages";
 import { clients, ctas, metrics, metricsIntro, partnersIntro, projects } from "@/constants/zan";
 import { pageMetadata } from "@/lib/metadata";
@@ -109,7 +108,7 @@ export default function PortfolioPage() {
       </Section>
 
       <PageNotes tone="bg">
-        <UpdatedLine date={pageUpdated("/portfolio")} />
+        <UpdatedLine path="/portfolio" />
       </PageNotes>
     </main>
   );

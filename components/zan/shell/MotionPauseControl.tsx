@@ -1,13 +1,18 @@
 "use client";
 
+import { MarqueeToggle } from "@/components/zan/work/MarqueeToggle";
 import { setMotionPaused } from "@/lib/motionPause";
 import { useMotionPaused } from "@/lib/useMotionPaused";
 
 /**
- * The switch for everything that moves by itself. WCAG 2.2.2 asks for one, and
- * the page's look must not change for it, so it works like the skip link: out of
- * sight, in the same place in the tab order, and the same pill as that link once
- * a keyboard lands on it. A mouse or touch visitor never sees it.
+ * The switch for everything that moves by itself, which WCAG 2.2.2 asks for. On
+ * every page it works like the skip link: out of sight, in the same place in the
+ * tab order, and the same pill as that link once a keyboard lands on it.
+ *
+ * The homepage also shows the switch: MotionPauseToggle below is a round button
+ * in the hero's lower left (opening/HeroScene.tsx), where the typing and the
+ * floating mark move by themselves. Both read and set the one value, so a press
+ * on either one updates the other.
  *
  * Pausing sets `html[data-motion-paused]`, which stops the CSS loops
  * (app/globals.css), and the hero's typing and the Industries carousel read the
@@ -27,5 +32,25 @@ export function MotionPauseControl() {
     >
       {paused ? "Play animations" : "Pause animations"}
     </button>
+  );
+}
+
+/**
+ * The same switch on show, for the homepage hero. It wears MarqueeToggle's look,
+ * so it reads as one of the site's pause buttons: the name stays "Pause
+ * animations" and aria-pressed says whether they are paused. Hidden for reduced
+ * motion, where nothing moves. Like the pill, it renders as playing on the
+ * server and during hydration, and shows a saved pause straight after.
+ */
+export function MotionPauseToggle({ className }: { className?: string }) {
+  const paused = useMotionPaused();
+
+  return (
+    <MarqueeToggle
+      paused={paused}
+      onToggle={() => setMotionPaused(!paused)}
+      label="Pause animations"
+      className={className}
+    />
   );
 }

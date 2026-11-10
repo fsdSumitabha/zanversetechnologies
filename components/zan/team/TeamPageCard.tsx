@@ -17,10 +17,18 @@ import { cn } from "@/lib/utils";
    `experience`, `description`, `email`, `linkedin` and `portrait` are each
    optional and each rendered only when it is set. Nothing is ever drawn as an
    empty frame, a blank row or a link that goes nowhere, which is what lets the
-   director's card carry exactly what we were given for him and stop there. */
+   director's card carry exactly what we were given for him and stop there.
+
+   EVERY CARD IS AN ANCHOR. Its outermost element carries the person's `id`, so
+   /our-team#karthikeyan opens on that card, and the structured data gives that
+   address as the person's `url` (lib/schema.ts). Only this page renders these
+   two cards and each person once, so no id repeats, and constants/zan.ts keeps
+   a person's id clear of the page's other ids. `scroll-mt-nav`, as every
+   anchor target on the standing pages has, keeps the fixed bar off the name.
+   It moves nothing on screen: it only changes where a jump to the card stops. */
 
 const card =
-  "zan-person flex h-full flex-col rounded-3xl border border-border bg-surface p-6 transition-[border-color,box-shadow,transform] duration-500 ease-out-expo hover:-translate-y-0.5 hover:border-border-strong hover:shadow-lift sm:p-7";
+  "zan-person flex h-full scroll-mt-nav flex-col rounded-3xl border border-border bg-surface p-6 transition-[border-color,box-shadow,transform] duration-500 ease-out-expo hover:-translate-y-0.5 hover:border-border-strong hover:shadow-lift sm:p-7";
 
 /** A labelled link out, sized to a 44px tap target. */
 const pill =
@@ -36,7 +44,7 @@ const pill =
 export function TeamPersonCard({ person }: { person: Person }) {
   const footer = Boolean(person.experience || person.linkedin || person.email);
   return (
-    <article className={card}>
+    <article id={person.id} className={card}>
       <div className="zan-person-top grow">
         <Portrait
           person={person}
@@ -127,14 +135,16 @@ function PersonLinks({ person, className }: { person: Person; className?: string
  * hairline, its ground and its "Leadership" label — so this is only the person
  * inside it, and the heading level picks up below the panel's own.
  *
- * Name, job title, headshot and profile link, because those are what we were
- * given. No description was supplied and none is invented; the moment one
- * arrives it is a line in constants/zan.ts and it renders here, under the
- * title. The links are the same labelled pills the practice cards use.
+ * Name, job title, headshot, the approved line and the profile link: what
+ * constants/zan.ts holds for him. The line sits under the title, at the
+ * panel's smaller size and narrower measure, and no years were given, so there
+ * is no Experience row. The links are the same labelled pills the practice
+ * cards use. The outer element is his card's anchor, /our-team#nadim, like
+ * every practice card's.
  */
 export function TeamLeadCard({ person }: { person: Person }) {
   return (
-    <div className="flex items-center gap-5">
+    <div id={person.id} className="flex scroll-mt-nav items-center gap-5">
       <Portrait
         person={person}
         sizes="112px"

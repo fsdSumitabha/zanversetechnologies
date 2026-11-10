@@ -109,7 +109,7 @@ export function MessageBubble({ message, agentName, firstOfGroup, lastOfGroup }:
           <span className="inline-block w-[4.5rem] select-none" aria-hidden="true" />
         </p>
 
-        <span className="absolute right-2.5 bottom-1 flex items-center gap-1 text-[0.6875rem] tabular-nums text-muted">
+        <span className="absolute right-2.5 bottom-1 flex items-center gap-1 text-[0.75rem] tabular-nums text-muted">
           {time}
           {isClient && <Ticks status={message.status} />}
         </span>

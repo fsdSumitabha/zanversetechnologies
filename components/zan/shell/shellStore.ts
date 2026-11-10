@@ -24,6 +24,8 @@ function subscribePreloaded(onChange: () => void) {
  * True once the preloader is out of the way. `html[data-preloaded]` is the
  * source of truth — the inline script sets it before hydration for a visitor
  * who will not see the preloader, and the preloader sets it as it leaves.
+ * When the cover's own fallback uncovered the page before the scripts came,
+ * PreloaderStage sets it as soon as they do, once the fallback has finished.
  */
 export function usePreloaded(): boolean {
   return useSyncExternalStore(

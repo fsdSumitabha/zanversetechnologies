@@ -1,7 +1,8 @@
 /* ───────────────────────────────────────────────────────────────────────────
    Preloader. Static until [data-play] — logo on the page ground, words in
-   their masks, hairline empty — so it holds the first paint however long
-   hydration and the section scenes keep the main thread busy. PreloaderStage
+   their masks, hairline empty — so it holds the first paint while hydration
+   and the section scenes keep the main thread busy, up to the fallback
+   described below. PreloaderStage
    sets [data-play] once a frame has actually been painted, and the sequence
    runs as CSS keyframes (transforms on the compositor, so a busy main thread
    does not stall them):
@@ -17,13 +18,40 @@
    background to its own slice of it), so while they are all up they read as
    a single navy panel; only their movement shows the cuts.
 
-   Failsafe: with no [data-play] (JavaScript never arrived) the stage hides
-   itself after 8s. A separate animation name, so switching to the real
-   sequence starts it fresh rather than inheriting the failsafe's clock.
+   Fallback: the cover waits for its script for --zan-pl-fallback-at from
+   its first frame, and no longer. With no [data-play] by then (a slow
+   connection, or a script that fails) it fades out where it stands over
+   --zan-pl-fallback-fade, then hides, and from then on takes no input. The
+   slats never move. The fade is opacity, so the compositor can run it on
+   time however busy the main thread is. The header (.zan-nav-in, in the
+   header section below) and the homepage hero's copy (components/zan/opening/
+   opening.css) come in on the same clock, so the page is never uncovered
+   with them still hidden.
+
+   The fallback's keyframes have names of their own, so a [data-play] set
+   before then swaps them for the sequence, which starts fresh rather than
+   inheriting their clock. After that the sequence never starts:
+   PreloaderStage sees the fallback under way (getAnimations(), its fade past
+   its delay), lets it finish, and sets the flag without playing anything
+   again over the page it has uncovered.
+
+   The two times are set once, here. Their other copies are FALLBACK_MS and
+   FALLBACK_FADE_MS in PreloaderStage.tsx, for a browser without
+   getAnimations(); opening.css reads both properties, with copies of its own
+   in case they are missing.
    ─────────────────────────────────────────────────────────────────────────── */
 
+:root {
+  --zan-pl-fallback-at: 3s;
+  --zan-pl-fallback-fade: 0.4s;
+}
+
+/* No [data-play]: the fallback. The fade, then the hide, which the stage
+   inherits, so that is also when it stops taking input. */
 .zan-pl-root {
-  animation: zan-pl-failsafe 1ms linear 8s both;
+  animation:
+    zan-pl-fallback-fade var(--zan-pl-fallback-fade) ease var(--zan-pl-fallback-at) both,
+    zan-pl-fallback-gone 1ms linear calc(var(--zan-pl-fallback-at) + var(--zan-pl-fallback-fade)) both;
 }
 .zan-pl-root[data-play] {
   animation: zan-pl-gone 1ms linear 2.55s both;
@@ -75,6 +103,46 @@
 .zan-pl-root[data-play] .zan-pl-slat {
   animation: zan-pl-slat 1s linear both;
   animation-delay: calc(1.35s + var(--zan-pl-i, 0) * 0.045s);
+}
+
+/* ── The header under the fallback ────────────────────────────────────────────
+   Navbar.tsx drops the header in from inline opacity 0 and translateY(-18px)
+   when the flag arrives, so in the server HTML it is invisible until the
+   scripts run. Under the fallback this brings it in with the cover's fade:
+   the same moment, and its own drop-in's 0.7s and ease. An animation
+   outranks the inline style, and its forwards fill keeps it in place.
+
+   Only while the flag is missing and the sequence has not started. A
+   sequence started in time switches it off while it is still in its delay,
+   where forwards fill shows nothing, so the header drops in as it always
+   has. A returning visitor has the flag before the first paint, so it never
+   applies to them.
+
+   The cover's state is read off <html>, where PreloaderStage copies it:
+   [data-preloader-play] with the cover's [data-play]. Not with
+   html:has(#zan-preloader...), which has Chrome check <html> again on every
+   insertion anywhere in the page: on the homepage that was about 300 extra
+   checks and a fifth more style work while it loads.
+
+   When the scripts arrive after the fallback, the flag switches the first
+   selector off before React has redrawn the header with its entered styles,
+   and anything that reads layout in between would restyle it at its server
+   opacity 0 and replay the drop-in. So PreloaderStage sets
+   [data-preloader-fallback] on <html> first, which keeps this same animation
+   running through the flag, and takes it off a second later, when the
+   header's own styles say the same thing.
+
+   It runs while animations are paused, like the other one-off entrances in
+   app/globals.css, or a pause saved on an earlier visit would leave the
+   header hidden. */
+
+html:not([data-preloaded]):not([data-preloader-play]) .zan-nav-in,
+html[data-preloader-fallback] .zan-nav-in {
+  animation: zan-nav-fallback 0.7s var(--ease-out-expo) var(--zan-pl-fallback-at) forwards;
+}
+
+html[data-motion-paused] .zan-nav-in {
+  animation-play-state: running !important;
 }
 
 @keyframes zan-pl-word-in {
@@ -150,11 +218,34 @@
   }
 }
 
-@keyframes zan-pl-failsafe {
+/* The fallback's own: the steps of zan-pl-stage-fade and zan-pl-gone, under
+   names the sequence does not use. */
+@keyframes zan-pl-fallback-fade {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes zan-pl-fallback-gone {
   from {
     visibility: visible;
   }
   to {
     visibility: hidden;
+  }
+}
+
+/* Navbar.tsx's inline starting point to its entered one. */
+@keyframes zan-nav-fallback {
+  from {
+    opacity: 0;
+    transform: translateY(-18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
   }
 }

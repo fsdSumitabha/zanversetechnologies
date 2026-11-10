@@ -170,7 +170,7 @@ function FieldShell({
         {optional && (
           <>
             {" "}
-            <span className="font-mono text-[0.6875rem] tracking-[0.12em] text-subtle uppercase">Optional</span>
+            <span className="font-mono text-[0.75rem] tracking-[0.12em] text-subtle uppercase">Optional</span>
           </>
         )}
       </label>

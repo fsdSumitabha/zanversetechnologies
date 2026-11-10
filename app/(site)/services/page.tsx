@@ -8,7 +8,6 @@ import { Reveal } from "@/components/zan/page/Reveal";
 import { FactCard, ServiceCard, StepCard } from "@/components/zan/page/cards";
 import { HeroLinks, HeroPanel } from "@/components/zan/page/HeroPanel";
 import { SiteButtonLink, SiteLink } from "@/components/zan/services/SiteLinks";
-import { pageUpdated } from "@/constants/freshness";
 import { areaPages, childrenOf, pageTrail, servicesPage } from "@/constants/pages";
 import { getReasonArt } from "@/constants/serviceArt";
 import { ctas, faqIntro, processIntro, processSteps, servicesFaqs, whyUs } from "@/constants/zan";
@@ -197,7 +196,7 @@ export default function ServicesPage() {
       </Section>
 
       <PageNotes tone="bg">
-        <UpdatedLine date={pageUpdated("/services")} />
+        <UpdatedLine path="/services" />
       </PageNotes>
     </main>
   );

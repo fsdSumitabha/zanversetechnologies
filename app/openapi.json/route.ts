@@ -1,4 +1,4 @@
-import { CONTENT_UPDATED } from "@/constants/freshness";
+import { COMPANY_DATA_UPDATED } from "@/constants/freshness";
 import { serviceOptions, site } from "@/constants/zan";
 import { absoluteUrl } from "@/lib/metadata";
 import { PUBLIC_HEADERS } from "@/lib/siteData";
@@ -45,7 +45,8 @@ const spec = {
   openapi: "3.1.0",
   info: {
     title: `${site.name} public API`,
-    version: CONTENT_UPDATED,
+    // The day the Company schema last changed, which is also company.json's.
+    version: COMPANY_DATA_UPDATED,
     description:
       "Public, read-only facts about the company, and one route for sending it an enquiry. There is no login. The data files are the same text the site's pages show.",
     contact: { name: site.name, url: site.url, email: site.email },
@@ -168,6 +169,13 @@ const spec = {
           name: string,
           shortName: string,
           url,
+          parentOrganization: {
+            type: "object",
+            description: "The company this one is part of.",
+            required: ["name", "url"],
+            properties: { name: string, url },
+          },
+          googleProfile: { ...url, description: "The company's listing on Google, its knowledge panel." },
           tagline: string,
           description: string,
           email: { type: "string", format: "email" },
@@ -292,6 +300,7 @@ const spec = {
               properties: { label: string, href: url },
             },
           },
+          socialOwner: { ...string, description: "Who the accounts in `social` belong to: the parent company." },
         },
       },
       CaseStudy: {

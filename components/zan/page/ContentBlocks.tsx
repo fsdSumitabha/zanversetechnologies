@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { SiteLink } from "@/components/zan/services/SiteLinks";
+import { pageUpdated } from "@/constants/freshness";
 import { labels } from "@/constants/pages";
+import { reviewerFor, teamCardPath } from "@/constants/reviewers";
 import type { ContentSection, SourceLink } from "@/constants/services/types";
 import { site } from "@/constants/zan";
 import { Section, toneAt, type SectionTone } from "./Section";
@@ -138,18 +140,41 @@ function longDate(iso: string): string {
 }
 
 /**
- * When the page last changed and who is answerable for it. The date is the one
- * the sitemap and the structured data give (constants/freshness.ts, or the
- * guide's own), so the three cannot disagree. The company rather than a person,
- * because no one person has been credited as the writer of a page.
+ * When the page last changed, and the colleague who reviews it.
+ *
+ * `path` is the page's own. The date is the one the sitemap and the structured
+ * data give for it: the page's date in constants/freshness.ts, or `date` where
+ * the caller has its own, as a guide does with its `updated`. So the three
+ * cannot disagree.
+ *
+ * The reviewer is the person constants/reviewers.ts names for the path, the
+ * owner's choice for each page: "Last updated 5 November 2026. Reviewed by
+ * Nadim Ali, Director." The name opens their card on /our-team, in the same
+ * quiet link the line has always used. The page's structured data names the
+ * same person (`reviewedBy`, or a guide's `author`), and so does its Markdown
+ * copy. A page with no reviewer there keeps the older line, which credits the
+ * team rather than a person.
  */
-export function UpdatedLine({ date }: { date: string }) {
+export function UpdatedLine({ path, date = pageUpdated(path) }: { path: string; date?: string }) {
+  const reviewer = reviewerFor(path);
+  const updated = <time dateTime={date}>{longDate(date)}</time>;
+  if (!reviewer) {
+    return (
+      <p className="text-small text-muted">
+        Last updated {updated} by the {site.name}{" "}
+        <SiteLink href="/our-team" className={quietLink}>
+          team
+        </SiteLink>
+      </p>
+    );
+  }
   return (
     <p className="text-small text-muted">
-      Last updated <time dateTime={date}>{longDate(date)}</time> by the {site.name}{" "}
-      <SiteLink href="/our-team" className={quietLink}>
-        team
+      Last updated {updated}. Reviewed by{" "}
+      <SiteLink href={teamCardPath(reviewer)} className={quietLink}>
+        {reviewer.name}
       </SiteLink>
+      , {reviewer.role}.
     </p>
   );
 }

@@ -10,7 +10,6 @@ import { FactCard, ServiceCard, StepCard } from "@/components/zan/page/cards";
 import { HeroLinks, HeroList, HeroPanel } from "@/components/zan/page/HeroPanel";
 import { SiteButtonLink } from "@/components/zan/services/SiteLinks";
 import { ButtonLink } from "@/components/zan/ui/Button";
-import { pageUpdated } from "@/constants/freshness";
 import {
   brandingPackages,
   childrenOf,
@@ -340,7 +339,7 @@ export default async function ServiceDetailPage({ params }: RouteParams) {
 
       <PageNotes tone={toneOf("notes")}>
         <SourcesList sources={content?.sources} />
-        <UpdatedLine date={pageUpdated(page.href)} />
+        <UpdatedLine path={page.href} />
       </PageNotes>
     </main>
   );

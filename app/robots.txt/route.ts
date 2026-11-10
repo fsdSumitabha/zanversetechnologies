@@ -14,13 +14,14 @@ import { site } from "@/constants/zan";
    Applebot-Extended are the AI-training opt-ins for Gemini and Apple
    Intelligence and are listed for the same reason.
 
-   TRAINING IS THE OWNER'S CALL (GEO 9). The training crawlers are let in, as
-   they always were, but CONTENT_SIGNAL states no preference on training. To
-   say yes, add ai-train=yes to it, here and in next.config.ts. To stop it and
-   keep the answers: in AI_CRAWLERS give GPTBot, ClaudeBot, Google-Extended,
+   TRAINING IS ALLOWED (GEO 9). On 10 November 2026 the owner decided that AI
+   companies may train on this site's content. So the training crawlers are
+   let in, as they always were, and CONTENT_SIGNAL says ai-train=yes, here and
+   in the Content-Signal header in next.config.ts. To reverse that and keep
+   the answers: in AI_CRAWLERS give GPTBot, ClaudeBot, Google-Extended,
    Applebot-Extended, meta-externalagent, Bytespider and CCBot `Disallow: /`,
    keep ChatGPT-User, OAI-SearchBot, PerplexityBot and Claude-User as they are,
-   and add ai-train=no in both places.
+   and change ai-train=yes to ai-train=no in both places.
 
    NOTE: this file does not decide whether a page is indexed. A meta tag or an
    X-Robots-Tag does that, per page: the /lp pages, /thank-you and /agent carry a
@@ -58,9 +59,9 @@ const PRIVATE = "/api/";
 
 /* A comment, on purpose. Lighthouse's robots check fails a file with a directive
    it does not know, and that takes the page's SEO score below 100. The working
-   signal is the Content-Signal response header (CONTENT_SIGNAL in next.config.ts).
-   Keep the two in step. */
-const CONTENT_SIGNAL = "# Content-Signal: search=yes, ai-input=yes";
+   signal is the Content-Signal response header in next.config.ts. Keep the two
+   in step: search, AI answers and AI training are all yes. */
+const CONTENT_SIGNAL = "# Content-Signal: search=yes, ai-input=yes, ai-train=yes";
 
 const group = (userAgent: string, ...extra: string[]) =>
   [`User-Agent: ${userAgent}`, ...extra, "Allow: /", `Disallow: ${PRIVATE}`].join("\n");

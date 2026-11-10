@@ -44,6 +44,17 @@
    own opening and in the refund policy and the disclaimer. Whether to bring
    those in line is for counsel.
 
+   One term is the owner's, not counsel's: on 10 November 2026 the owner set
+   the bug-fix support period at three months, which the homepage, /how-we-work,
+   the service pages and a guide already promised. The refund policy's §6 had
+   said "typically 7-30 days as per SOW"; its first bullet now gives 3 months
+   of post-launch support for bug fixes due to our fault, and the policy's
+   effective date moved to November 10, 2026. Nothing else here gives a
+   support or warranty period that disagrees: privacy §7 already says 3 months
+   post-launch, and the 7 days in refund §4 is a refund window, not a support
+   period. Counsel should still read the new bullet, and should know that it
+   no longer defers to the SOW.
+
    Structure is flattened to tagged blocks so one renderer can lay out all five
    pages consistently.
    ─────────────────────────────────────────────────────────────────────────── */
@@ -235,7 +246,7 @@ export const legalDocuments: Record<string, LegalDocument> = {
   },
   "refund-policy": {
     title: "Refund & Cancellation Policy",
-    effective: "October 23, 2026",
+    effective: "November 10, 2026",
     blocks: [
       { tag: "p", text: "This Refund and Cancellation Policy (\"Policy\") forms part of our Terms and Conditions and applies to all services provided by Zan Verse Technologies (\"we,\" \"us,\" or \"our\"), including web development, mobile app development, blockchain & Web3 solutions, AI solutions, digital marketing, SEO, social media management, and related digital services." },
       { tag: "p", text: "We aim to deliver high-quality work and maintain transparent client relationships. However, due to the custom, project-based, and time-intensive nature of our services, refunds and cancellations are limited and governed by this Policy." },
@@ -279,7 +290,7 @@ export const legalDocuments: Record<string, LegalDocument> = {
       { tag: "li", text: "You must settle any outstanding payments before cancellation takes effect." },
       { tag: "li", text: "Upon mutual agreement, we will cease work and deliver any partially completed materials (subject to full payment for work done)." },
       { tag: "h2", text: "6. Limited Warranty and Remedies" },
-      { tag: "li", text: "We provide a limited post-delivery support period (typically 7-30 days as per SOW) for bug fixes at no extra cost if defects are due to our fault." },
+      { tag: "li", text: "We provide a limited post-launch support period of 3 months for bug fixes at no extra cost if defects are due to our fault." },
       { tag: "li", text: "If major issues arise within this period that we cannot resolve, you may request cancellation with a proportional refund for undelivered portions only." },
       { tag: "li", text: "This is your sole remedy; no further refunds or damages." },
       { tag: "h2", text: "7. Force Majeure and Exceptional Cases" },

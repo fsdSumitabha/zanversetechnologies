@@ -31,7 +31,13 @@ function holdHashTarget(): (() => void) | undefined {
   } catch {
     // Not valid percent-encoding, so it can only be the id as written.
   }
-  return holdTarget(() => document.getElementById(id));
+  const find = () => document.getElementById(id);
+  // A target inside a block that rises into place as it fades in (Reveal, 18px)
+  // lands on its place in the layout, or it stops that far off once the rise
+  // ends: a person's card on /our-team, which each reviewer line links to.
+  // Every other target lands as it always has.
+  const rising = find()?.closest("[data-reveal]") != null;
+  return holdTarget(find, { ignoreTransforms: rising });
 }
 
 /**

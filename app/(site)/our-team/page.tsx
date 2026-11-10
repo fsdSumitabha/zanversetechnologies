@@ -7,7 +7,6 @@ import { Section, toneAt } from "@/components/zan/page/Section";
 import { HeroPanel } from "@/components/zan/page/HeroPanel";
 import { SiteButtonLink } from "@/components/zan/services/SiteLinks";
 import { TeamLeadCard, TeamPersonCard } from "@/components/zan/team/TeamPageCard";
-import { pageUpdated } from "@/constants/freshness";
 import { labels, ourTeamPage, pageTrail } from "@/constants/pages";
 import { ctas, teamGroups, teamLead } from "@/constants/zan";
 import { pageMetadata } from "@/lib/metadata";
@@ -27,10 +26,9 @@ export const metadata: Metadata = pageMetadata({
    description be read rather than glimpsed, with the profile links spelled out.
    Same data (constants/zan.ts), so the two can never say different things.
 
-   The director sits in the hero's panel rather than in a band of his own: the
-   card we can honestly build for him is a name and a job title, and a name and
-   a job title alone across 1224px of page would be a band mostly made of
-   nothing. In the panel it is the first thing on the page at every width, above
+   The director sits in the hero's panel rather than in a band of his own: his
+   card is a name, a job title and one approved line (10 Nov 2026), and that
+   alone across 1224px of page would be a band mostly made of nothing. In the panel it is the first thing on the page at every width, above
    both groups, and it fills the hero with something specific to this page
    instead of the facts two other pages already show there.
 
@@ -112,7 +110,7 @@ export default function OurTeamPage() {
       </Section>
 
       <PageNotes tone={toneAt(teamGroups.length + 1)}>
-        <UpdatedLine date={pageUpdated("/our-team")} />
+        <UpdatedLine path="/our-team" />
       </PageNotes>
     </main>
   );

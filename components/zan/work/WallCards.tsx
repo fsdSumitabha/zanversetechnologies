@@ -41,7 +41,7 @@ const cardBase =
 
 const linkFocus = "focus-visible:-translate-y-2.5 focus-visible:shadow-float";
 
-const mono = "font-mono text-[0.6875rem] uppercase tracking-[0.14em]";
+const mono = "font-mono text-[0.75rem] uppercase tracking-[0.14em]";
 
 /* What the picture band asks next/image for. The band is the card's full
    width, and wall.css gives a card max(19rem, 26vw) from 1024px up — so 26vw

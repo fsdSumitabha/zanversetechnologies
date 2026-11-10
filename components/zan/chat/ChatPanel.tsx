@@ -175,7 +175,7 @@ export function ChatPanel({ open, onClose }: { open: boolean; onClose: () => voi
               <p className="truncate text-small font-semibold text-foreground">
                 {human ? (chat.agentName ?? `${site.name} team`) : "Zan assistant"}
               </p>
-              <p className="flex items-center gap-1.5 text-[0.6875rem] text-subtle">
+              <p className="flex items-center gap-1.5 text-[0.75rem] text-subtle">
                 {chat.connection === "connecting" && !chat.ready ? (
                   <>
                     <span aria-hidden="true" className="size-1.5 animate-pulse rounded-full bg-subtle" />

@@ -96,6 +96,9 @@ export function Hero() {
       <h1
         id="hero-title"
         data-reveal
+        /* It enters by focus, not by fade (opening.css), so like the big line
+           it is painted from the first frame. */
+        data-in="focus"
         className="zan-hero-in mx-auto mt-6 max-w-[36rem] text-[1.0625rem] leading-relaxed text-pretty text-muted sm:mt-7 sm:text-[1.1875rem] lg:mx-0"
         style={delay(1)}
       >
@@ -128,7 +131,9 @@ export function Hero() {
         <HeroActions />
       </div>
 
-      {/* The company in three figures, under a hairline. */}
+      {/* The company in three figures, under a hairline. The labels take the
+          muted shade: the subtle one measured as low as 4.37:1 over the hero's
+          tinted ground, under the 4.5:1 that small text needs. */}
       <dl
         data-reveal
         className="zan-hero-in mx-auto mt-9 grid max-w-[27rem] grid-cols-3 border-t border-border pt-5 sm:mt-10 lg:mx-0 lg:max-w-full"
@@ -142,7 +147,7 @@ export function Hero() {
               (i > 0 ? "border-l border-border lg:pl-5" : "lg:pl-0")
             }
           >
-            <dt className="text-center text-[0.75rem] leading-snug text-subtle lg:text-left">
+            <dt className="text-center text-[0.75rem] leading-snug text-muted lg:text-left">
               {STAT_LABEL[m.id] ?? m.label}
             </dt>
             <dd className="font-hero text-[1.625rem] leading-none font-bold tracking-[-0.03em] text-foreground tabular-nums [font-stretch:92%] sm:text-[1.875rem]">

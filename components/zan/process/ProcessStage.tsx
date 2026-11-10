@@ -161,7 +161,7 @@ function Timeline() {
           />
           <span
             aria-hidden="true"
-            className="absolute left-0 top-6 grid size-8 place-items-center rounded-full border border-border-strong bg-surface font-mono text-[0.6875rem] text-accent-ink lg:hidden"
+            className="absolute left-0 top-6 grid size-8 place-items-center rounded-full border border-border-strong bg-surface font-mono text-[0.75rem] text-accent-ink lg:hidden"
           >
             {s.index}
           </span>

@@ -31,7 +31,7 @@ export function DomainGrid() {
             {d.stack.map((s) => (
               <li
                 key={s}
-                className="rounded-full border border-border bg-surface-muted px-2.5 py-1 font-mono text-[0.6875rem] leading-none text-muted"
+                className="rounded-full border border-border bg-surface-muted px-2.5 py-1 font-mono text-[0.75rem] leading-none text-muted"
               >
                 {s}
               </li>

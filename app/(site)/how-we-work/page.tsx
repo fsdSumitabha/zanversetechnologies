@@ -7,7 +7,6 @@ import { Section } from "@/components/zan/page/Section";
 import { FactCard, StepCard } from "@/components/zan/page/cards";
 import { HeroFacts, HeroPanel } from "@/components/zan/page/HeroPanel";
 import { SiteButtonLink } from "@/components/zan/services/SiteLinks";
-import { pageUpdated } from "@/constants/freshness";
 import { howWeWorkFaqs } from "@/constants/pageFaqs";
 import { howWeWorkPage, labels, pageTrail } from "@/constants/pages";
 import { getReasonArt } from "@/constants/serviceArt";
@@ -144,7 +143,7 @@ export default function HowWeWorkPage() {
       </Section>
 
       <PageNotes tone="surface">
-        <UpdatedLine date={pageUpdated("/how-we-work")} />
+        <UpdatedLine path="/how-we-work" />
       </PageNotes>
     </main>
   );

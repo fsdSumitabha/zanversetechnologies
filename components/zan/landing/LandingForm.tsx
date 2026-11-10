@@ -161,11 +161,11 @@ function FieldShell({
         {optional && (
           <>
             {" "}
-            <span className="font-mono text-[0.6875rem] tracking-[0.12em] text-subtle uppercase">Optional</span>
+            <span className="font-mono text-[0.75rem] tracking-[0.12em] text-subtle uppercase">Optional</span>
           </>
         )}
         {confirmed && (
-          <span className="inline-flex items-center gap-1 font-mono text-[0.6875rem] tracking-[0.06em] text-success-ink uppercase">
+          <span className="inline-flex items-center gap-1 font-mono text-[0.75rem] tracking-[0.06em] text-success-ink uppercase">
             <Check aria-hidden="true" className="size-3 shrink-0" strokeWidth={3} />
             {confirmed}
           </span>

@@ -12,15 +12,20 @@
    Everything below pushes to `window.dataLayer` and nothing else. Triggers in
    the GTM container are what act on these events, so they have to listen for
    the names spelled exactly as they are here. The event names and their payload
-   shapes are the earlier site's, bar one deliberate change: form_submission no
-   longer carries what the visitor typed.
+   shapes are the earlier site's, bar two deliberate changes: form_submission no
+   longer carries what the visitor typed, and generate_lead has a second shape,
+   for an enquiry an AI agent sent, which the earlier site could not receive.
 
      form_submission   an enquiry was sent: the form name and the service,
-                       nothing personal
-     generate_lead     a lead the forms' script sent has reached /thank-you —
-                       the Google Ads conversion, with the user_data block
-                       Enhanced Conversions hashes and matches on. Nothing else
-                       that reaches that page fires it
+                       nothing personal. The form name is "webmcp" when the
+                       WebMCP tool send_enquiry sent it
+     generate_lead     the Google Ads conversion, with the user_data block
+                       Enhanced Conversions hashes and matches on. Fired when a
+                       lead the forms' script sent reaches /thank-you, and by
+                       nothing else that reaches that page. Also fired by
+                       send_enquiry once the route says the enquiry went, with
+                       conversion_type "webmcp_enquiry" and lead_source
+                       "webmcp" to tell it apart
      whatsapp_click    a WhatsApp link was followed
      contact_click     a tel: or mailto: link was followed
      phone Icon click  a tel: link was followed, under the name the container's
@@ -62,6 +67,11 @@ function push(event: DataLayerEvent) {
  * A landing page adds which page and which of its forms, under the keys the
  * earlier site's landing pages used: campaigns are bought per page, so that is
  * the unit the reports need.
+ *
+ * The WebMCP tool send_enquiry sends it too, as the form "webmcp". The agent
+ * writes its service itself, so the tool pushes only a title the site knows: one
+ * from list_services, "Not sure yet", or "Other" for anything else
+ * (knownService in components/zan/webmcp/tools.ts).
  */
 export function trackFormSubmission(
   formName: string,
@@ -72,19 +82,34 @@ export function trackFormSubmission(
 }
 
 /**
- * The conversion itself, fired once on /thank-you, and only for a lead takeLead()
- * handed back.
+ * The conversion itself. It fires at most once for a lead, from one of two places.
+ *
+ * /thank-you, for a lead takeLead() handed back: one a form's script sent. That
+ * is `trackGenerateLead(lead)`, and its shape is the earlier site's.
+ *
+ * The WebMCP tool send_enquiry, with `{ source: "webmcp" }`, once the route has
+ * said the enquiry went. The owner decided on 10 November 2026 that an agent's
+ * enquiry counts as a lead. The tool goes to no page, so `page` is where the
+ * agent was. conversion_type "webmcp_enquiry" and lead_source "webmcp" are what
+ * a GTM trigger or a report tells it apart by. A form an agent filled and a
+ * person sent is a form's lead, and reaches /thank-you like any other.
  *
  * `user_data` is what Google Ads Enhanced Conversions matches on: the address
- * and number the visitor gave, hashed by the tag before they leave the
- * browser. That is what ties the conversion back to the click that produced it,
- * which is the whole point of the page.
+ * and number given, hashed by the tag before they leave the browser. That is
+ * what ties the conversion back to the click that produced it, which is the
+ * whole point of /thank-you.
  */
-export function trackGenerateLead(user: { email?: string; phone?: string }) {
+export function trackGenerateLead(
+  user: { email?: string; phone?: string },
+  from?: { source: "webmcp" },
+) {
+  // As in push(), and before the address is read.
+  if (typeof window === "undefined") return;
   push({
     event: "generate_lead",
-    conversion_type: "lead_form_submit",
-    page: "/thank-you",
+    ...(from?.source === "webmcp"
+      ? { conversion_type: "webmcp_enquiry", lead_source: "webmcp", page: window.location.pathname }
+      : { conversion_type: "lead_form_submit", page: "/thank-you" }),
     user_data: {
       email: user.email ?? "",
       phone_number: user.phone ?? "",
@@ -131,9 +156,11 @@ export function trackPopupView(popupName: string) {
  * logs and every analytics hit on the page. sessionStorage keeps them in the
  * one tab, for the one navigation, and the page clears them on read.
  *
- * It is also what makes a visit a conversion. A lead stored here is the only
- * thing that fires `generate_lead`, so a cold visit, a reload, a bot in the trap
- * and a plain post with no script all reach /thank-you and report nothing.
+ * It is also what makes a visit to /thank-you a conversion. A lead stored here
+ * is the only thing that fires `generate_lead` there, so a cold visit, a
+ * reload, a bot in the trap and a plain post with no script all reach it and
+ * report nothing. The WebMCP tool stores nothing here and never goes there: it
+ * fires its own generate_lead when its send goes (trackGenerateLead).
  */
 const LEAD_KEY = "zan.lead";
 

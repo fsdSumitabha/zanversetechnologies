@@ -150,14 +150,14 @@ function OfficeClock({ timeZone, still }: { timeZone: string; still: boolean }) 
         <span className="absolute top-1/2 left-1/2 size-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-foreground" />
       </span>
       <span className="flex flex-col">
-        <span className="font-mono text-[0.6875rem] tracking-[0.14em] text-subtle uppercase">
+        <span className="font-mono text-[0.75rem] tracking-[0.14em] text-subtle uppercase">
           Local time in {office.city}
         </span>
         <span className="mt-1 flex items-baseline gap-2">
           <time dateTime={iso} className="font-mono text-h3 text-foreground tabular-nums">
             {time}
           </time>
-          {offset && <span className="font-mono text-[0.6875rem] tracking-[0.06em] text-subtle">{offset}</span>}
+          {offset && <span className="font-mono text-[0.75rem] tracking-[0.06em] text-subtle">{offset}</span>}
         </span>
       </span>
     </p>
@@ -282,7 +282,7 @@ export function Footer() {
               <li key={c.id}>
                 <SiteLink
                   href="/about-us#credentials"
-                  className="inline-flex h-11 items-center gap-2 rounded-full border border-dashed border-border-strong pr-4 pl-3 font-mono text-[0.6875rem] font-medium tracking-[0.06em] text-muted md:h-9 transition-colors duration-300 hover:border-solid hover:border-foreground hover:text-foreground"
+                  className="inline-flex h-11 items-center gap-2 rounded-full border border-dashed border-border-strong pr-4 pl-3 font-mono text-[0.75rem] font-medium tracking-[0.06em] text-muted md:h-9 transition-colors duration-300 hover:border-solid hover:border-foreground hover:text-foreground"
                 >
                   <ShieldCheck aria-hidden="true" className="size-4 shrink-0 text-accent-ink" strokeWidth={1.8} />
                   {c.name}

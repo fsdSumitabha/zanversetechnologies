@@ -60,7 +60,10 @@ export interface Lead {
   /**
    * Which form: "enquiry_form", or "landing:<slug> (<form on the page>)". With
    * no script running: "form", or "landing:<slug> (<form on the page>, plain post)".
-   * "webmcp" from the agent tool, and "api" from a caller who gave none.
+   * "webmcp" from the agent tool, and "api" from a caller who gave none. The
+   * agent tool's "webmcp" is also its form name and lead source in the
+   * dataLayer (lib/analytics.ts), so the inbox and the reports tell its leads
+   * apart by the same word.
    */
   source: string;
   /**
@@ -90,7 +93,12 @@ export async function sendLead(lead: Omit<Lead, "page">): Promise<void> {
    The spec's registerTool() refuses a name already in use, so only one form on a
    page carries a tool's name, and it differs from the imperative tool
    `send_enquiry`. There is no `toolautosubmit`, on purpose: a person presses the
-   button on every enquiry. */
+   button on every enquiry a form sends.
+
+   So a form an agent filled is still that form's lead: its own source in the
+   mail, then /thank-you and the conversion, like any other. Only `send_enquiry`
+   is marked "webmcp", in the mail and in the dataLayer
+   (components/zan/webmcp/tools.ts). */
 
 /** What an agent is told after a person pressed the button on a form it filled. */
 export interface AgentReply {

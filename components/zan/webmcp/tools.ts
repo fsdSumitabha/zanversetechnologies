@@ -1,3 +1,4 @@
+import { trackFormSubmission, trackGenerateLead } from "@/lib/analytics";
 import { EMAIL_PATTERN, leadsReady } from "@/lib/leads";
 // Types only, and erased at build, so nothing of that server-only file reaches the browser.
 import type { caseStudiesData, companyData, faqsData, servicesData } from "@/lib/siteData";
@@ -29,11 +30,12 @@ import type { caseStudiesData, companyData, faqsData, servicesData } from "@/lib
      starts at 149, so this listens at both.
 
    WHAT THE TOOLS TOUCH. Only /data/*.json, which are public copies of constants/,
-   and POST /api/leads. Nothing here reads the page's content, its forms, cookies,
-   localStorage or the staff console, and requests go with credentials "omit", so no
-   cookie goes along. All it takes from the page is the address: the path goes with an
-   enquiry. No tool returns text a visitor wrote, so none of them sets
-   untrustedContentHint. A tool that ever does must set it.
+   POST /api/leads, and after a sent enquiry the page's dataLayer, as a form's send
+   does (lib/analytics.ts). Nothing here reads the page's content, its forms,
+   cookies, localStorage or the staff console, and requests go with credentials
+   "omit", so no cookie goes along. All it takes from the page is the address: the
+   path goes with an enquiry and with its conversion. No tool returns text a visitor
+   wrote, so none of them sets untrustedContentHint. A tool that ever does must set it.
 
    SMALL ANSWERS. Chrome's guide (developer.chrome.com/docs/ai/webmcp/secure-tools)
    recommends at most 1.5K characters for a tool's output, 500 for a description,
@@ -332,7 +334,7 @@ const getCompanyFacts: Tool = {
   name: "get_company_facts",
   title: "Get company facts",
   description:
-    "Returns who the company is, what it does, how it works, its certificates, where its office is and how to reach it.",
+    "Returns who the company is, the company it is part of, what it does, how it works, its certificates, where its office is and how to reach it.",
   inputSchema: inputs(),
   annotations: READS_ONLY,
   run: async (_, signal) => {
@@ -341,6 +343,7 @@ const getCompanyFacts: Tool = {
     return {
       name: company.name,
       website: company.url,
+      partOf: company.parentOrganization,
       summary: about.summary,
       howWeWork: about.howWeWork,
       facts: about.facts.map(({ label, value }) => `${label}: ${value}`),
@@ -367,14 +370,56 @@ const getCompanyFacts: Tool = {
    corrected or repeated try can go, and it is only ever in this variable, for this
    page load.
 
-   NO CONVERSION, AND NO NAVIGATION. The forms go on to /thank-you, where a stored
-   lead is what fires generate_lead. This tool goes nowhere, stores no lead and calls
-   nothing in lib/analytics.ts, so an agent's enquiry is a mail marked source "webmcp"
-   and never a Google Ads conversion. Counting them is the owner's decision. */
+   NO NAVIGATION, BUT IT COUNTS. The forms go on to /thank-you, where a stored lead
+   is what fires generate_lead. This tool goes nowhere and stores no lead. It fires
+   the forms' two events itself, once, when the route has said the enquiry went:
+   form_submission as the form "webmcp", and generate_lead, the Google Ads
+   conversion, with the address and number for Enhanced Conversions. Counting an
+   agent's enquiry as a lead is the owner's decision of 10 November 2026. The
+   conversion carries conversion_type "webmcp_enquiry" and lead_source "webmcp", so
+   a GTM trigger and the reports can tell it from a form's lead, as source "webmcp"
+   does in the team's mail. A repeat, a refusal, a failed or cancelled request and
+   an answer that is not the route's count nothing. A form an agent filled and a
+   person sent is a form's lead, and is counted on /thank-you like any other. */
 
 const PHONE_PATTERN = "^[0-9+\\s()\\-]{6,20}$";
 
 let lastEnquiry: string | null = null;
+
+/**
+ * The service as a title the site knows, never the agent's own words. The
+ * dataLayer takes nothing typed (lib/analytics.ts), and the agent writes this
+ * field itself. A title from list_services is matched without regard to case,
+ * "Not sure yet" stays, and anything else is "Other". The team's mail still
+ * gets the service as the agent wrote it. The file was read for list_services
+ * and is cached for an hour, so this is normally the browser's copy.
+ */
+async function knownService(service: string): Promise<string> {
+  const wanted = service.trim().toLowerCase();
+  if (wanted === "not sure yet") return "Not sure yet";
+  try {
+    const { services } = await readData<ServicesFile>(SERVICES);
+    return services.find(({ title }) => title.toLowerCase() === wanted)?.title ?? "Other";
+  } catch {
+    return "Other";
+  }
+}
+
+/**
+ * The two events, for an enquiry the route said it sent. They have their own
+ * catch. Anything that threw in dataLayer.push would otherwise reach the catch in
+ * run, which tells the agent a sent enquiry may not have gone, and clears the
+ * memory that stops it going twice. Not awaited, so the agent's answer does not
+ * wait for the services file.
+ */
+async function countEnquiry({ email, phone, service = "" }: Values) {
+  try {
+    trackFormSubmission("webmcp", await knownService(service));
+    trackGenerateLead({ email, phone }, { source: "webmcp" });
+  } catch {
+    // Not counted. The mail went all the same, and the agent is told so.
+  }
+}
 
 const ANOTHER_WAY = "The person can also use the email address or phone number from get_company_facts.";
 
@@ -440,6 +485,7 @@ const sendEnquiry: Tool = {
       const answer = text.slice(0, 500);
 
       if (response.ok && (JSON.parse(text) as { sent?: unknown }).sent === true) {
+        void countEnquiry(values);
         return { sent: true, answer, note: "The team has the enquiry and replies within 24 hours." };
       }
 

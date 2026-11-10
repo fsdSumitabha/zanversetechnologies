@@ -1,7 +1,19 @@
 import { pageUpdated } from "@/constants/freshness";
 import type { ServicePage } from "@/constants/pages";
-import type { FAQ } from "@/constants/zan";
-import { credentials, ctas, everyone, office, processSteps, practices, site, socialLinks } from "@/constants/zan";
+import { reviewerFor, teamCardPath } from "@/constants/reviewers";
+import type { FAQ, Person } from "@/constants/zan";
+import {
+  credentials,
+  ctas,
+  everyone,
+  googleProfile,
+  office,
+  parentCompany,
+  processSteps,
+  practices,
+  site,
+  socialLinks,
+} from "@/constants/zan";
 import { absoluteUrl, OG_IMAGE, shareImage } from "@/lib/metadata";
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -30,10 +42,16 @@ import { absoluteUrl, OG_IMAGE, shareImage } from "@/lib/metadata";
 
    NOT PORTED from the previous site's index.html, deliberately:
 
-     aggregateRating 4.9 / 120 reviews — there are no 120 published reviews
-       behind it. Unsubstantiated review markup is a manual-action risk, and
-       Google has been removing self-serve AggregateRating from rich results
-       for service pages regardless.
+     aggregateRating 4.9 / 120 reviews — the owner confirmed the 4.9 on
+       10 Nov 2026, and it is published in the page text and the data files
+       (`metrics` in constants/zan.ts). It stays out of the markup for two
+       reasons that have nothing to do with whether it is true. Google does
+       not show review snippets for self-serving reviews, and a company's
+       rating of itself, on its own Organization or LocalBusiness node, is
+       exactly that. And there are no published third-party reviews to mark
+       up: an AggregateRating has to total reviews a reader can find, and the
+       old "120" had none behind it. Review markup that cannot be checked is a
+       manual-action risk with no rich result to win.
      WebSite SearchAction — this site has no search endpoint to point it at.
        Declaring one that 404s is worse than declaring none.
    ═══════════════════════════════════════════════════════════════════════════ */
@@ -72,13 +90,16 @@ const everyService = practices.flatMap((p) => p.items);
  *
  * Everything in it is something the site already says in its own copy: the
  * Dubai office's address and number, the inbox, the services, the people, the
- * two ISO certificates.
+ * two ISO certificates, and the parent company, which /about-us names in its
+ * questions. The exception is `sameAs`, the company's listing on Google, which
+ * no page prints: it is a pointer for machines rather than copy.
  *
- * LEFT OUT until someone confirms them: opening hours, a founding date, a postal
- * code, map coordinates, a headcount and a registration number. None of them is
- * published anywhere on the site, and a node that states a fact the pages do not
- * is the drift this file exists to prevent. Each one is a line here the day it
- * is known.
+ * LEFT OUT until the Google Business Profile is ready (it was not on
+ * 10 Nov 2026): opening hours, a postal code, map coordinates, a founding
+ * date, a headcount and a licence number. None of them is published anywhere
+ * on the site, and Google blocks scripts from reading the listing, so a node
+ * that stated them would be guessing, which is the drift this file exists to
+ * prevent. Each one is a line here the day it is known.
  */
 export function organizationSchema() {
   return {
@@ -126,34 +147,59 @@ export function organizationSchema() {
     })),
     areaServed,
     knowsAbout: everyService.map((s) => s.title),
-    /* The named colleagues /our-team and the homepage's rail render, the
-       director first. Name and job title for everyone; `email` and `sameAs`
-       only for the people who actually have one on file, because a Person
-       carrying an invented address or profile URL is the exact drift this file
-       exists to prevent. Like the address and the services, who works here is
-       a fact about the company rather than about one URL, so it rides along on
-       every page with the rest of the node.
+    /* The named colleagues /our-team renders, the director first. Name, job
+       title, `url` and `worksFor` for everyone. `url` is the person's own card:
+       every card on /our-team carries the person's `id` as its anchor
+       (components/zan/team/TeamPageCard.tsx), so /our-team#sumitabha opens on
+       Sumitabha's card. `worksFor` repeats what sitting under `employee`
+       already says, so that a Person node read on its own still names the
+       company. `description` (the approved line), `image` (the headshot),
+       `email` and `sameAs` only for the people who actually have one on file,
+       because a Person carrying an invented address or profile URL is the
+       exact drift this file exists to prevent. Like the address and the
+       services, who works here is a fact about the company rather than about
+       one URL, so it rides along on every page with the rest of the node.
 
        NOT `founder`, and not `employee` + a second officer property for Nadim
-       Ali. What we have is the job title "Director" and nothing else. A
-       director is an officer of the company, appointed to the role, and a
-       company can have several; it is not the same claim as having started
-       it, so `founder` would assert something about the company's history
-       that nobody has told us. `employee` with the title he was given says
-       exactly what we know, and the day someone confirms more, this is one
-       line.
+       Ali. What we have is the job title "Director" and the line written from
+       it, and nothing else. A director is an officer of the company, appointed
+       to the role, and a company can have several; it is not the same claim as
+       having started it, so `founder` would assert something about the
+       company's history that nobody has told us. `employee` with the title he
+       was given says exactly what we know, and the day someone confirms more,
+       this is one line.
 
-       No `@id` on any of them either: none of the six has a page of their own,
-       and /our-team is the company's page about its people rather than a
-       profile URL per person. */
+       No `@id` on any of them: nothing else in the graph points at a person.
+       A card's anchor is where the person is described, and `url` says so,
+       which is all a reader of this node needs. */
     employee: everyone.map((person) => ({
       "@type": "Person",
       name: person.name,
       jobTitle: person.role,
+      url: `${absoluteUrl("/our-team")}#${person.id}`,
+      worksFor: { "@id": ORG_ID },
+      ...(person.description ? { description: person.description } : {}),
+      ...(person.portrait ? { image: absoluteUrl(person.portrait) } : {}),
       ...(person.email ? { email: person.email } : {}),
       ...(person.linkedin ? { sameAs: person.linkedin } : {}),
     })),
-    sameAs: socialLinks.map((l) => l.href),
+    /* Zan Services, the company Zan Verse Technologies is part of (confirmed
+       by the owner on 10 Nov 2026): its own site, and the LinkedIn, Instagram
+       and X accounts the footer links to, which are Zan Services' accounts.
+       No `@id`: the node is the other site's to identify, and one invented
+       here would claim to name it. */
+    parentOrganization: {
+      "@type": "Organization",
+      name: parentCompany.name,
+      url: parentCompany.url,
+      sameAs: socialLinks.map((l) => l.href),
+    },
+    /* `sameAs` means "the same entity, elsewhere", so it is the company's own
+       listing on Google (its knowledge panel), and nothing else. Not the
+       three accounts in the footer: they are the parent's, and listing them
+       here would say Zan Verse Technologies and Zan Services are one company.
+       They sit under `parentOrganization` instead. */
+    sameAs: [googleProfile],
   };
 }
 
@@ -170,21 +216,48 @@ export function websiteSchema() {
 }
 
 /**
- * What one page is and when it last changed, tied to the two sitewide nodes by
- * their @id. `dateModified` falls back to the page's entry in
- * constants/freshness.ts. The company is the author and the publisher, because
- * no person has been credited as the writer of a page.
- *
- * `type: "FAQPage"` is for a page with no faqSchema node of its own. Google's
- * rich results check rejects two FAQPage nodes on one URL.
- */
-/**
  * The @id of a page's BreadcrumbList (components/zan/page/Breadcrumbs.tsx), which
  * its WebPage node points to. Every page that calls webPageSchema renders a
  * trail, apart from the homepage.
  */
 export const breadcrumbId = (path: string) => `${absoluteUrl(path)}#breadcrumb`;
 
+/**
+ * The colleague a page names at its foot (constants/reviewers.ts), as its
+ * structured data names them: the `reviewedBy` of its WebPage, a guide's
+ * included. Name, job title, the address of their card on /our-team
+ * and, where they have one, their LinkedIn profile as `sameAs`. The card and
+ * the profile are what let a reader, Google included, tell this person from
+ * another of the same name. The same name, title and address as their node in
+ * the Organization's `employee` list, and like that node no `@id`, so a reader
+ * matches the two by `url`.
+ */
+function personNode(person: Person) {
+  return {
+    "@type": "Person",
+    name: person.name,
+    jobTitle: person.role,
+    url: absoluteUrl(teamCardPath(person)),
+    ...(person.linkedin ? { sameAs: person.linkedin } : {}),
+  };
+}
+
+/**
+ * What one page is, when it last changed and who reviews it, tied to the two
+ * sitewide nodes by their @id. `dateModified` falls back to the page's entry in
+ * constants/freshness.ts.
+ *
+ * The company stays the author and the publisher: these pages carry no byline.
+ * What their foot does carry is a reviewer, the colleague the owner chose for
+ * the page in constants/reviewers.ts, and that person is `reviewedBy` here,
+ * with `lastReviewed` the same date as `dateModified`, because the foot gives
+ * one date for both: "Last updated 5 November 2026. Reviewed by Nadim Ali,
+ * Director." A page with no reviewer there, such as the homepage or a policy,
+ * gets neither property.
+ *
+ * `type: "FAQPage"` is for a page with no faqSchema node of its own. Google's
+ * rich results check rejects two FAQPage nodes on one URL.
+ */
 export function webPageSchema({
   path,
   name,
@@ -199,6 +272,8 @@ export function webPageSchema({
   dateModified?: string;
 }) {
   const url = absoluteUrl(path);
+  const modified = dateModified ?? pageUpdated(path);
+  const reviewer = reviewerFor(path);
   return {
     "@context": "https://schema.org",
     "@type": type,
@@ -212,7 +287,8 @@ export function webPageSchema({
     about: { "@id": ORG_ID },
     author: { "@id": ORG_ID },
     publisher: { "@id": ORG_ID },
-    dateModified: dateModified ?? pageUpdated(path),
+    dateModified: modified,
+    ...(reviewer ? { reviewedBy: personNode(reviewer), lastReviewed: modified } : {}),
     ...(path === "/" ? {} : { breadcrumb: { "@id": breadcrumbId(path) } }),
   };
 }
@@ -249,9 +325,15 @@ export function serviceSchema(page: ServicePage, opts: { name?: string; descript
  * One `Article` node per guide. Its image is the guide's share card, and
  * `citations` are the outside sources the guide lists.
  *
- * The company is the author and the publisher. The name rides along with the
- * @id here, because Article is the one node Google shows an author for, and the
- * Organization node it points at sits in another script block.
+ * The company is the author and the publisher, its name riding along with the
+ * @id, because the Organization node it points at sits in another script
+ * block. The guide's foot says "Reviewed by <name>", not "by <name>", so the
+ * colleague the owner chose for it in constants/reviewers.ts is the
+ * `reviewedBy` of the page the Article belongs to, as a full Person node
+ * (`personNode`), with the guide's `updated` as `lastReviewed`, as every other
+ * dated page does. Markup has to say what the page says, and nobody has said
+ * these colleagues wrote the guides. If one did, make them the author here and
+ * have the foot say "Written and reviewed by".
  */
 export function articleSchema({
   path,
@@ -270,13 +352,20 @@ export function articleSchema({
 }) {
   const url = absoluteUrl(path);
   const company = { "@type": "Organization", "@id": ORG_ID, name: site.name } as const;
+  const reviewer = reviewerFor(path);
   return {
     "@context": "https://schema.org",
     "@type": "Article",
     "@id": `${url}#article`,
     // The page itself, so that its trail (components/zan/page/Breadcrumbs.tsx)
-    // hangs off it: Article has no breadcrumb property of its own.
-    mainEntityOfPage: { "@type": "WebPage", "@id": `${url}#webpage`, url, breadcrumb: { "@id": breadcrumbId(path) } },
+    // hangs off it, and its reviewer: Article has neither property of its own.
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `${url}#webpage`,
+      url,
+      breadcrumb: { "@id": breadcrumbId(path) },
+      ...(reviewer ? { reviewedBy: personNode(reviewer), lastReviewed: dateModified } : {}),
+    },
     url,
     headline,
     description,

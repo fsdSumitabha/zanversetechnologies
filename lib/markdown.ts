@@ -18,6 +18,7 @@ import {
   type LegalSlug,
   type ServicePage,
 } from "@/constants/pages";
+import { reviewerFor, teamCardPath } from "@/constants/reviewers";
 import {
   about,
   clients,
@@ -33,6 +34,7 @@ import {
   metrics,
   metricsIntro,
   office,
+  parentCompany,
   partnersIntro,
   pillars,
   pillarsIntro,
@@ -114,8 +116,17 @@ const sentence = (label: string, items: readonly string[]) => `${label}: ${text(
 
 /* ── One page ─────────────────────────────────────────────────────────────── */
 
+/**
+ * The title, then the line saying which page this copies and when it last
+ * changed, with its reviewer where it has one (constants/reviewers.ts): the
+ * same person the real page's foot names, linked to the same card on /our-team.
+ */
 function page(path: string, title: string, updated: string, ...blocks: Block[]): string {
-  return `${join(heading(1, title), `> Markdown copy of <${absoluteUrl(path)}>. Last updated ${updated}.`, blocks)}\n`;
+  const reviewer = reviewerFor(path);
+  const reviewed = reviewer
+    ? ` Reviewed by ${link(reviewer.name, absoluteUrl(teamCardPath(reviewer)))}, ${text(reviewer.role)}.`
+    : "";
+  return `${join(heading(1, title), `> Markdown copy of <${absoluteUrl(path)}>. Last updated ${updated}.${reviewed}`, blocks)}\n`;
 }
 
 /* ── Bands more than one page has ─────────────────────────────────────────── */
@@ -523,6 +534,9 @@ export const markdownParams = () => publicPaths().map((path) => ({ path: markdow
 
 const entry = (item: PublicPage) => `${link(item.title, item.url)}${item.note ? `: ${text(item.note)}` : ""}`;
 
+/** Whose company this is, with the parent's address: the owner confirmed it on 10 Nov 2026. */
+const parentLine = () => `${text(`${site.name} is part of`)} ${link(parentCompany.name, parentCompany.url)}.`;
+
 /** The llms.txt format: a name, a summary, some notes, then lists of links. */
 export function llmsTxt(): string {
   const pages = publicPages();
@@ -532,6 +546,7 @@ export function llmsTxt(): string {
   return `${join(
     heading(1, site.name),
     `> ${text(site.description)}`,
+    parentLine(),
     para(about.body[1]),
     para(contactIntro.lead),
     para(
@@ -545,7 +560,11 @@ export function llmsTxt(): string {
     group("guide"),
     heading(2, "Data"),
     list([
-      data("/data/company.json", "Company facts", "JSON. The office, contact details, certificates, team, clients and process."),
+      data(
+        "/data/company.json",
+        "Company facts",
+        "JSON. The office, contact details, parent company, certificates, figures, team, clients and process.",
+      ),
       data("/data/services.json", "Services", "JSON. The text, questions and links of every service page."),
       data("/data/case-studies.json", "Case studies", "JSON. The brief, the build and the outcome of each."),
       data("/data/faqs.json", "Questions and answers", "JSON. Every question set on the site, by topic."),
@@ -574,6 +593,7 @@ export function llmsFullTxt(): string {
   const intro = join(
     heading(1, `${site.name}: the text of every page`),
     `> ${text(site.description)}`,
+    parentLine(),
     para(`A map of the site is at ${absoluteUrl("/llms.txt")}. Each page below opens with its own address.`),
   );
   const pages = publicPaths().flatMap((path) => markdownFor(path)?.trimEnd() ?? []);

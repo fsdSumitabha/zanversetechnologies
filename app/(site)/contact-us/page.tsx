@@ -8,7 +8,6 @@ import { FaqAccordion } from "@/components/zan/contact/FaqAccordion";
 import { OfficeCards } from "@/components/zan/contact/OfficeCard";
 import { Eyebrow } from "@/components/zan/ui/Eyebrow";
 import { HeroPanel } from "@/components/zan/page/HeroPanel";
-import { pageUpdated } from "@/constants/freshness";
 import { contactPage, labels, pageTrail } from "@/constants/pages";
 import { faqIntro, faqs, site } from "@/constants/zan";
 import { pageMetadata } from "@/lib/metadata";
@@ -107,7 +106,7 @@ export default async function ContactPage({ searchParams }: PageProps<"/contact-
       </Section>
 
       <PageNotes tone="bg">
-        <UpdatedLine date={pageUpdated("/contact-us")} />
+        <UpdatedLine path="/contact-us" />
       </PageNotes>
     </main>
   );

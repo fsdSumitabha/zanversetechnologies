@@ -353,14 +353,69 @@
    `backwards` fill only: once an entrance ends the element falls back to its
    own styles, so these never hold a transform over a GSAP-driven one.
 
-   If the flag never arrives, the failsafe shows everything after 5 s. Without
-   JavaScript, the noscript rule in layout.tsx shows every [data-reveal]. The
-   big line is never part of this: it paints from the server HTML at once. The
-   h1, the sentence under it, is: it enters with the rest of the copy. */
+   Until the flag, the copy is held hidden by one of two rules. The h1 is the
+   exception, below.
+
+   While the preloader still waits for its script (no [data-preloader-play]
+   on <html>, which PreloaderStage sets with the cover's own [data-play]; not
+   read with html:has(), which made Chrome check <html> again on every
+   insertion in the page), the fallback rule holds it, and fades it in at the moment the
+   cover gives up waiting and fades out by itself. It reads the cover's
+   --zan-pl-fallback-at and --zan-pl-fallback-fade (shell/preloader.css,
+   copied as FALLBACK_MS and FALLBACK_FADE_MS in shell/PreloaderStage.tsx),
+   with 3 s and 0.4 s of its own in case they are missing. It ends with the
+   cover's fade because that is the soonest a late script settles the hero:
+   PreloaderStage gives every .zan-hero-in and .zan-hero-word an inline
+   animation:none before it sets the flag, so the entrance never plays over
+   copy already on screen.
+
+   Once the preloader plays its sequence, the 5 s rule holds it instead. Its
+   keyframes are not the fallback's, so its clock starts with the sequence,
+   which sets the flag in about 2 s; it shows the copy only if the flag is
+   lost. It shares zan-hero-fade with the fade layers' entrance, so when the
+   flag comes those layers are retimed rather than restarted, and are already
+   there as the panel lifts, as they always have been.
+
+   The big line is never part of this: it paints from the server HTML at
+   once. Nor is the h1, the sentence under it, which can be the largest text
+   on a phone. It enters by focus ([data-in="focus"]): zan-hero-rise with
+   blur in place of the fade, so like the big line's words it is painted from
+   the first frame. While the cover waits for its script, the fallback rule
+   holds it blurred and 20px low, and brings it into focus with the cover's
+   fade. Once the sequence plays, its own hold (zan-hero-focus-hold, 5 s,
+   like the other copy's) keeps it in that same blurred, low start, so when
+   the flag comes the entrance starts from exactly where the h1 already is.
+   The flag normally comes as the stage drops out, 1.96 s into the
+   sequence, while all five slats are still up (1.93 s to 1.97 s,
+   shell/preloader.css). If a long task holds the flag back past that, the
+   slats uncover the h1 still blurred and low, and it rises when the flag
+   comes: it never shows sharp and then jumps back.
+
+   Without JavaScript, the noscript rule in layout.tsx shows every
+   [data-reveal]. It resets transform but not filter, so `scripting: none`
+   below takes the h1 out of the fallback, and it simply rests. */
 
 @media (prefers-reduced-motion: no-preference) {
   html:not([data-preloaded]) .zan-hero-in {
     animation: zan-hero-fade 0.6s ease 5s backwards;
+  }
+
+  html:not([data-preloaded]):not([data-preloader-play]) .zan-hero-in {
+    animation: zan-hero-fallback var(--zan-pl-fallback-fade, 0.4s) ease var(--zan-pl-fallback-at, 3s) backwards;
+  }
+
+  /* The h1: held blurred and low rather than hidden, so it is painted from
+     the first frame. Its keyframes have a name of their own, so the flag's
+     zan-hero-focus restarts the entrance cleanly. */
+  html:not([data-preloaded]) .zan-hero-in[data-in="focus"] {
+    animation: zan-hero-focus-hold 0.6s ease 5s backwards;
+  }
+
+  /* Under the fallback the h1 keeps the fallback's clock, with the focus
+     keyframes. The whole shorthand, because the hold above weighs the same
+     as the fallback rule and comes after it. */
+  html:not([data-preloaded]):not([data-preloader-play]) .zan-hero-in[data-in="focus"] {
+    animation: zan-hero-focus var(--zan-pl-fallback-fade, 0.4s) ease var(--zan-pl-fallback-at, 3s) backwards;
   }
 
   html[data-preloaded] .zan-hero-in {
@@ -376,12 +431,40 @@
     animation-name: zan-hero-astro;
     animation-duration: 1.8s;
   }
+
+  html[data-preloaded] .zan-hero-in[data-in="focus"] {
+    animation-name: zan-hero-focus;
+  }
+}
+
+/* No JavaScript: the h1 rests (see above). */
+@media (scripting: none) {
+  .zan-hero-in[data-in="focus"] {
+    animation: none !important;
+  }
 }
 
 @keyframes zan-hero-rise {
   from {
     opacity: 0;
     transform: translate3d(0, 20px, 0);
+  }
+}
+
+/* The h1's: the rise, with blur in place of opacity. */
+@keyframes zan-hero-focus {
+  from {
+    transform: translate3d(0, 20px, 0);
+    filter: blur(8px);
+  }
+}
+
+/* The same start, under its own name for the hold while the sequence plays,
+   so the entrance that follows is a new animation and starts from 0. */
+@keyframes zan-hero-focus-hold {
+  from {
+    transform: translate3d(0, 20px, 0);
+    filter: blur(8px);
   }
 }
 
@@ -395,6 +478,13 @@
   from {
     opacity: 0;
     transform: translate3d(90px, -70px, 0) rotate(10deg) scale(0.9);
+  }
+}
+
+/* The fallback's own, so no entrance ever inherits its clock. */
+@keyframes zan-hero-fallback {
+  from {
+    opacity: 0;
   }
 }
 

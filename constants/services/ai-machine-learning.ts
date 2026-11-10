@@ -2,9 +2,15 @@ import type { ServiceContent } from "./types";
 
 export const content: ServiceContent = {
   h1: "AI Development Company in Dubai",
-  seoTitle: "AI Development Company in Dubai",
+  /* The search title names AI agents, while the h1 keeps the company phrase.
+     By 10 November 2026 "AI agent" had passed "generative AI" in UAE
+     searches, and the page already says we build both chatbots and agents.
+     35 characters, so the rendered title runs to 60 (at most 62). Changing
+     this redraws the page's share card, so the page's date in
+     constants/freshness.ts moves with it. */
+  seoTitle: "AI Development & AI Agents in Dubai",
   seoDescription:
-    "Zan Verse is an AI development company in Dubai. We build custom machine learning models, chatbots and generative AI, and offer AI consulting for businesses.",
+    "Zan Verse is an AI development company in Dubai. We build AI agents, chatbots, custom machine learning models and generative AI, and offer AI consulting.",
   lead: "Zan Verse Technologies is an AI development company in Dubai. Growing businesses get AI consulting, custom machine learning models, chatbots and generative AI features that automate work and connect to the systems they already run.",
   sections: [
     {

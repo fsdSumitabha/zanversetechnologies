@@ -9,7 +9,6 @@ import { FactCard, FactList, MetricRow } from "@/components/zan/page/cards";
 import { HeroFacts, HeroPanel } from "@/components/zan/page/HeroPanel";
 import { OfficeCards } from "@/components/zan/contact/OfficeCard";
 import { SiteButtonLink } from "@/components/zan/services/SiteLinks";
-import { pageUpdated } from "@/constants/freshness";
 import { aboutFaqs } from "@/constants/pageFaqs";
 import { aboutPage, labels, pageTrail } from "@/constants/pages";
 import { getIndustryArt } from "@/constants/serviceArt";
@@ -213,7 +212,7 @@ export default function AboutPage() {
       </Section>
 
       <PageNotes tone="surface">
-        <UpdatedLine date={pageUpdated("/about-us")} />
+        <UpdatedLine path="/about-us" />
       </PageNotes>
     </main>
   );

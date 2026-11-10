@@ -128,7 +128,7 @@ export default async function GuidePage({ params }: PageProps<"/guides/[slug]">)
 
       <PageNotes tone={toneAt(written + 2)}>
         <SourcesList sources={guide.sources} />
-        <UpdatedLine date={guide.updated} />
+        <UpdatedLine path={path} date={guide.updated} />
       </PageNotes>
     </main>
   );

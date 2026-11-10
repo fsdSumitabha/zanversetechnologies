@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment } from "react";
+import { Fragment, type CSSProperties, type ReactNode } from "react";
 import { motion, type Variants } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Eyebrow } from "./Eyebrow";
@@ -10,6 +10,10 @@ const VIEWPORT = { once: true, margin: "0px 0px -12% 0px" } as const;
 
 const HEADINGS = { h1: motion.h1, h2: motion.h2, h3: motion.h3 } as const;
 
+/* The in-view entrance's line rise. The eyebrow's and the lead's timings are
+   inline below. entrance="css" plays the same three as keyframes in
+   app/globals.css (zan-eyebrow-in, zan-title-in, zan-lead-in), with the same
+   distances, durations, delays and ease: change them together. */
 const line: Variants = {
   hidden: { y: "110%" },
   visible: (i: number) => ({
@@ -47,15 +51,32 @@ const DISPLAY_FIT = "min(var(--text-display), 12.2cqi)";
  * word of one line apart from the first word of the next for anything that
  * reads the text rather than the layout.
  *
- * The in-view trigger sits on the HEADING, not on each line. A line starts
- * translated fully below its overflow-hidden mask, and IntersectionObserver
- * clips a target by its ancestors' overflow — so a line watching itself never
- * intersects and never rises. The heading's own box is never clipped; it
- * fires once and its variant propagates to the lines.
+ * Two entrances, chosen by `entrance`.
  *
- * Reduced motion: <MotionConfig reducedMotion="user"> in the root turns the
- * rise into a plain appearance. No-JS: the noscript rule in layout.tsx shows
- * every [data-reveal] element at rest.
+ * "view", the default, for every heading further down a page: Framer Motion
+ * plays it as the heading scrolls into view. The in-view trigger sits on the
+ * HEADING, not on each line. A line starts translated fully below its
+ * overflow-hidden mask, and IntersectionObserver clips a target by its
+ * ancestors' overflow — so a line watching itself never intersects and never
+ * rises. The heading's own box is never clipped; it fires once and its
+ * variant propagates to the lines. Reduced motion: <MotionConfig
+ * reducedMotion="user"> in the root turns the rise into a plain appearance.
+ * No-JS: the noscript rule in layout.tsx shows every [data-reveal] element
+ * at rest.
+ *
+ * "css", for the heading at the top of a page (PageHero). The same entrance,
+ * played by keyframes in app/globals.css that start on the first frame of
+ * the server HTML instead of after hydration. The in-view version starts the
+ * eyebrow and the lead at opacity 0, so on a slow phone they stayed off the
+ * screen until the scripts ran: on /privacy-policy, on slow 4G at 4x CPU, the
+ * lead was the largest paint at 6.1 s against a first paint at 2.6 s. Here
+ * the eyebrow and the lead rise and come into focus with transform and blur,
+ * never opacity, so they are painted from the first frame, and the lines
+ * rise out of their masks as above. The markup is the same on the server and
+ * the client, so hydration leaves the running animations alone. There is no
+ * [data-reveal] on these: nothing here waits for JavaScript, so without it
+ * the entrance plays as it does for everyone. Reduced motion, Pause
+ * animations and client-side navigation are covered beside the keyframes.
  */
 export function SectionHeading({
   eyebrow,
@@ -66,6 +87,7 @@ export function SectionHeading({
   size = "h1",
   id,
   accentLine,
+  entrance = "view",
   className,
   leadClassName,
 }: {
@@ -79,22 +101,72 @@ export function SectionHeading({
   id?: string;
   /** Index of the one title line set in the brand text gradient. One per view, at most. */
   accentLine?: number;
+  /**
+   * When the entrance plays. "view": as the heading scrolls into view, with
+   * Framer Motion. "css": from the first frame, without waiting for the
+   * scripts, for a heading that is on screen at load.
+   */
+  entrance?: "view" | "css";
   className?: string;
   leadClassName?: string;
 }) {
   const centred = align === "center";
   const display = size === "display";
+  const wrapperClass = cn(
+    /* The query container DISPLAY_FIT measures against. Only on the
+       display size, so nothing else on the site takes containment. */
+    display && "[container-type:inline-size]",
+    centred && "mx-auto flex flex-col items-center text-center",
+    className,
+  );
+  /* Inline, so it overrides only the font-size the text-display utility
+     sets and leaves its line height, tracking and weight alone. */
+  const headingStyle = display ? { fontSize: DISPLAY_FIT } : undefined;
+  const headingClass = cn(
+    "font-display text-balance",
+    display ? "text-display" : size === "h1" ? "text-h1" : "text-h2",
+    eyebrow && "mt-5",
+  );
+  const lineClass = (i: number) => cn("block", i === accentLine && "text-accent-gradient");
+  const leadClass = cn("mt-6 max-w-[54ch] text-lead text-muted", leadClassName);
+  /* Each line inside its own mask, a space between them. Both entrances
+     share it, so the masks are the same whichever one plays. */
+  const lines = (renderLine: (text: string, i: number) => ReactNode) =>
+    title.map((text, i) => (
+      <Fragment key={i}>
+        {i > 0 && " "}
+        <span className="-mb-[0.1em] block overflow-hidden pb-[0.1em]">{renderLine(text, i)}</span>
+      </Fragment>
+    ));
+
+  if (entrance === "css") {
+    const Tag = as;
+    return (
+      <div className={wrapperClass}>
+        {eyebrow && (
+          <div className="zan-eyebrow-in">
+            <Eyebrow>{eyebrow}</Eyebrow>
+          </div>
+        )}
+
+        {/* --zan-line, the line's index, staggers the delays, as `custom`
+            does for the in-view version. */}
+        <Tag id={id} style={headingStyle} className={headingClass}>
+          {lines((text, i) => (
+            <span className={cn("zan-title-in", lineClass(i))} style={{ "--zan-line": i } as CSSProperties}>
+              {text}
+            </span>
+          ))}
+        </Tag>
+
+        {lead && <p className={cn("zan-lead-in", leadClass)}>{lead}</p>}
+      </div>
+    );
+  }
+
   const Heading = HEADINGS[as];
   return (
-    <div
-      className={cn(
-        /* The query container DISPLAY_FIT measures against. Only on the
-           display size, so nothing else on the site takes containment. */
-        display && "[container-type:inline-size]",
-        centred && "mx-auto flex flex-col items-center text-center",
-        className,
-      )}
-    >
+    <div className={wrapperClass}>
       {eyebrow && (
         <motion.div
           data-reveal
@@ -112,36 +184,20 @@ export function SectionHeading({
         initial="hidden"
         whileInView="visible"
         viewport={VIEWPORT}
-        /* Inline, so it overrides only the font-size the text-display utility
-           sets and leaves its line height, tracking and weight alone. */
-        style={display ? { fontSize: DISPLAY_FIT } : undefined}
-        className={cn(
-          "font-display text-balance",
-          display ? "text-display" : size === "h1" ? "text-h1" : "text-h2",
-          eyebrow && "mt-5",
-        )}
+        style={headingStyle}
+        className={headingClass}
       >
-        {title.map((text, i) => (
-          <Fragment key={i}>
-            {i > 0 && " "}
-            <span className="-mb-[0.1em] block overflow-hidden pb-[0.1em]">
-              <motion.span
-                data-reveal
-                className={cn("block", i === accentLine && "text-accent-gradient")}
-                variants={line}
-                custom={i}
-              >
-                {text}
-              </motion.span>
-            </span>
-          </Fragment>
+        {lines((text, i) => (
+          <motion.span data-reveal className={lineClass(i)} variants={line} custom={i}>
+            {text}
+          </motion.span>
         ))}
       </Heading>
 
       {lead && (
         <motion.p
           data-reveal
-          className={cn("mt-6 max-w-[54ch] text-lead text-muted", leadClassName)}
+          className={leadClass}
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={VIEWPORT}

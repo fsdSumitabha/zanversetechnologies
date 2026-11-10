@@ -283,7 +283,7 @@ function Way({
           {icon}
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block font-mono text-[0.6875rem] tracking-[0.14em] text-subtle uppercase">{label}</span>{" "}
+          <span className="block font-mono text-[0.75rem] tracking-[0.14em] text-subtle uppercase">{label}</span>{" "}
           <span className="mt-0.5 block truncate text-body font-medium text-foreground transition-colors duration-300 group-hover/way:text-accent-ink">
             {children}
           </span>
@@ -417,12 +417,12 @@ function OfficeCard() {
           </ul>
 
           <div className="mt-5 flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
-            <p className="font-mono text-[0.6875rem] tracking-[0.14em] text-subtle uppercase">Local time</p>
+            <p className="font-mono text-[0.75rem] tracking-[0.14em] text-subtle uppercase">Local time</p>
             <p className="flex items-baseline gap-2">
               <time dateTime={iso} className="font-mono text-h3 text-foreground tabular-nums">
                 {time}
               </time>
-              {offset && <span className="font-mono text-[0.6875rem] tracking-[0.06em] text-subtle">{offset}</span>}
+              {offset && <span className="font-mono text-[0.75rem] tracking-[0.06em] text-subtle">{offset}</span>}
             </p>
           </div>
         </div>

@@ -1,6 +1,6 @@
 import "server-only";
 
-import { credentials, office, site, teamLead, type FAQ } from "@/constants/zan";
+import { credentials, office, parentCompany, site, socialLinks, teamLead, type FAQ } from "@/constants/zan";
 
 /* ───────────────────────────────────────────────────────────────────────────
    THE QUESTION SETS OF /about-us AND /how-we-work
@@ -13,7 +13,10 @@ import { credentials, office, site, teamLead, type FAQ } from "@/constants/zan";
    Every fact here is published elsewhere on the site: `about`, `team*`,
    `credentials`, `clients`, `projects` and the FAQ answers in constants/zan.ts,
    and the payment, ownership and confidentiality clauses of the terms in
-   constants/legal.ts. None of the questions is one of the homepage's, because two
+   constants/legal.ts. The one exception is the parent company (Zan Services,
+   confirmed by the owner on 10 Nov 2026), which /about-us is the first page to
+   state in words; its name and address are still read from `parentCompany`.
+   None of the questions is one of the homepage's, because two
    pages carrying the same question and answer give a search engine one to keep
    and one to discard. Where a fact is a stored value (a number, an address, a
    name) it is read from where it is stored rather than typed a second time.
@@ -23,11 +26,25 @@ import { credentials, office, site, teamLead, type FAQ } from "@/constants/zan";
 
 const [iso9001, iso27001] = credentials;
 
+/** The footer's accounts by name, as a sentence lists them: "LinkedIn, Instagram and X". */
+const socialNames = socialLinks.map((link) => link.label);
+const footerAccounts =
+  socialNames.length > 1
+    ? `${socialNames.slice(0, -1).join(", ")} and ${socialNames[socialNames.length - 1]}`
+    : socialNames.join("");
+
 export const aboutFaqs: readonly FAQ[] = [
   {
     question: `Is ${site.name} an IT company in Dubai?`,
     answer:
       "Yes. We are an IT company based at IFZA Business Park in Dubai Silicon Oasis, in the United Arab Emirates. We build web platforms, mobile apps, AI systems and blockchain products, run digital marketing, and design interfaces and brand identities.",
+  },
+  /* The one fact in this list that no page states anywhere else: the owner
+     confirmed it on 10 Nov 2026. It also answers the question the footer
+     raises, since the accounts it links to carry the parent's name. */
+  {
+    question: `Is ${site.name} part of ${parentCompany.name}?`,
+    answer: `Yes. ${site.name} is part of ${parentCompany.name}. It serves businesses in the UAE from its office at IFZA Business Park in Dubai Silicon Oasis. The ${footerAccounts} accounts in the footer belong to ${parentCompany.name}.`,
   },
   {
     question: `What certifications does ${site.name} hold?`,

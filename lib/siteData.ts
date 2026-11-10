@@ -1,6 +1,6 @@
 import "server-only";
 
-import { CONTENT_UPDATED, pageUpdated } from "@/constants/freshness";
+import { COMPANY_DATA_UPDATED, newest, pageUpdated } from "@/constants/freshness";
 import { guides } from "@/constants/guides";
 import type { Guide } from "@/constants/guides/types";
 import { legalDocuments } from "@/constants/legal";
@@ -34,9 +34,11 @@ import {
   credentials,
   faqs,
   faqsForService,
+  googleProfile,
   industries,
   metrics,
   office,
+  parentCompany,
   processSteps,
   projects,
   servicesFaqs,
@@ -169,6 +171,9 @@ export function publicPages(): readonly PublicPage[] {
 
 /* ── The people ───────────────────────────────────────────────────────────── */
 
+/* Everyone's approved line goes out as `description`, the director's too. It is
+   read off the same Person the cards render, so this file and the cards cannot
+   disagree about anyone's line. */
 const personData = ({ name, role, experience, description, email, linkedin }: Person) => ({
   name,
   role,
@@ -193,10 +198,16 @@ export function teamData() {
 
 export function companyData() {
   return {
-    updated: CONTENT_UPDATED,
+    updated: COMPANY_DATA_UPDATED,
     name: site.name,
     shortName: site.shortName,
     url: site.url,
+    /* The company this one is part of, confirmed by the owner on 10 Nov 2026
+       (constants/zan.ts). */
+    parentOrganization: { name: parentCompany.name, url: parentCompany.url },
+    /* The company's own listing on Google, its knowledge panel. Not a Google
+       Business Profile: that was not ready on 10 Nov 2026. */
+    googleProfile,
     tagline: site.tagline,
     description: site.description,
     email: site.email,
@@ -213,12 +224,12 @@ export function companyData() {
     currency: { code: site.currency, name: site.currencyName },
     about: { summary: about.body[0], howWeWork: about.body[1], facts: about.principles },
     credentials: credentials.map(({ name, body, refLabel, ref }) => ({ name, body, refLabel, ref })),
-    // Not the rating or the on-time figure. The site keeps those out of its
-    // markup (lib/schema.ts) until published reviews and records stand behind
-    // them, and an agent would pass them on as facts.
-    metrics: metrics
-      .filter((m) => m.id !== "rating" && m.id !== "on-time")
-      .map(({ label, value, detail }) => ({ label, value, detail })),
+    // All five, the rating and the on-time figure included. The owner
+    // confirmed them on 10 Nov 2026 as true and as the source of truth, so an
+    // agent can pass them on as facts. The rating stays out of the structured
+    // data only because of Google's rules on self-serving reviews
+    // (lib/schema.ts), which do not apply to a data file.
+    metrics: metrics.map(({ label, value, detail }) => ({ label, value, detail })),
     team: teamData(),
     clients: clients.map(({ name, sector }) => ({ name, sector })),
     industries: industries.map(({ label, description }) => ({ label, description })),
@@ -231,7 +242,11 @@ export function companyData() {
       api: absoluteUrl("/api/leads"),
       apiDescription: absoluteUrl("/openapi.json"),
     },
+    // The same shape as ever. They are the parent company's accounts, not
+    // this company's own, which is what `socialOwner` tells a reader who
+    // takes the list on its own.
     social: socialLinks.map(({ label, href }) => ({ label, href })),
+    socialOwner: parentCompany.name,
   };
 }
 
@@ -328,7 +343,8 @@ export const serviceDataFor = (page: ServicePage): ServiceData => serviceData(pa
 
 export function servicesData() {
   return {
-    updated: CONTENT_UPDATED,
+    // The newest of its entries, so the file is never older than one of them.
+    updated: newest(servicePages.map((page) => pageUpdated(page.href))),
     services: servicePages.map(serviceData),
   };
 }
@@ -336,16 +352,18 @@ export function servicesData() {
 /* ── /data/faqs.json ──────────────────────────────────────────────────────── */
 
 export function faqsData() {
-  const sets: { topic: string; path: string; faqs: readonly FAQ[] }[] = [
-    { topic: "General", path: "/", faqs },
-    { topic: "IT services", path: "/services", faqs: servicesFaqs },
-    { topic: "About the company", path: "/about-us", faqs: aboutFaqs },
-    { topic: "How we work", path: "/how-we-work", faqs: howWeWorkFaqs },
-    ...servicePages.map((page) => ({ topic: page.title, path: page.href, faqs: serviceFaqs(page) })),
-    ...guides.map((guide) => ({ topic: guide.title, path: guidePath(guide), faqs: guide.faqs })),
+  const sets: { topic: string; path: string; date: string; faqs: readonly FAQ[] }[] = [
+    { topic: "General", path: "/", date: pageUpdated("/"), faqs },
+    { topic: "IT services", path: "/services", date: pageUpdated("/services"), faqs: servicesFaqs },
+    { topic: "About the company", path: "/about-us", date: pageUpdated("/about-us"), faqs: aboutFaqs },
+    { topic: "How we work", path: "/how-we-work", date: pageUpdated("/how-we-work"), faqs: howWeWorkFaqs },
+    ...servicePages.map((page) => ({ topic: page.title, path: page.href, date: pageUpdated(page.href), faqs: serviceFaqs(page) })),
+    ...guides.map((guide) => ({ topic: guide.title, path: guidePath(guide), date: guide.updated, faqs: guide.faqs })),
   ];
   return {
-    updated: CONTENT_UPDATED,
+    // The newest of the pages the questions come from, as each page's own date
+    // moves when its questions do.
+    updated: newest(sets.filter((set) => set.faqs.length > 0).map((set) => set.date)),
     groups: sets
       .filter((set) => set.faqs.length > 0)
       .map(({ topic, path, faqs: items }) => ({ topic, url: absoluteUrl(path), faqs: items })),

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { MarqueeToggle } from "@/components/zan/work/MarqueeToggle";
 import { gsap, MQ } from "@/lib/gsap";
 import { isMotionPaused, subscribeMotionPause } from "@/lib/motionPause";
 
@@ -32,6 +33,15 @@ import { isMotionPaused, subscribeMotionPause } from "@/lib/motionPause";
    The dots are a pointer shortcut to what the arrows do. WCAG 2.5.8 accepts a
    small control when an equivalent one on the page is large enough, and the
    arrows are, so the dots are out of the tab order and the tree in every mode.
+
+   Only the rotator turns by itself, every 3 s. Autoplay holds while a mouse is
+   over the carousel (the deck or its controls), during a drag, while keyboard
+   focus is in the deck, while the deck is mostly off screen or the tab is
+   hidden, and while either pause is on: the carousel's own button, first in
+   the control row, or the page's Pause animations (lib/motionPause.ts). WCAG
+   2.2.2 asks for a visible way to stop it, and the button is that. It shows
+   only with the rotator (industries.css), because the slider and the grid
+   never move on their own.
    ─────────────────────────────────────────────────────────────────────────── */
 
 export interface CarouselItem {
@@ -52,21 +62,25 @@ const ROT = 34;
 const Z_STEP = 150;
 /** Cards further than this from the centre are not painted. */
 const VISIBLE = 3.4;
-/** Autoplay interval. Hovering does not pause it; a drag, keyboard focus inside or
-    the page's pause control holds it, and a turn the visitor makes restarts the
-    count. */
+/** Autoplay interval. A mouse over the carousel, a drag, keyboard focus inside,
+    the carousel's own pause button or the page's pause control holds it (see
+    the header), and a turn the visitor makes restarts the count. */
 const AUTOPLAY_MS = 3000;
 
 export function IndustryCarousel({ items, label }: { items: readonly CarouselItem[]; label: string }) {
   const stageRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLUListElement>(null);
-  const apiRef = useRef<{ go: (d: number) => void; to: (i: number) => void } | null>(null);
+  const apiRef = useRef<{ go: (d: number) => void; to: (i: number) => void; sync: () => void } | null>(null);
   const [active, setActive] = useState(0);
+  /** The carousel's own pause button. Read by the effect below through the ref. */
+  const [paused, setPaused] = useState(false);
+  const pausedRef = useRef(false);
   const total = items.length;
 
   useEffect(() => {
     const track = trackRef.current;
-    if (!track) return;
+    const stage = stageRef.current;
+    if (!track || !stage) return;
     const slides = Array.from(track.querySelectorAll<HTMLElement>("li[data-i]"));
     const n = slides.length;
     if (!n) return;
@@ -227,8 +241,17 @@ export function IndustryCarousel({ items, label }: { items: readonly CarouselIte
     let timer = 0;
     let inView = false;
     let keyFocus = false; // focus inside that came from the keyboard, not a click
+    let hovered = false; // a mouse over the stage: the deck or its controls
     const syncAuto = () => {
-      const wanted = inView && !keyFocus && !dragging && !document.hidden && mode === "rotator" && !isMotionPaused();
+      const wanted =
+        inView &&
+        !keyFocus &&
+        !hovered &&
+        !dragging &&
+        !pausedRef.current &&
+        !document.hidden &&
+        mode === "rotator" &&
+        !isMotionPaused();
       if (wanted && !timer) timer = window.setInterval(() => go(1), AUTOPLAY_MS);
       if (!wanted && timer) {
         clearInterval(timer);
@@ -242,7 +265,8 @@ export function IndustryCarousel({ items, label }: { items: readonly CarouselIte
       syncAuto();
     };
 
-    /* What the buttons and dots under the deck call. */
+    /* What the buttons and dots under the deck call, and the pause button's
+       effect below. */
     apiRef.current = {
       go: (d) => {
         restartAuto();
@@ -252,6 +276,7 @@ export function IndustryCarousel({ items, label }: { items: readonly CarouselIte
         restartAuto();
         to(i);
       },
+      sync: syncAuto,
     };
 
     /* ── mode ────────────────────────────────────────────────────────────── */
@@ -435,6 +460,21 @@ export function IndustryCarousel({ items, label }: { items: readonly CarouselIte
     };
     const onVisibility = () => syncAuto();
 
+    /* A mouse resting on the carousel holds it, so a card being read, or a
+       button being reached for, does not turn away. Only a mouse: a finger
+       enters on the press and leaves on the lift, which says nothing about
+       where anyone is looking. Leaving clears it whatever the pointer, as the
+       logo loop does (components/ui/logo-loop.tsx). */
+    const onPointerEnter = (e: PointerEvent) => {
+      if (e.pointerType !== "mouse") return;
+      hovered = true;
+      syncAuto();
+    };
+    const onPointerLeave = () => {
+      hovered = false;
+      syncAuto();
+    };
+
     const io = new IntersectionObserver(
       ([entry]) => {
         inView = entry.isIntersecting;
@@ -451,6 +491,8 @@ export function IndustryCarousel({ items, label }: { items: readonly CarouselIte
     track.addEventListener("focusin", onFocusIn);
     track.addEventListener("focusout", onFocusOut);
     track.addEventListener("scroll", onScroll, { passive: true });
+    stage.addEventListener("pointerenter", onPointerEnter);
+    stage.addEventListener("pointerleave", onPointerLeave);
     document.addEventListener("visibilitychange", onVisibility);
     mqDesk.addEventListener("change", setMode);
     mqReduce.addEventListener("change", setMode);
@@ -477,12 +519,22 @@ export function IndustryCarousel({ items, label }: { items: readonly CarouselIte
       track.removeEventListener("focusin", onFocusIn);
       track.removeEventListener("focusout", onFocusOut);
       track.removeEventListener("scroll", onScroll);
+      stage.removeEventListener("pointerenter", onPointerEnter);
+      stage.removeEventListener("pointerleave", onPointerLeave);
       document.removeEventListener("visibilitychange", onVisibility);
       mqDesk.removeEventListener("change", setMode);
       mqReduce.removeEventListener("change", setMode);
       window.removeEventListener("resize", onResize);
     };
   }, []);
+
+  /* The pause button's state reaches the autoplay above through the ref, so a
+     press stops or starts the timer without rebuilding the deck. Playing again
+     waits a full interval before the next turn. */
+  useEffect(() => {
+    pausedRef.current = paused;
+    apiRef.current?.sync();
+  }, [paused]);
 
   /* The stage rises into place once, for visitors who allow motion. */
   useEffect(() => {
@@ -525,6 +577,16 @@ export function IndustryCarousel({ items, label }: { items: readonly CarouselIte
       </ul>
 
       <div className="zan-ind-controls mt-10 flex items-center justify-center gap-5 sm:gap-7">
+        {/* First in the row, so it comes first in the tab order after the deck,
+            and it balances the counter at the other end. Shown only with the
+            rotator, the one mode that turns by itself (industries.css). */}
+        <MarqueeToggle
+          paused={paused}
+          onToggle={() => setPaused((p) => !p)}
+          label="Pause the industries carousel"
+          className="zan-ind-pause"
+        />
+
         <button type="button" onClick={() => go(-1)} className="zan-ind-arrow" aria-label="Previous card">
           <ChevronLeft aria-hidden="true" className="size-5" />
         </button>

@@ -1,5 +1,5 @@
 import { GoogleGenAI, Type } from "@google/genai";
-import { about, office, serviceOptions, site } from "@/constants/zan";
+import { about, office, parentCompany, serviceOptions, site } from "@/constants/zan";
 import { getEnv } from "../config/env";
 import { logger } from "../config/logger";
 import {
@@ -70,6 +70,8 @@ const FACTS = [
   `Address: ${ADDRESS}`,
   PHONE_FACT,
   `Email: ${site.email}`,
+  // As the /about-us questions say (confirmed by the owner on 10 Nov 2026).
+  `Part of: ${parentCompany.name} (${parentCompany.url}), which owns the LinkedIn, Instagram and X accounts the website links to`,
   ...about.principles.map((p) => `${p.label}: ${p.value}`),
 ]
   .map((fact) => `- ${fact}`)

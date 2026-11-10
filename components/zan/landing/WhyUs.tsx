@@ -30,7 +30,7 @@ export function WhyUs() {
                   />
                 </span>
                 <h3 className="mt-5 font-display text-h3 font-semibold text-foreground">{reason.title}</h3>
-                <p className="mt-1.5 font-mono text-[0.6875rem] leading-relaxed tracking-[0.12em] text-subtle uppercase">
+                <p className="mt-1.5 font-mono text-[0.75rem] leading-relaxed tracking-[0.12em] text-subtle uppercase">
                   {reason.tagline}
                 </p>
                 <p className="mt-3.5 text-small text-muted">{reason.description}</p>

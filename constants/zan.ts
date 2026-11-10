@@ -6,7 +6,9 @@
    /ae pages already traded as Zan Verse Technologies, and that build's India
    and US material does not exist here at all. There is no region switch, no
    /ae prefix and no second office; anything that names another city or
-   another legal entity is a bug.
+   another legal entity is a bug. The one exception is the parent company,
+   Zan Services (`parentCompany`), which the owner confirmed on 10 Nov 2026:
+   this company is part of it, and the social accounts are its own.
 
    Sources, in order of preference:
      1. the UAE pages of the previous build (zanservices.com/ae), which took
@@ -223,7 +225,10 @@ export const practices: readonly Practice[] = [
         tagline: "Intelligence, Automated.",
         description:
           "Harness the power of artificial intelligence to automate processes, generate insights, and create intelligent applications.",
-        capabilities: ["Custom ML Models", "Chatbots", "Generative AI", "AI Consulting"],
+        /* "AI Agents" first (10 Nov 2026): it is the search phrase the page's
+           title now names, and the homepage deck clamps this list to two or
+           three lines, so the first items are the ones that always show. */
+        capabilities: ["AI Agents", "Custom ML Models", "Chatbots", "Generative AI", "AI Consulting"],
         icon: "ai",
         href: "/services/ai-machine-learning",
       },
@@ -761,7 +766,17 @@ export const projects: readonly Project[] = [
    The clients figure's detail is the one line written here rather than
    carried over. Where the old build listed countries, it gives the spread of
    sectors instead, and only what the client list below shows: Angel Care and
-   Patient Care Unit in healthcare, Shreya High Rise in real estate. */
+   Patient Care Unit in healthcare, Shreya High Rise in real estate.
+
+   CONFIRMED BY THE OWNER ON 10 NOV 2026: 80+ projects delivered, 50+ clients
+   served, the 4.9 average client rating and 99% on-time delivery are true,
+   and this list is the source of truth for them. Anything else on the site
+   that gives one of these figures follows this list. None of the five is held
+   back: the figures bands on the pages, /data/company.json, /llms-full.txt
+   and the Markdown copies give all five, and the hero and the landing pages
+   pick theirs from this list. The rating is still kept out of the structured
+   data, for a reason about Google's rules rather than the figure: see the NOT
+   PORTED note in lib/schema.ts. */
 
 export interface Metric {
   id: string;
@@ -1061,12 +1076,19 @@ export const about = {
    (components/zan/sections/Team.tsx) and the full page at /our-team
    (app/(site)/our-team/page.tsx), so the two can never drift apart.
 
-   THE DESCRIPTIONS ARE WRITTEN FROM THE ROLE and from this site's own service
-   copy. Nobody here has approved their own line, so treat each one as a
-   placeholder for the person's own words and replace it the moment they send
-   something. No projects, no credentials, no personality: nothing that was not
-   already in the job title. The director has no line at all, because none was
-   given and a director's description is not something to invent.
+   THE DESCRIPTIONS ARE THE BIOS THE COMPANY APPROVED ON 10 NOV 2026: the
+   lines written from each person's role and from this site's own service
+   copy, the director's included. The owner allowed either each person's
+   LinkedIn About section or these lines, and LinkedIn refuses automated
+   requests, so these are the ones in use. They stay plain on purpose: no
+   projects, no credentials, no personality, nothing that was not already in
+   the job title. If someone sends a line in their own words, it replaces
+   theirs here and nothing else has to change.
+
+   EACH CARD ON /our-team IS AN ANCHOR: the card carries the person's `id`, so
+   /our-team#sribabu lands on Sribabu's card, and the structured data gives
+   that address as the person's `url` (lib/schema.ts). The homepage's rail
+   cards carry no id.
 
    THE PHOTOGRAPHS ARE THE HEADSHOTS THE COMPANY SUPPLIED, one per person,
    and every card below points at its file. The stock photography under
@@ -1094,14 +1116,19 @@ export const about = {
    ───────────────────────────────────────────────────────────────────────── */
 
 export interface Person {
-  /** Short and stable: it is also the photograph's filename. */
+  /** Short and stable: it is also the photograph's filename, and the anchor
+      of the person's card on /our-team (/our-team#nadim), which their node in
+      the structured data uses as its `url`. So it is unique, and never one of
+      that page's other ids: a group's id (development, marketing), main or
+      next. */
   id: string;
   name: string;
   /** Their job title, as given. */
   role: string;
   /** Years in the discipline, as given: "3 years", "5+ years". */
   experience?: string;
-  /** One line, written from the role. A placeholder for their own words. */
+  /** One line, written from the role: the bio the company approved on
+      10 Nov 2026. Replaced by the person's own words if they send some. */
   description?: string;
   /** Company address. Rendered as a mailto link, labelled rather than printed. */
   email?: string;
@@ -1111,7 +1138,8 @@ export interface Person {
   /** Path under /public to a real headshot, once there is one — the whole
       path, so the format is whatever was supplied. Until then: the monogram.
       No alt text anywhere: the name is set beside the frame, so the picture is
-      decorative and captioning it again only repeats the name. */
+      decorative and captioning it again only repeats the name. The structured
+      data gives the same file, as a full URL, as the person's `image`. */
   portrait?: string;
 }
 
@@ -1137,14 +1165,18 @@ export const teamIntro = {
 /**
  * The director, shown above the practice groups rather than inside one.
  *
- * Name, title, headshot and LinkedIn profile are everything we were given. No
- * description and no years, so the card renders those and stops there, which
- * is the correct card for the facts in hand.
+ * Name, title, headshot and LinkedIn profile are as given. The description is
+ * the approved line, written from his title and from the three practices this
+ * site already lists, and it claims nothing more: no years, no history, no
+ * location. No `experience`, because none was given, so his card has no
+ * Experience row.
  */
 export const teamLead: Person = {
   id: "nadim",
   name: "Nadim Ali",
   role: "Director",
+  description:
+    "Leads the company across its three practices: development, digital marketing, and branding and design.",
   portrait: "/images/team/nadim.webp",
   linkedin: "https://www.linkedin.com/in/md-nadim-ali/",
 };
@@ -1671,8 +1703,31 @@ export const legalLinks = [
   { label: "Disclaimer", href: "/disclaimer" },
 ] as const;
 
-/** The accounts the previous build linked to. "zanservices" is each
-    account's own handle, not a name this site trades under. */
+/**
+ * The company Zan Verse Technologies is part of: Zan Verse is a child company
+ * of Zan Services, trading in the UAE under its own name. Confirmed by the
+ * owner on 10 Nov 2026. The structured data names it as the parent
+ * organisation (lib/schema.ts), and /about-us, /data/company.json and
+ * /llms.txt say the same.
+ */
+export const parentCompany = { name: "Zan Services", url: "https://zanservices.com" } as const;
+
+/**
+ * The company's own listing on Google: the knowledge panel for "Zan Verse
+ * Technologies", entity /g/11zzm_nn55, which the owner shared on 10 Nov 2026
+ * as https://share.google/AyWKRlkS9nDdKnXlu. Kept as the kgmid search address,
+ * which names the panel itself, rather than the share link, which is only a
+ * redirect to it. It is the company's `sameAs` in the structured data and
+ * `googleProfile` in /data/company.json. It is not the Google Business
+ * Profile, which was not ready on that date.
+ */
+export const googleProfile = "https://www.google.com/search?kgmid=/g/11zzm_nn55";
+
+/** Zan Services' accounts, which the footer links to. Zan Verse Technologies
+    is its child company, and these are the accounts this site should link:
+    confirmed by the owner on 10 Nov 2026. Because they are the parent's, the
+    structured data lists them under the parent organisation rather than as
+    the company's own `sameAs` (lib/schema.ts). */
 export const socialLinks = [
   { label: "LinkedIn", href: "https://www.linkedin.com/company/zanservices" },
   { label: "Instagram", href: "https://www.instagram.com/zanservices" },

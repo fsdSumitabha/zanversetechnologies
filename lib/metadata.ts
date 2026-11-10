@@ -141,6 +141,8 @@ export function pageMetadata({ title, description, path, absoluteTitle = false }
       // Without an image this degrades to a plain `summary` card whatever it
       // says here.
       card: "summary_large_image",
+      // The parent company's X account, as in the root layout: Zan Services,
+      // which Zan Verse Technologies is part of (constants/zan.ts).
       site: "@zanservices",
       title: full,
       description,

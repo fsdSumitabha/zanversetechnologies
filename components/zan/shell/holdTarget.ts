@@ -73,7 +73,8 @@ function placeOf(el: HTMLElement): number | null {
  * find opened before hydration (components/zan/contact/FaqAccordion.tsx).
  * `ignoreTransforms` lands on the target's place in the layout rather than on
  * its moving box, for a row that rises into place as it fades in: the page
- * would otherwise follow the rise, and the row would appear without it.
+ * would otherwise follow the rise, and the row would appear without it. A
+ * section link takes it when its target is inside such a row (a Reveal).
  * Returns the function that ends it.
  */
 export function holdTarget(

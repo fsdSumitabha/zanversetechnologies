@@ -94,7 +94,9 @@ const onPath = (pathname: string | null, href: string) => {
  * Transparent at the very top of the page; from the first 24px of scroll it
  * sits on a solid light ground with a hairline, and it stays on screen the
  * whole way down (see the scroll state above). It drops in once the preloader
- * has left.
+ * has left. If the preloader gives up waiting for the scripts and uncovers the
+ * page by itself, .zan-nav-in (preloader.css) brings it in with the cover
+ * instead, over the inline styles, so a page on screen always has its header.
  */
 export function Navbar() {
   const href = useSiteHref();
@@ -259,9 +261,11 @@ export function Navbar() {
 
         <div
           data-reveal
-          className="h-full transition-[opacity,transform] duration-700 ease-out-expo"
+          className="zan-nav-in h-full transition-[opacity,transform] duration-700 ease-out-expo"
           // The short delay lands the drop-in as the preloader's panel clears
-          // the top of the screen.
+          // the top of the screen. .zan-nav-in is the failsafe for when the
+          // preloader's fallback uncovers the page before the scripts arrive:
+          // it starts from these same inline values (preloader.css).
           style={{
             opacity: entered ? 1 : 0,
             transform: entered ? "none" : "translateY(-18px)",
@@ -269,10 +273,14 @@ export function Navbar() {
           }}
         >
           <div className="container-zan flex h-full items-center justify-between gap-3 xl:grid xl:grid-cols-[1fr_auto_1fr] xl:gap-6">
+            {/* w-fit, as LandingNav's logo has: from 1280px the bar is a grid,
+                and a grid item stretches across its column, so the link (and
+                its hover dim and focus ring) ran far past the logo. Below that
+                the bar is a flex row, where the link was already this size. */}
             <SiteLink
               href={logoHref}
               aria-label={`${site.name} home`}
-              className="-ml-1 inline-flex shrink-0 items-center rounded-lg p-1 transition-opacity duration-300 hover:opacity-75"
+              className="-ml-1 inline-flex w-fit shrink-0 items-center rounded-lg p-1 transition-opacity duration-300 hover:opacity-75"
             >
               <ZanLogo eager className="h-7 sm:h-8" />
             </SiteLink>

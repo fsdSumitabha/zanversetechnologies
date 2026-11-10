@@ -5,7 +5,6 @@ import { Section } from "@/components/zan/page/Section";
 import { ServiceCard } from "@/components/zan/page/cards";
 import { HeroLinks, HeroPanel } from "@/components/zan/page/HeroPanel";
 import { SiteButtonLink } from "@/components/zan/services/SiteLinks";
-import { pageUpdated } from "@/constants/freshness";
 import { guides } from "@/constants/guides";
 import { guidesPage, labels, pageTrail, servicePages } from "@/constants/pages";
 import { ctas } from "@/constants/zan";
@@ -86,7 +85,7 @@ export default function GuidesPage() {
       </Section>
 
       <PageNotes tone="surface">
-        <UpdatedLine date={pageUpdated("/guides")} />
+        <UpdatedLine path="/guides" />
       </PageNotes>
     </main>
   );

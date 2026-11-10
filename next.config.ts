@@ -215,11 +215,14 @@ const nextConfig: NextConfig = {
         source: "/((?!agent(?:/|$)|api/|_next/).*)",
         headers: [
           { key: "Content-Security-Policy-Report-Only", value: REPORT_ONLY_POLICY },
-          /* What this site lets AI tools do with its content. It sits here and
-             not in robots.txt, where it is only a comment: Lighthouse's robots
-             check fails a file with a directive it does not know. Keep it in step
-             with app/robots.txt/route.ts, which says how to stop AI training. */
-          { key: "Content-Signal", value: "search=yes, ai-input=yes" },
+          /* What this site lets AI tools do with its content: search, answers,
+             and training, which the owner allowed on 10 November 2026. It sits
+             here and not in robots.txt, where it is only a comment:
+             Lighthouse's robots check fails a file with a directive it does
+             not know. Keep it in step with CONTENT_SIGNAL in
+             app/robots.txt/route.ts, which says how to reverse the training
+             decision. */
+          { key: "Content-Signal", value: "search=yes, ai-input=yes, ai-train=yes" },
         ],
       },
     ];
