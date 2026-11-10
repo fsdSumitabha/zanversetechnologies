@@ -6,10 +6,16 @@ import { PreloaderStage } from "./PreloaderStage";
  * reduced motion, gets a <style> that hides it before first paint — and the
  * preloaded flag, so the navbar does not wait for an event that never comes.
  *
+ * An automated browser gets the same skip. This only skips it for
+ * navigator.webdriver, so that agents are not blocked: an agent acts as soon as
+ * the page has loaded, and for the next few seconds its clicks would land on
+ * this cover. People see exactly the same preloader, with the same timing.
+ * PreloaderStage makes the same check.
+ *
  * It injects a style rather than removing the node: React still has to find
  * the node to hydrate it.
  */
-const SKIP_SCRIPT = `(function(){try{var d=document,r=d.documentElement,s=false;try{s=sessionStorage.getItem('zan.preloader.seen')==='1'}catch(e){}if(s||window.matchMedia('(prefers-reduced-motion: reduce)').matches){var t=d.createElement('style');t.setAttribute('data-zan-preloader','skip');t.textContent='#zan-preloader{display:none!important}';d.head.appendChild(t);r.setAttribute('data-preloaded','1')}}catch(e){}})();`;
+const SKIP_SCRIPT = `(function(){try{var d=document,r=d.documentElement,s=false;try{s=sessionStorage.getItem('zan.preloader.seen')==='1'}catch(e){}if(s||navigator.webdriver===true||window.matchMedia('(prefers-reduced-motion: reduce)').matches){var t=d.createElement('style');t.setAttribute('data-zan-preloader','skip');t.textContent='#zan-preloader{display:none!important}';d.head.appendChild(t);r.setAttribute('data-preloaded','1')}}catch(e){}})();`;
 
 /**
  * First-visit preloader. A server component, so the skip script is part of

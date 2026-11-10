@@ -9,6 +9,15 @@ const GROUNDS = {
   surface2: "bg-surface-muted",
 } as const;
 
+export type SectionTone = keyof typeof GROUNDS;
+
+/**
+ * The ground of the band at this position after a page's hero: the page ground
+ * first, as every standing page opens, then turn about. A page with bands that
+ * come and go counts its bands and asks here, so no two neighbours ever match.
+ */
+export const toneAt = (position: number): SectionTone => (position % 2 === 0 ? "bg" : "surface");
+
 /**
  * One band of a standing page: a hairline, the page ground or a surface, and
  * an optional eyebrow + heading pair above the content. Deliberately plain —
@@ -22,17 +31,24 @@ export function Section({
   lead,
   aside,
   tone = "bg",
+  landmark = true,
   children,
   className,
 }: {
   id?: string;
   eyebrow?: string;
-  /** One line. Section headings on these pages are short by design. */
+  /** Short by design, except a copy file's search phrase, which can run to a few lines. */
   title?: string;
   lead?: string;
   /** Opposite the heading: a link, a note. */
   aside?: ReactNode;
-  tone?: keyof typeof GROUNDS;
+  tone?: SectionTone;
+  /**
+   * A band named by its heading is a landmark, and landmarks are the short list
+   * of a page's main parts. False for one of several written sections: the id
+   * still gives it an address, and the heading is how a reader finds it.
+   */
+  landmark?: boolean;
   children: ReactNode;
   className?: string;
 }) {
@@ -40,7 +56,7 @@ export function Section({
   return (
     <section
       id={id}
-      aria-labelledby={title ? headingId : undefined}
+      aria-labelledby={title && landmark ? headingId : undefined}
       /* One vertical scale for every standing page, deliberately tighter than
          the homepage's `py-section`: these bands are read in sequence rather
          than pinned one screen at a time. */

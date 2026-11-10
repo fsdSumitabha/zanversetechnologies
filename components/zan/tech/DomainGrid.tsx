@@ -24,7 +24,7 @@ export function DomainGrid() {
             <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent-ink">
               <ZanIcon name={d.icon} className="size-5" />
             </span>
-            <h3 className="text-h3 text-foreground">{d.label}</h3>
+            <p className="text-h3 text-foreground">{d.label}</p>
           </div>
           <p className="mt-4 text-small text-muted">{d.blurb}</p>
           <ul className="mt-5 flex flex-wrap gap-1.5" aria-label={`${d.label} stack`}>

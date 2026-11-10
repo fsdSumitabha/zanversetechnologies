@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { gsap, MQ } from "@/lib/gsap";
+import { isMotionPaused, subscribeMotionPause } from "@/lib/motionPause";
 
 /* ───────────────────────────────────────────────────────────────────────────
    INDUSTRY CAROUSEL — one list of cards, three behaviours.
@@ -21,11 +22,21 @@ import { gsap, MQ } from "@/lib/gsap";
    The three layouts are CSS (industries.css); this file only adds transforms
    when the rotator is the live mode, so there is no layout flash on hydration
    and every card is in the server HTML.
+
+   A keyboard and a screen reader meet the rotator through its front card, the
+   arrows and the live region. The cards behind the front one are partly covered,
+   so setFront below takes them out of the tab order and the tree as the deck
+   turns; a pointer still acts on them. The slider and the grid leave every card
+   reachable.
+
+   The dots are a pointer shortcut to what the arrows do. WCAG 2.5.8 accepts a
+   small control when an equivalent one on the page is large enough, and the
+   arrows are, so the dots are out of the tab order and the tree in every mode.
    ─────────────────────────────────────────────────────────────────────────── */
 
 export interface CarouselItem {
   key: string;
-  /** Used for the slide's accessible name and the dot labels. */
+  /** Used for the live region and the dot labels. */
   label: string;
   node: ReactNode;
   media?: ReactNode;
@@ -41,8 +52,9 @@ const ROT = 34;
 const Z_STEP = 150;
 /** Cards further than this from the centre are not painted. */
 const VISIBLE = 3.4;
-/** Autoplay interval. Hovering does not pause it; a drag or keyboard focus inside
-    holds it, and a turn the visitor makes restarts the count. */
+/** Autoplay interval. Hovering does not pause it; a drag, keyboard focus inside or
+    the page's pause control holds it, and a turn the visitor makes restarts the
+    count. */
 const AUTOPLAY_MS = 3000;
 
 export function IndustryCarousel({ items, label }: { items: readonly CarouselItem[]; label: string }) {
@@ -81,6 +93,37 @@ export function IndustryCarousel({ items, label }: { items: readonly CarouselIte
       setActive(i);
     };
 
+    /* ── what a keyboard and a screen reader reach ───────────────────────── */
+
+    const links = slides.map((el) => Array.from(el.querySelectorAll<HTMLElement>("a[href]")));
+    /* Safari focuses a link on a press only if it has a tabindex, which the links
+       behind the front card now do. Chrome and Firefox always focused it. So in
+       Safari that focus must not turn the deck, which it never did there. */
+    const pressNewlyFocuses = navigator.vendor.startsWith("Apple");
+    let front: number | null = null;
+    /** Only card `i` stays reachable; null leaves them all reachable. Written to the
+        DOM, and only when the front card changes. Not inert: inert would also stop
+        a hover or a drag that starts on one of these cards. */
+    const setFront = (i: number | null) => {
+      if (i === front) return;
+      front = i;
+      if (i !== null) {
+        // A card must not be hidden from the tree with focus inside it, so focus
+        // steps back to the deck first. The next Tab goes on from there.
+        const holder = document.activeElement?.closest("li[data-i]");
+        if (holder && holder !== slides[i] && track.contains(holder)) track.focus({ preventScroll: true });
+      }
+      slides.forEach((el, k) => {
+        const reachable = i === null || k === i;
+        if (reachable) el.removeAttribute("aria-hidden");
+        else el.setAttribute("aria-hidden", "true");
+        for (const link of links[k]) {
+          if (reachable) link.removeAttribute("tabindex");
+          else link.tabIndex = -1;
+        }
+      });
+    };
+
     /* ── the rotator ─────────────────────────────────────────────────────── */
 
     const paint = () => {
@@ -108,6 +151,7 @@ export function IndustryCarousel({ items, label }: { items: readonly CarouselIte
         if (scrim) scrim.style.opacity = (Math.min(a, 2) * 0.17).toFixed(3);
       }
       publish(mod(Math.round(pos)));
+      setFront(idx);
     };
 
     const tick = (now: number) => {
@@ -184,7 +228,7 @@ export function IndustryCarousel({ items, label }: { items: readonly CarouselIte
     let inView = false;
     let keyFocus = false; // focus inside that came from the keyboard, not a click
     const syncAuto = () => {
-      const wanted = inView && !keyFocus && !dragging && !document.hidden && mode === "rotator";
+      const wanted = inView && !keyFocus && !dragging && !document.hidden && mode === "rotator" && !isMotionPaused();
       if (wanted && !timer) timer = window.setInterval(() => go(1), AUTOPLAY_MS);
       if (!wanted && timer) {
         clearInterval(timer);
@@ -217,6 +261,7 @@ export function IndustryCarousel({ items, label }: { items: readonly CarouselIte
       if (next === mode) return;
       mode = next;
       halt();
+      setFront(null);
       for (const el of slides) {
         el.style.cssText = "";
         const scrim = el.firstElementChild?.querySelector<HTMLElement>("[data-scrim]");
@@ -252,6 +297,9 @@ export function IndustryCarousel({ items, label }: { items: readonly CarouselIte
     let lastX = 0;
     let lastT = 0;
     let swallowClick = false;
+    let captured = false;
+    /** Past this a press is a drag, and the click at the end of it does nothing. */
+    const DRAG_PX = 6;
 
     const onDown = (e: PointerEvent) => {
       if (mode !== "rotator" || e.button !== 0) return;
@@ -264,16 +312,28 @@ export function IndustryCarousel({ items, label }: { items: readonly CarouselIte
       lastT = performance.now();
       halt();
       syncAuto(); // held until the pointer lets go
-      try {
-        track.setPointerCapture(e.pointerId);
-      } catch {
-        /* capture is best-effort */
-      }
+      /* The window hears the rest of the press, because the pointer is not
+         captured yet and can leave the track first. */
+      window.addEventListener("pointermove", onMove);
+      window.addEventListener("pointerup", onUp);
+      window.addEventListener("pointercancel", onUp);
     };
     const onMove = (e: PointerEvent) => {
       if (!dragging || e.pointerId !== pid) return;
       const dx = e.clientX - startX;
       moved = Math.max(moved, Math.abs(dx));
+      /* Captured only once this is a drag. A capture taken on the press sends the
+         click that follows to the track, so a click on a card never reached it:
+         the front card's link did not go anywhere, and a side card did not turn
+         the deck. */
+      if (moved > DRAG_PX && !captured) {
+        captured = true;
+        try {
+          track.setPointerCapture(e.pointerId);
+        } catch {
+          /* capture is best-effort */
+        }
+      }
       const now = performance.now();
       const dt = now - lastT;
       if (dt > 0) vel = (e.clientX - lastX) / dt;
@@ -285,16 +345,22 @@ export function IndustryCarousel({ items, label }: { items: readonly CarouselIte
     const onUp = (e: PointerEvent) => {
       if (!dragging || e.pointerId !== pid) return;
       dragging = false;
-      try {
-        track.releasePointerCapture(e.pointerId);
-      } catch {
-        /* already released */
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+      window.removeEventListener("pointercancel", onUp);
+      if (captured) {
+        captured = false;
+        try {
+          track.releasePointerCapture(e.pointerId);
+        } catch {
+          /* already released */
+        }
       }
       const projected = Math.max(-1.6, Math.min(1.6, (-vel / (cardW * STEP_NEAR)) * 180));
       target = Math.round(pos + projected);
       run();
       syncAuto(); // a full interval from the release
-      if (moved > 6) {
+      if (moved > DRAG_PX) {
         swallowClick = true;
         setTimeout(() => {
           swallowClick = false;
@@ -357,6 +423,7 @@ export function IndustryCarousel({ items, label }: { items: readonly CarouselIte
       syncAuto();
       const el = t?.closest?.("li[data-i]") as HTMLElement | null;
       if (!el) return;
+      if (mode === "rotator" && pressNewlyFocuses && !keyFocus) return;
       const i = Number(el.dataset.i);
       if (mode === "rotator" && mod(Math.round(target)) !== i) to(i);
       else if (mode === "slider") centre(i, "smooth");
@@ -378,9 +445,6 @@ export function IndustryCarousel({ items, label }: { items: readonly CarouselIte
     io.observe(track);
 
     track.addEventListener("pointerdown", onDown);
-    track.addEventListener("pointermove", onMove);
-    track.addEventListener("pointerup", onUp);
-    track.addEventListener("pointercancel", onUp);
     track.addEventListener("click", onClick, true);
     track.addEventListener("wheel", onWheel, { passive: false });
     track.addEventListener("keydown", onKey);
@@ -391,6 +455,7 @@ export function IndustryCarousel({ items, label }: { items: readonly CarouselIte
     mqDesk.addEventListener("change", setMode);
     mqReduce.addEventListener("change", setMode);
     window.addEventListener("resize", onResize);
+    const stopListeningForPause = subscribeMotionPause(syncAuto);
 
     setMode();
 
@@ -400,10 +465,12 @@ export function IndustryCarousel({ items, label }: { items: readonly CarouselIte
       if (scrollRaf) cancelAnimationFrame(scrollRaf);
       io.disconnect();
       apiRef.current = null;
+      stopListeningForPause();
+      setFront(null);
       track.removeEventListener("pointerdown", onDown);
-      track.removeEventListener("pointermove", onMove);
-      track.removeEventListener("pointerup", onUp);
-      track.removeEventListener("pointercancel", onUp);
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+      window.removeEventListener("pointercancel", onUp);
       track.removeEventListener("click", onClick, true);
       track.removeEventListener("wheel", onWheel);
       track.removeEventListener("keydown", onKey);
@@ -442,25 +509,12 @@ export function IndustryCarousel({ items, label }: { items: readonly CarouselIte
   const to = (i: number) => apiRef.current?.to(i);
 
   return (
-    <div
-      ref={stageRef}
-      className="zan-ind-stage relative"
-      role="region"
-      aria-roledescription="carousel"
-      aria-label={label}
-    >
+    <div ref={stageRef} className="zan-ind-stage relative">
       <span aria-hidden="true" className="zan-ind-ground" />
 
       <ul ref={trackRef} tabIndex={0} className="zan-ind-track" aria-label={label}>
         {items.map((item, i) => (
-          <li
-            key={item.key}
-            data-i={i}
-            className="zan-ind-slide"
-            role="group"
-            aria-roledescription="slide"
-            aria-label={`${i + 1} of ${total}: ${item.label}`}
-          >
+          <li key={item.key} data-i={i} className="zan-ind-slide">
             <div className="zan-ind-card">
               {item.media}
               {item.node}
@@ -475,12 +529,15 @@ export function IndustryCarousel({ items, label }: { items: readonly CarouselIte
           <ChevronLeft aria-hidden="true" className="size-5" />
         </button>
 
-        <ul className="flex items-center gap-1.5 sm:gap-2" aria-label="Choose a card">
+        {/* The blur: a press would otherwise leave focus inside this hidden list. */}
+        <ul aria-hidden="true" className="flex items-center gap-1.5 sm:gap-2">
           {items.map((item, i) => (
             <li key={item.key}>
               <button
                 type="button"
+                tabIndex={-1}
                 onClick={() => to(i)}
+                onFocus={(e) => e.currentTarget.blur()}
                 aria-label={item.label}
                 aria-current={i === active ? "true" : undefined}
                 className="zan-ind-dot"

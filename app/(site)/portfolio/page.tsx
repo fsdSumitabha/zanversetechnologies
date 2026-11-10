@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { PageNotes, UpdatedLine } from "@/components/zan/page/ContentBlocks";
 import { PageHero } from "@/components/zan/page/PageHero";
 import { ProjectPanel } from "@/components/zan/page/ProjectPanel";
 import { Reveal } from "@/components/zan/page/Reveal";
@@ -7,9 +8,11 @@ import { Section } from "@/components/zan/page/Section";
 import { MetricRow } from "@/components/zan/page/cards";
 import { HeroFacts, HeroPanel } from "@/components/zan/page/HeroPanel";
 import { SiteButtonLink } from "@/components/zan/services/SiteLinks";
+import { pageUpdated } from "@/constants/freshness";
 import { labels, pageTrail, portfolioPage } from "@/constants/pages";
 import { clients, ctas, metrics, metricsIntro, partnersIntro, projects } from "@/constants/zan";
 import { pageMetadata } from "@/lib/metadata";
+import { jsonLd, webPageSchema } from "@/lib/schema";
 
 export const metadata: Metadata = pageMetadata({
   title: portfolioPage.seoTitle,
@@ -20,6 +23,19 @@ export const metadata: Metadata = pageMetadata({
 export default function PortfolioPage() {
   return (
     <main id="main">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: jsonLd(
+            webPageSchema({
+              path: "/portfolio",
+              name: portfolioPage.title.join(" "),
+              description: portfolioPage.seoDescription,
+              type: "CollectionPage",
+            }),
+          ),
+        }}
+      />
       <PageHero
         eyebrow={portfolioPage.eyebrow}
         title={portfolioPage.title}
@@ -34,7 +50,7 @@ export default function PortfolioPage() {
         <div className="mt-9 flex flex-wrap items-center gap-3">
           <SiteButtonLink href={ctas.consultation.href} size="lg">
             {ctas.consultation.label}
-          </SiteButtonLink>
+          </SiteButtonLink>{" "}
           <SiteButtonLink href="/services" variant="secondary" size="lg">
             What we do
           </SiteButtonLink>
@@ -71,7 +87,7 @@ export default function PortfolioPage() {
                     />
                   </div>
                   <figcaption className="border-t border-border bg-surface px-4 py-3 text-center">
-                    <span className="block text-small font-medium text-foreground">{client.name}</span>
+                    <span className="block text-small font-medium text-foreground">{client.name}</span>{" "}
                     <span className="mt-0.5 block text-[0.8125rem] text-subtle">{client.sector}</span>
                   </figcaption>
                 </figure>
@@ -91,6 +107,10 @@ export default function PortfolioPage() {
           </SiteButtonLink>
         </Reveal>
       </Section>
+
+      <PageNotes tone="bg">
+        <UpdatedLine date={pageUpdated("/portfolio")} />
+      </PageNotes>
     </main>
   );
 }

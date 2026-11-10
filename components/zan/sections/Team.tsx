@@ -33,8 +33,7 @@ import { team, teamGroups, teamIntro } from "@/constants/zan";
    ─────────────────────────────────────────────────────────────────────────── */
 
 export function Team() {
-  // Running position across both groups: the slide labels and the live region
-  // count the five people, not the two tracks they are split into.
+  // Running position across both groups, for the stagger on the way in.
   let n = 0;
   return (
     <section
@@ -52,12 +51,8 @@ export function Team() {
       </div>
 
       {/* Without JavaScript the buttons are inert and the progress line never
-          moves, while the rail itself is still a native scroller. Hide the
-          row rather than offer a dead control. */}
-      <noscript>
-        <style>{`.zan-team-controls{display:none}`}</style>
-      </noscript>
-
+          moves, while the rail itself is still a native scroller. The layout's
+          noscript style hides the row, rather than offer a dead control. */}
       <div className="mt-12 lg:mt-16">
         <TeamRail label={teamIntro.eyebrow} names={team.map((p) => p.name)}>
           {teamGroups.map((group) => (
@@ -70,14 +65,7 @@ export function Team() {
               {group.people.map((person) => {
                 const i = n++;
                 return (
-                  <li
-                    key={person.id}
-                    data-person=""
-                    role="group"
-                    aria-roledescription="slide"
-                    aria-label={`${i + 1} of ${team.length}: ${person.name}, ${person.role}`}
-                    className="zan-team-slide"
-                  >
+                  <li key={person.id} data-person="" className="zan-team-slide">
                     <Reveal delay={Math.min(i, 3) * 0.05} className="h-full">
                       <PersonCard person={person} />
                     </Reveal>

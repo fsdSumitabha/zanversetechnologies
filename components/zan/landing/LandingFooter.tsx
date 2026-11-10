@@ -48,7 +48,7 @@ export function LandingFooter() {
             <span>
               {office.addressLines.map((line) => (
                 <span key={line} className="block">
-                  {line}
+                  {line}{" "}
                 </span>
               ))}
               <span className="block">{office.country}</span>

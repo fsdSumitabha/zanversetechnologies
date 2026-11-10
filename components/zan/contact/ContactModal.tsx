@@ -6,9 +6,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Phone, X } from "lucide-react";
 import { office } from "@/constants/zan";
 import { Eyebrow } from "@/components/zan/ui/Eyebrow";
-import { focusables, usePreloaded } from "@/components/zan/shell/shellStore";
-import { getLenis } from "@/hooks/useLenis";
+import { focusables, isAutomated, usePreloaded } from "@/components/zan/shell/shellStore";
+import { lockScroll } from "@/lib/scrollLock";
 import { trackPopupView } from "@/lib/analytics";
+import { inertOutside } from "@/lib/backgroundInert";
 import { leadsReady } from "@/lib/leads";
 import { cn } from "@/lib/utils";
 import { EnquiryForm } from "./EnquiryForm";
@@ -34,10 +35,15 @@ import { EnquiryForm } from "./EnquiryForm";
      Never over the      The delay is counted from the moment the preloader
      preloader.          leaves, not from load, or most of it is spent behind
                          a screen the visitor cannot read past.
+     Never for an        An automated browser (navigator.webdriver), or a
+     agent.              session where WebMCP has used one of its tools, which
+                         writes the same key this reads. A form arriving by
+                         itself would take the next click of a task in hand.
+                         People still get it as described above.
 
    It is a real dialog. Focus moves into it and is trapped while it is open,
-   Escape and the backdrop close it, the page behind cannot scroll, and focus
-   goes back where it came from. Motion is left to <MotionConfig
+   Escape and the backdrop close it, the page behind cannot scroll and is inert,
+   and focus goes back where it came from. Motion is left to <MotionConfig
    reducedMotion="user"> in Providers: for a visitor who has asked for less it
    drops the transforms and keeps the fade, so the modal still arrives. The
    content is the point, the movement is not.
@@ -82,17 +88,22 @@ export function ContactModal() {
   // The timer. Showing it is what records the visit, so a visitor who closes
   // it and one who reloads the page mid-enquiry are both asked exactly once.
   useEffect(() => {
-    if (!revealed || suppressed || !leadsReady) return;
-    try {
-      if (sessionStorage.getItem(SEEN_KEY) === "1") return;
-    } catch {
-      // Private mode, or storage refused. With no way to remember it, better
-      // not to ask at all than to ask again on every page of the visit.
-      return;
-    }
+    if (!revealed || suppressed || !leadsReady || isAutomated()) return;
+    const seen = () => {
+      try {
+        return sessionStorage.getItem(SEEN_KEY) === "1";
+      } catch {
+        // Private mode, or storage refused. With no way to remember it, better
+        // not to ask at all than to ask again on every page of the visit.
+        return true;
+      }
+    };
+    if (seen()) return;
 
     let timer = 0;
     const ask = () => {
+      // Read again: a WebMCP tool can have written the key during the delay.
+      if (seen()) return;
       if (formInView()) {
         timer = window.setTimeout(ask, RETRY_MS);
         return;
@@ -117,7 +128,8 @@ export function ContactModal() {
      effect, so nothing happens on arrival — only on the way out. */
   useEffect(() => () => setOpen(false), [pathname]);
 
-  // The scroll lock, Escape, and focus — only while it is open.
+  // The scroll lock, Escape, focus and the inert page behind — only while it is
+  // open.
   useEffect(() => {
     if (!open) return;
 
@@ -125,12 +137,8 @@ export function ContactModal() {
     const active = document.activeElement;
     returnFocus.current = active instanceof HTMLElement && active !== document.body ? active : null;
 
-    const html = document.documentElement;
-    const prevHtml = html.style.overflow;
-    const prevBody = document.body.style.overflow;
-    html.style.overflow = "hidden";
-    document.body.style.overflow = "hidden";
-    getLenis()?.stop();
+    const unlockScroll = lockScroll();
+    const wakePage = panelRef.current ? inertOutside(panelRef.current) : null;
 
     /* The panel itself, not the first field: dropping a cursor into a text
        input opens the keyboard on a phone, which is a hostile way to greet
@@ -138,6 +146,10 @@ export function ContactModal() {
     const focusPanel = requestAnimationFrame(() => panelRef.current?.focus({ preventScroll: true }));
 
     const onKey = (e: KeyboardEvent) => {
+      // Another overlay on top, such as the timed popup, owns the keys: it has
+      // made this one inert, or, if this one mounted after it, it has already
+      // handled the key. Tab and Escape are its, not this one's.
+      if (e.defaultPrevented || panelRef.current?.closest("[inert]")) return;
       if (e.key === "Escape") {
         e.preventDefault();
         close();
@@ -165,9 +177,9 @@ export function ContactModal() {
     return () => {
       cancelAnimationFrame(focusPanel);
       document.removeEventListener("keydown", onKey);
-      html.style.overflow = prevHtml;
-      document.body.style.overflow = prevBody;
-      getLenis()?.start();
+      // First, because an inert element cannot take the focus handed back below.
+      wakePage?.();
+      unlockScroll();
       const back = returnFocus.current;
       returnFocus.current = null;
       // Not after a navigation: whatever focus came from left with the page.

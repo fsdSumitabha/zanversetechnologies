@@ -100,10 +100,11 @@ function Switch({
  * First in the body, straight after the skip link, so it is the first thing a
  * keyboard or a screen reader reaches, while on screen it runs along the
  * bottom: a card on a phone, one slim row across the window from md. Until the
- * visitor answers it covers the Contact Us dock; the navbar still carries the
- * phone number. It never takes focus on its own; opening the panel moves focus
- * to it, and closing puts focus back where it came from. Over the dock (z-40),
- * under the chat panel (z-45), the navbar (z-50) and the mobile menu (z-60).
+ * visitor answers it covers the Contact Us dock, which is inert meanwhile
+ * (FloatingActions); the navbar still carries the phone number. It never takes
+ * focus on its own; opening the panel moves focus to it, and closing puts focus
+ * back where it came from. Over the dock (z-40), under the chat panel (z-45),
+ * the navbar (z-50) and the mobile menu (z-60).
  */
 export function ConsentBanner() {
   const consent = useConsent();
@@ -117,6 +118,14 @@ export function ConsentBanner() {
   const headingRef = useRef<HTMLHeadingElement>(null);
   /** Where focus was when the footer opened the panel. */
   const returnFocus = useRef<HTMLElement | null>(null);
+  /* The answer just given, cleared when the banner shows again. After an answer
+     the banner fades out for about half a second, and it still takes presses,
+     so that its look, hover included, stays exactly as it was. A press in that
+     time that would allow more than the answer just given is ignored: it is the
+     press that lands on "Accept all", over the Contact Us button, when it was
+     meant for the button. Any other press counts, as it always did, so a
+     refusal after "Accept all" still refuses. */
+  const answered = useRef<Consent | null>(null);
 
   // The footer's Cookie settings, from any page.
   useEffect(
@@ -150,6 +159,9 @@ export function ConsentBanner() {
   };
 
   const choose = (choice: Consent) => {
+    const last = answered.current;
+    if (last && (choice.analytics && !last.analytics || choice.marketing && !last.marketing)) return;
+    answered.current = choice;
     const back = returnFocus.current;
     returnFocus.current = null;
     setSettingsOpen(false);
@@ -161,12 +173,18 @@ export function ConsentBanner() {
   const onKeyDown = (e: KeyboardEvent<HTMLElement>) => {
     if (e.key !== "Escape" || !settingsOpen) return;
     e.stopPropagation();
+    // Handled, for the other layers' document listeners (the chat, the menus),
+    // which stopPropagation does not reach, so they leave this Escape alone.
+    e.preventDefault();
     closeSettings();
   };
 
   // Not on the server or during hydration, where the choice is unknown, and
   // not under the preloader.
   const visible = entered && (consent === null || settingsOpen);
+  useEffect(() => {
+    if (visible) answered.current = null;
+  }, [visible]);
 
   return (
     <AnimatePresence>

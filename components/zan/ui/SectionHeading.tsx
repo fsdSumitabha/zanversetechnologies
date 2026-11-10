@@ -1,5 +1,6 @@
 "use client";
 
+import { Fragment } from "react";
 import { motion, type Variants } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Eyebrow } from "./Eyebrow";
@@ -41,8 +42,10 @@ const DISPLAY_FIT = "min(var(--text-display), 12.2cqi)";
 
 /**
  * Eyebrow + display heading + lead, with each heading line rising out of its
- * own mask as it enters. The heading's accessible name is the full sentence
- * (aria-label), so screen readers do not hear it line by line.
+ * own mask as it enters. The lines are the heading's real text, with a space
+ * between them: it renders nothing between two blocks, and it keeps the last
+ * word of one line apart from the first word of the next for anything that
+ * reads the text rather than the layout.
  *
  * The in-view trigger sits on the HEADING, not on each line. A line starts
  * translated fully below its overflow-hidden mask, and IntersectionObserver
@@ -106,7 +109,6 @@ export function SectionHeading({
 
       <Heading
         id={id}
-        aria-label={title.join(" ")}
         initial="hidden"
         whileInView="visible"
         viewport={VIEWPORT}
@@ -120,16 +122,19 @@ export function SectionHeading({
         )}
       >
         {title.map((text, i) => (
-          <span key={i} aria-hidden="true" className="-mb-[0.1em] block overflow-hidden pb-[0.1em]">
-            <motion.span
-              data-reveal
-              className={cn("block", i === accentLine && "text-accent-gradient")}
-              variants={line}
-              custom={i}
-            >
-              {text}
-            </motion.span>
-          </span>
+          <Fragment key={i}>
+            {i > 0 && " "}
+            <span className="-mb-[0.1em] block overflow-hidden pb-[0.1em]">
+              <motion.span
+                data-reveal
+                className={cn("block", i === accentLine && "text-accent-gradient")}
+                variants={line}
+                custom={i}
+              >
+                {text}
+              </motion.span>
+            </span>
+          </Fragment>
         ))}
       </Heading>
 

@@ -3,6 +3,7 @@
 import { useEffect, useLayoutEffect, useRef, useSyncExternalStore, type ReactNode } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { gsap, MQ } from "@/lib/gsap";
+import { isMotionPaused } from "@/lib/motionPause";
 import { cn } from "@/lib/utils";
 import "@/components/zan/work/work.css";
 import "@/components/zan/work/wall.css";
@@ -20,14 +21,22 @@ import "@/components/zan/work/wall.css";
    renders three copies of its cards (clone · original · clone) and the
    offset wraps by exactly one copy's width, which is invisible.
 
-   The clones exist only on the client with motion allowed, and are
-   aria-hidden and inert, so the server HTML, screen readers and keyboard
-   users meet each card once. Reduced motion: no clones, no marquee, and
-   wall.css reflows the rows into a flat grid.
+   The clones exist only on the client with motion allowed, and are inert, so
+   the server HTML holds each card once and a pointer only ever acts on an
+   original. Reduced motion: no clones, no marquee, and wall.css reflows the
+   rows into a flat grid.
+
+   The rows are decoration for the keyboard and the accessibility tree: they
+   are aria-hidden, and each card's link has tabindex -1 (WallCards.tsx). Cards
+   that drift cannot be scrolled to, and the same links are on the page in plain
+   form. A mouse or a finger still uses them, and the section's heading stays in
+   the tree.
 
    The marquee pauses while the section is off screen or the tab is hidden,
-   eases to a stop while a desktop pointer rests on a row, and stops while a
-   card holds keyboard focus, sliding that card to the middle of the screen.
+   eases to a stop while a desktop pointer rests on a row or the page's pause
+   control is on (lib/motionPause.ts), and stops while a script holds focus on
+   a card, sliding that card to the middle of the screen. A press does not count:
+   it must not move the card out from under the pointer.
    ─────────────────────────────────────────────────────────────────────────── */
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
@@ -200,7 +209,7 @@ export function HeroParallax({
 
         for (const row of state) {
           if (row.focused) continue;
-          const want = row.hovered ? 0 : 1;
+          const want = row.hovered || isMotionPaused() ? 0 : 1;
           row.mult += (want - row.mult) * (1 - Math.exp(-dt * 5));
           row.pos += row.dir * (speed + boost) * row.mult * dt;
           // Keep pos small so float precision never drifts.
@@ -260,6 +269,10 @@ export function HeroParallax({
           });
         }
         const focusIn = (e: FocusEvent) => {
+          // Never for a press. A press focuses the link, and sliding the card out
+          // from under the pointer then lost the click: the release landed on
+          // something else, so the link did not go anywhere.
+          if (!(e.target as HTMLElement).matches(":focus-visible")) return;
           row.focused = true;
           const card = (e.target as HTMLElement).closest<HTMLElement>("li");
           const first = el.querySelector<HTMLElement>(`[data-copy="${ORIGINAL}"]`);
@@ -275,7 +288,7 @@ export function HeroParallax({
           });
         };
         const focusOut = (e: FocusEvent) => {
-          if (el.contains(e.relatedTarget as Node | null)) return;
+          if (!row.focused || el.contains(e.relatedTarget as Node | null)) return;
           row.focused = false;
           row.mult = 0; // ease back up from a standstill
         };
@@ -323,6 +336,7 @@ export function HeroParallax({
           <ul
             key={r}
             data-wall-track
+            aria-hidden="true"
             className="zan-workwall-row will-change-transform"
           >
             {Array.from({ length: looping ? COPIES : 1 }, (_, copy) => {
@@ -332,7 +346,6 @@ export function HeroParallax({
                 <li
                   key={`${set}-${c}`}
                   data-copy={c === 0 ? set : undefined}
-                  aria-hidden={clone || undefined}
                   inert={clone || undefined}
                   className={cn("zan-workwall-card", clone && "zan-workwall-clone")}
                 >

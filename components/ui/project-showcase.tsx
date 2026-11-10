@@ -176,13 +176,11 @@ export function ProjectShowcase({ projects }: { projects: readonly Project[] }) 
       >
         {projects.map((p, i) => {
           const isOpen = open === p.id;
-          const btnId = `${baseId}-btn-${i}`;
           const panelId = `${baseId}-panel-${i}`;
           return (
             <li key={p.id} id={`case-${p.id}`} className="scroll-mt-[calc(var(--spacing-nav)+1.5rem)] border-b border-border">
               <h3>
                 <button
-                  id={btnId}
                   type="button"
                   aria-expanded={isOpen}
                   aria-controls={panelId}
@@ -201,16 +199,18 @@ export function ProjectShowcase({ projects }: { projects: readonly Project[] }) 
                       isOpen && "opacity-100",
                     )}
                   />
-                  <span className="self-start pt-[0.45em] font-mono text-eyebrow text-subtle">{p.index}</span>
+                  <span aria-hidden="true" className="self-start pt-[0.45em] font-mono text-eyebrow text-subtle">
+                    {p.index}
+                  </span>{" "}
                   <span className="min-w-0">
                     <span className="block text-balance font-sans text-[clamp(1.375rem,0.95rem+2vw,2.75rem)] font-semibold leading-[1.06] tracking-[-0.03em] text-foreground transition-colors duration-300 group-hover/row:text-accent-ink">
                       {p.name}
-                    </span>
+                    </span>{" "}
                     <span className="mt-2 block text-small text-muted">
                       {p.discipline} · {p.industry}
                       <span className="lg:hidden"> · {p.timeline}</span>
                     </span>
-                  </span>
+                  </span>{" "}
                   <span className="hidden font-mono text-eyebrow uppercase text-subtle lg:block">{p.timeline}</span>
                   <span
                     aria-hidden="true"
@@ -231,8 +231,6 @@ export function ProjectShowcase({ projects }: { projects: readonly Project[] }) 
 
               <div
                 id={panelId}
-                role="region"
-                aria-labelledby={btnId}
                 inert={!isOpen}
                 className={cn(
                   "grid transition-[grid-template-rows] duration-500 ease-out-expo",

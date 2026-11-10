@@ -116,6 +116,23 @@
     width 0.45s var(--ease-out-expo),
     background-color 0.3s ease;
 }
+/* On a touch screen, the part of a dot that can be pressed: 24px tall, around
+   the 8px that shows. Only where nothing can hover: :hover covers this box too,
+   and with a mouse or a trackpad, even on a tablet, a dot lights up where it
+   always has, over the 8px it shows. The arrows on either side do the same job
+   at full size.
+   Unpainted, and its negative margins take back the height it adds, so it adds
+   no layout and no pixels. In flow rather than absolutely placed: position:
+   relative on the dot or its list item moves the dots' anti-aliasing at
+   fractional offsets, by up to 13 colour steps at 1440px. */
+@media (any-hover: none) {
+  .zan-ind-dot::before {
+    content: "";
+    display: block;
+    height: 1.5rem;
+    margin-block: -0.5rem;
+  }
+}
 .zan-ind-dot:hover {
   background: var(--color-accent-ink);
 }

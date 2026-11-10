@@ -1,14 +1,17 @@
 # Netlify configuration.
 #
 # The build command, publish directory and the Next.js runtime plugin are all
-# detected automatically; this file exists only to configure secrets scanning.
+# detected automatically; this file exists to configure secrets scanning and
+# the browser cache on the images in public/images.
 #
 # NOTE ON SCOPE — this file used to also carry the site's security headers.
-# It no longer does, and that is not an oversight. Those rules only ever
-# reached files Netlify's CDN serves directly (everything under public/);
+# It no longer does, and that is not an oversight. A rule here only ever
+# reaches files Netlify's CDN serves directly (everything under public/);
 # every HTML route is rendered by the Next runtime handler, whose responses
 # bypass Netlify's header layer entirely. next.config.ts's `headers()` is the
 # layer that actually owns the pages, and that is where this site sets them.
+# The images are exactly the files a rule here does reach, and the ones
+# next.config.ts cannot, which is why their one rule is at the end of this file.
 
 [build.environment]
 
@@ -39,6 +42,9 @@
   #                               browser, and the NEXT_PUBLIC_ prefix is Next's
   #                               explicit opt-in to inlining it. It is in the
   #                               client bundle on purpose and always will be.
+  #   NEXT_PUBLIC_WEBMCP_OT_TOKEN The browser's origin trial token. It is written
+  #                               into every page's HTML on purpose, so the scanner
+  #                               would fail the build on it.
   #   PUSHER_APP_ID               An identifier rather than a credential — the
   #                               secret it pairs with is PUSHER_SECRET, which
   #                               stays scanned. Seven digits cannot help but
@@ -63,9 +69,23 @@
   # Before adding anything to this list, confirm the variable is genuinely not
   # a credential. If a future build flags one that is NOT listed here, treat it
   # as a real finding and investigate rather than extending the list.
-  SECRETS_SCAN_OMIT_KEYS = "LOG_LEVEL,NODE_ENV,GEMINI_MODEL,WHATSAPP_API_VERSION,WHATSAPP_TEMPLATE_LOCALE,WHATSAPP_DRY_RUN,WHATSAPP_LEAD_TEMPLATE,TRUSTED_IP_HEADER,NEXT_PUBLIC_PUSHER_KEY,NEXT_PUBLIC_PUSHER_CLUSTER,PUSHER_APP_ID,SMTP_HOST,SMTP_PORT,SMTP_USER,MAIL_TO"
+  SECRETS_SCAN_OMIT_KEYS = "LOG_LEVEL,NODE_ENV,GEMINI_MODEL,WHATSAPP_API_VERSION,WHATSAPP_TEMPLATE_LOCALE,WHATSAPP_DRY_RUN,WHATSAPP_LEAD_TEMPLATE,TRUSTED_IP_HEADER,NEXT_PUBLIC_PUSHER_KEY,NEXT_PUBLIC_PUSHER_CLUSTER,NEXT_PUBLIC_WEBMCP_OT_TOKEN,PUSHER_APP_ID,SMTP_HOST,SMTP_PORT,SMTP_USER,MAIL_TO"
 
   # The build cache is restored and saved between builds but is never deployed,
   # so scanning it reports on bytes no visitor can reach. It produced the
   # overwhelming majority of the previous build's first-deploy findings.
   SECRETS_SCAN_OMIT_PATHS = ".netlify/.next/cache/**,.next/cache/**"
+
+# ── The images ──────────────────────────────────────────────────────────────
+#
+# Without this every repeat visit asks again for every image: the live site
+# answered these with max-age=0 on 5 November 2026. A week, then a month of
+# serving the old copy while a new one is fetched. NOT immutable, because a file
+# here keeps its name when its picture changes.
+#
+# It reaches next/image's copies too: Netlify's Image CDN puts the headers set on
+# a source image on the images it makes from it.
+[[headers]]
+  for = "/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, stale-while-revalidate=2592000"

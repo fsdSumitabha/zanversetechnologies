@@ -17,6 +17,7 @@ import { ChatPanelLazy } from "@/components/zan/chat/ChatPanelLazy";
 import { SiteLink } from "@/components/zan/services/SiteLinks";
 import { trackPopupView, trackWhatsAppClick } from "@/lib/analytics";
 import { waLink } from "@/lib/links";
+import { useConsent } from "@/lib/useConsent";
 import { cn } from "@/lib/utils";
 import { SocialIcon } from "./SocialIcon";
 import { usePreloaded } from "./shellStore";
@@ -83,8 +84,11 @@ function Row({
 export function FloatingActions() {
   const entered = usePreloaded();
   const menuId = useId();
+  // null while the cookie banner is waiting for an answer. undefined on the
+  // server and during hydration, so both render the dock awake.
+  const consent = useConsent();
 
-  const rootRef = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<HTMLElement>(null);
   const dialRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
   /** Scroll position when the menu opened; null while it is closed. */
@@ -197,7 +201,9 @@ export function FloatingActions() {
       if (!dialRef.current?.contains(e.target as Node)) close();
     };
     const onKey = (e: KeyboardEvent) => {
-      if (e.key !== "Escape") return;
+      // Not an Escape that another layer has handled, or one meant for an
+      // overlay opened over the dock, which has made the dock inert.
+      if (e.key !== "Escape" || e.defaultPrevented || dialRef.current?.closest("[inert]")) return;
       close();
       toggleRef.current?.focus();
     };
@@ -216,14 +222,29 @@ export function FloatingActions() {
     transitionDelay: entered ? "0.35s" : "0s",
   };
 
+  /* Out of the tree and the focus order, though not out of sight, in two cases.
+
+     While the chat is up the dock would only get in its way, and its menu sits a
+     layer below the panel. It goes away and comes back with the panel, so it
+     must not be tabbed into meanwhile.
+
+     Under the cookie banner, until it is answered. The banner sits on top of the
+     dock, so a press aimed at Contact Us lands on the banner, and a tab stop here
+     would be a button nobody can see. The dock stays where it is and looks the
+     same.
+
+     `inert` goes on the inner element, not on the <aside>. The aside is a child
+     of <body>, which lib/backgroundInert.ts sets and clears by hand behind the
+     popups and the phone menu, and clearing it there would wake a dock that
+     should still be asleep. aria-hidden takes the empty landmark out with it. */
+  const asleep = chatOpen || consent === null;
+
   return (
     <>
-      <div
+      <aside
         ref={rootRef}
-        // While the chat is up the dock would only get in its way, and its
-        // menu sits a layer below the panel. It goes away and comes back with
-        // the panel, inert so it cannot be tabbed into meanwhile.
-        inert={chatOpen}
+        aria-label="Contact options"
+        aria-hidden={asleep || undefined}
         className={cn(
           "fixed right-4 bottom-[max(1.25rem,env(safe-area-inset-bottom))] z-40 sm:right-6 sm:bottom-6",
           "transition-[opacity,translate] duration-300 ease-out-expo",
@@ -235,6 +256,7 @@ export function FloatingActions() {
         <div
           ref={dialRef}
           data-reveal
+          inert={asleep}
           className="flex flex-col items-end gap-3 transition-[opacity,transform] duration-500 ease-out-expo"
           style={reveal}
         >
@@ -310,7 +332,7 @@ export function FloatingActions() {
             ref={toggleRef}
             type="button"
             aria-expanded={open}
-            aria-controls={menuId}
+            aria-controls={open ? menuId : undefined}
             onClick={toggle}
             data-contact="toggle"
             className={cn(
@@ -336,7 +358,7 @@ export function FloatingActions() {
             </span>
           </button>
         </div>
-      </div>
+      </aside>
 
       {/* Nothing of the panel — its code included — exists until the first
           time someone chooses Chat with us. */}

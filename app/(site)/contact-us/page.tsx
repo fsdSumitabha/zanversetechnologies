@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { inlineLink, PageNotes, UpdatedLine } from "@/components/zan/page/ContentBlocks";
 import { PageHero } from "@/components/zan/page/PageHero";
 import { Section } from "@/components/zan/page/Section";
 import { ContactDirect } from "@/components/zan/contact/ContactDirect";
@@ -7,9 +8,11 @@ import { FaqAccordion } from "@/components/zan/contact/FaqAccordion";
 import { OfficeCards } from "@/components/zan/contact/OfficeCard";
 import { Eyebrow } from "@/components/zan/ui/Eyebrow";
 import { HeroPanel } from "@/components/zan/page/HeroPanel";
+import { pageUpdated } from "@/constants/freshness";
 import { contactPage, labels, pageTrail } from "@/constants/pages";
 import { faqIntro, faqs, site } from "@/constants/zan";
 import { pageMetadata } from "@/lib/metadata";
+import { jsonLd, webPageSchema } from "@/lib/schema";
 import { serviceFromPath } from "@/lib/services";
 
 export const metadata: Metadata = pageMetadata({
@@ -24,9 +27,8 @@ export const metadata: Metadata = pageMetadata({
    here as well would give Google two byte-for-byte identical FAQPage nodes on
    two URLs of one site: it keeps one and discards the other, and the one it
    keeps is not reliably the homepage, which is the URL that should rank for
-   them. The markup lives on / (components/zan/sections/FAQ.tsx). The
-   accordion below renders in full all the same — this is a markup decision,
-   not a content one. */
+   them. The markup lives on / (app/(site)/page.tsx). The accordion below
+   renders in full all the same — this is a markup decision, not a content one. */
 
 export default async function ContactPage({ searchParams }: PageProps<"/contact-us">) {
   /* A service page's "Get Free Consultation" arrives as
@@ -40,6 +42,19 @@ export default async function ContactPage({ searchParams }: PageProps<"/contact-
 
   return (
     <main id="main">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: jsonLd(
+            webPageSchema({
+              path: "/contact-us",
+              name: contactPage.title.join(" "),
+              description: contactPage.seoDescription,
+              type: "ContactPage",
+            }),
+          ),
+        }}
+      />
       <PageHero
         eyebrow={contactPage.eyebrow}
         title={contactPage.title}
@@ -78,10 +93,7 @@ export default async function ContactPage({ searchParams }: PageProps<"/contact-
           <div className="lg:col-span-4">
             <p className="text-lead text-muted">
               Still unsure what you need? Write to{" "}
-              <a
-                href={`mailto:${site.email}`}
-                className="font-medium text-foreground underline decoration-border-strong underline-offset-4 transition-colors duration-300 hover:text-accent-ink hover:decoration-current"
-              >
+              <a href={`mailto:${site.email}`} className={inlineLink}>
                 {site.email}
               </a>{" "}
               and describe the problem in a paragraph. We answer every enquiry within 24 hours.
@@ -93,6 +105,10 @@ export default async function ContactPage({ searchParams }: PageProps<"/contact-
           </div>
         </div>
       </Section>
+
+      <PageNotes tone="bg">
+        <UpdatedLine date={pageUpdated("/contact-us")} />
+      </PageNotes>
     </main>
   );
 }

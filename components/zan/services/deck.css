@@ -220,14 +220,29 @@
 
 /* The third line of a card — capabilities or a description. It is the first
    thing to go when the screen is too short or too narrow to hold it, which is
-   what stops a short laptop from pushing the panel past the fold. */
+   what stops a short laptop from pushing the panel past the fold.
+
+   It goes from the screen, not from the page: out of flow and clipped to
+   nothing, so the layout is exactly what display: none gave, and the words stay
+   for screen readers and for anything reading a phone-sized page. Every panel's
+   section is overflow: clip (story-scroll.tsx), so the box cannot add scroll. */
 .zan-deck-note {
-  display: none;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
   margin-top: clamp(0.375rem, 1svh, 0.625rem);
 }
 
 @media (min-width: 48rem) and (min-height: 46rem) {
   .zan-deck-note {
+    position: static;
+    width: auto;
+    height: auto;
+    clip-path: none;
+    white-space: normal;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 3;

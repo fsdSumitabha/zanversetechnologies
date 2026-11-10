@@ -7,11 +7,15 @@ import { ConsentBanner } from "@/components/zan/analytics/ConsentBanner";
 import { ContactModal } from "@/components/zan/contact/ContactModal";
 import { Providers } from "@/components/zan/Providers";
 import { ScrollRefresh } from "@/components/zan/ScrollRefresh";
+import { MotionPauseControl } from "@/components/zan/shell/MotionPauseControl";
+import { EARLY_INPUT_SCRIPT } from "@/lib/earlyInput";
+import { MOTION_PAUSE_SCRIPT } from "@/lib/motionPause";
 import { Preloader } from "@/components/zan/shell/Preloader";
 import { Navbar } from "@/components/zan/shell/Navbar";
 import { Footer } from "@/components/zan/shell/Footer";
 import { ScrollProgress } from "@/components/zan/shell/ScrollProgress";
 import { RouteChange } from "@/components/zan/shell/RouteChange";
+import { WebMcpTools } from "@/components/zan/webmcp/WebMcpTools";
 import { homeSeo } from "@/constants/pages";
 import { site } from "@/constants/zan";
 import { brandPalette } from "@/lib/brand";
@@ -104,6 +108,11 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
+/* The browser's WebMCP origin trial token for this domain, once there is one.
+   Until then the tools only work for someone who has turned on the flag, and
+   no tag is written. A token is public by design. */
+const webMcpTrialToken = process.env.NEXT_PUBLIC_WEBMCP_OT_TOKEN;
+
 /**
  * The marketing site's root layout — one of three. The agent console has its own
  * in app/(console)/agent/layout.tsx, so nothing here (the shell, the consent
@@ -123,10 +132,15 @@ export default function SiteLayout({ children }: Readonly<{ children: React.Reac
       suppressHydrationWarning
     >
       <head>
+        {webMcpTrialToken ? <meta httpEquiv="origin-trial" content={webMcpTrialToken} /> : null}
+        {/* A "Pause animations" choice saved on an earlier visit, before the page paints. */}
+        <script dangerouslySetInnerHTML={{ __html: MOTION_PAUSE_SCRIPT }} />
+        {/* Notes input before hydration, for the section-link hold. */}
+        <script dangerouslySetInnerHTML={{ __html: EARLY_INPUT_SCRIPT }} />
         {/* WHO THIS IS, on every page. The Organization node is the company —
             the Dubai office's address and number, the services, the people —
             and the WebSite node is this site; both carry a stable @id that
-            the per-page Service, HowTo and BreadcrumbList nodes point back to.
+            the per-page WebPage, Article and Service nodes point back to.
             Attached in the layout rather than on the homepage alone so that a
             crawler landing on any URL in the sitemap gets the company with
             it. */}
@@ -134,9 +148,12 @@ export default function SiteLayout({ children }: Readonly<{ children: React.Reac
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: jsonLd(organizationSchema(), websiteSchema()) }}
         />
-        {/* Without JavaScript nothing would ever reveal: show everything at rest. */}
+        {/* Without JavaScript nothing would ever reveal: show everything at rest.
+            That goes for the closed FAQ answers too, which only a click could
+            open, and the team rail's controls are hidden, because the rail is
+            still a native scroller and nothing could drive the buttons. */}
         <noscript>
-          <style>{`[data-reveal]{opacity:1!important;transform:none!important;clip-path:none!important}#zan-preloader{display:none!important}`}</style>
+          <style>{`[data-reveal]{opacity:1!important;transform:none!important;clip-path:none!important}#zan-preloader{display:none!important}.zan-faq-panel{grid-template-rows:1fr!important}.zan-faq-panel p,.zan-faq-panel [hidden]{opacity:1!important;transform:none!important;translate:none!important;content-visibility:visible!important}.zan-team-controls{display:none}`}</style>
         </noscript>
       </head>
       <body className="bg-canvas text-foreground antialiased" suppressHydrationWarning>
@@ -144,12 +161,14 @@ export default function SiteLayout({ children }: Readonly<{ children: React.Reac
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[300] focus:rounded-full focus:bg-action focus:px-5 focus:py-3 focus:text-small focus:text-action-foreground"
         >
-          Skip to content
+          Skip to content{" "}
         </a>
+        <MotionPauseControl />
         <div className="noise-overlay" aria-hidden="true" />
         <Providers>
-          {/* First after the skip link, so a keyboard or a screen reader
-              reaches it before the page; on screen it sits at the bottom. */}
+          {/* Straight after the skip link and the pause control, so a keyboard
+              or a screen reader reaches it before the page; on screen it sits
+              at the bottom. */}
           <ConsentBanner />
           <Preloader />
           <ScrollProgress />
@@ -170,6 +189,8 @@ export default function SiteLayout({ children }: Readonly<{ children: React.Reac
             for a visitor who has agreed to them in the cookie banner, and then
             on idle or first interaction, never during the first paint. */}
         <Analytics />
+        {/* Renders nothing, and loads nothing unless the browser has WebMCP. */}
+        <WebMcpTools />
       </body>
     </html>
   );

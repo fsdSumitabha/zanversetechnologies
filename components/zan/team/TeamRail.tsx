@@ -188,7 +188,7 @@ export function TeamRail({
   }, [go]);
 
   return (
-    <div role="region" aria-roledescription="carousel" aria-label={label}>
+    <div>
       <ul
         ref={trackRef}
         tabIndex={0}

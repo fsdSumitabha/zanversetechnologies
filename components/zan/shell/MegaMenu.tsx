@@ -36,8 +36,11 @@ const SERVICES_HREF = mainNav.find((item) => item.sections?.length)?.href ?? "/s
  * Dubai office's phone, "All services" and the main CTA.
  *
  * Positioned against the fixed header (its nearest positioned ancestor), so
- * it spans the full bar while living next to its trigger in the DOM — Tab
- * from "Services" walks straight into it.
+ * it spans the full bar while living next to its trigger in the DOM. Tab from
+ * the chevron beside "Services" walks straight into it.
+ *
+ * It only exists while it is open. MegaMenuLinks, below, puts the same links in
+ * the server HTML the rest of the time.
  */
 export const MegaMenu = forwardRef<
   HTMLDivElement,
@@ -167,3 +170,43 @@ export const MegaMenu = forwardRef<
     </AnimatePresence>
   );
 });
+
+/**
+ * The panel's 20 links again, as a plain list that is always in the HTML, so a
+ * crawler or a plain fetch finds them while the panel is closed. The `hidden`
+ * attribute keeps it out of the accessibility tree and the tab order, so nothing
+ * reads the links twice while the panel is open, and it paints nothing. Plain
+ * anchors, because nobody can reach them to click, and next/link would only add
+ * 20 observers.
+ */
+export function MegaMenuLinks() {
+  const href = useSiteHref();
+
+  return (
+    <ul hidden>
+      {serviceNav.map((section) => (
+        <li key={section.title}>
+          <a href={section.href}>{section.title}</a>
+          <ul>
+            {section.items.map((leaf) => (
+              <li key={leaf.label}>
+                <a href={leaf.href}>{leaf.label}</a>
+              </li>
+            ))}
+          </ul>
+        </li>
+      ))}
+      <li>
+        <a href={`tel:${office.phoneTel}`}>
+          {office.city}: {office.phoneDisplay}
+        </a>
+      </li>
+      <li>
+        <a href={SERVICES_HREF}>All services</a>
+      </li>
+      <li>
+        <a href={href(ctas.project.href)}>{ctas.project.label}</a>
+      </li>
+    </ul>
+  );
+}

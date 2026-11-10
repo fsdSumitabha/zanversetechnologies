@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { ScrollWarpPortal } from "@/components/animations/ScrollWarpPortal";
 import { Eyebrow } from "@/components/zan/ui/Eyebrow";
 import { chapters } from "@/constants/zan";
@@ -11,15 +12,15 @@ export function ChapterWork() {
   const c = chapters.work;
   return (
     <ScrollWarpPortal
-      ariaLabel={`${c.eyebrow}: ${c.label.join(" ")}`}
       label={
         <div className="flex flex-col items-center gap-6 text-center">
           <Eyebrow>{c.eyebrow}</Eyebrow>
           <p className="font-sans text-giant font-bold uppercase text-foreground">
-            {c.label.map((line) => (
-              <span key={line} className="block">
-                {line}
-              </span>
+            {c.label.map((line, i) => (
+              <Fragment key={line}>
+                {i > 0 && " "}
+                <span className="block">{line}</span>
+              </Fragment>
             ))}
           </p>
         </div>

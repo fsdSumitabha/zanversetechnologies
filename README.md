@@ -29,7 +29,7 @@ npx pnpm@10.34.6 install
 npx pnpm@10.34.6 dev      # http://localhost:5173
 ```
 
-Copy `.env.example` to `.env.local` for the chat, the agent console and the enquiry form. `next build` succeeds without any of it, because the server reads its credentials only when a request needs them. Values prefixed `NEXT_PUBLIC_` (the Pusher key and cluster) are the exception: they are compiled into the browser bundle, so set them before building. So are `SMTP_USER` and `SMTP_PASS`, because the build decides whether the forms appear: without them the forms show the email address instead of a form that cannot send. Restart the dev server after adding them.
+Copy `.env.example` to `.env.local` for the chat, the agent console and the enquiry form. `next build` succeeds without any of it, because the server reads its credentials only when a request needs them. Values prefixed `NEXT_PUBLIC_` (the Pusher key and cluster, and the WebMCP origin trial token `NEXT_PUBLIC_WEBMCP_OT_TOKEN`) are the exception: they are compiled into the browser bundle, so set them before building. So are `SMTP_USER` and `SMTP_PASS`, because the build decides whether the forms appear: without them the forms show the email address instead of a form that cannot send. Restart the dev server after adding them.
 
 ## Deploy
 
@@ -57,6 +57,8 @@ Every enquiry form, on the site and the landing pages, posts to `app/api/leads/r
 - **To the team:** `MAIL_TO`, or `site.email` if that is empty. It holds everything the visitor sent, and pressing Reply answers the visitor. If this mail fails, the visitor is told, and they get no confirmation.
 - **To the visitor:** a confirmation. It is fixed text with no words from the form except a checked name, because anyone can type someone else's address into a public form. If only this mail fails, the lead still counts as sent.
 
+With no script running, the forms still work. The route takes form data as well as JSON, and answers 303 to `/thank-you`, or 303 back to the page with `?form=invalid`. A filled trap field (`hp_leave_blank`) gets the same 303 to `/thank-you` with nothing sent. A post from another site's page is refused, with nothing sent. A lead sent this way reaches the inbox with `form` or `plain post` in its Source row, and fires no `generate_lead`.
+
 To set it up on Gmail or Google Workspace:
 
 1. Turn on 2-Step Verification on the `SMTP_USER` account. A Workspace admin may have to allow it.
@@ -69,13 +71,15 @@ Limits: 5 leads per IP in 10 minutes, 40 per hour across the site, and 3 confirm
 
 | Path | What it holds |
 |---|---|
-| `app/(site)/layout.tsx` | Fonts, the metadata every route inherits (with the pre-launch noindex), the company's JSON-LD, and the shell: consent banner, preloader, scroll progress, smooth scroll, navbar, footer, contact modal, analytics |
+| `app/(site)/layout.tsx` | Fonts, the metadata every route inherits, the company's JSON-LD, and the shell: consent banner, preloader, scroll progress, smooth scroll, navbar, footer, contact modal, analytics |
 | `app/(site)/page.tsx` | The homepage's section order, with a map of every scene |
 | `app/(site)/*/` | Every other page: services and the sixteen service pages, portfolio, how we work, about us, our team, contact, thank you and the five policies |
 | `app/(landing)/` | The paid landing pages (`/lp/<slug>`), with their own root layout: no preloader, no mega menu, no timed modal. Consent banner and tags as everywhere else. See "Landing pages" below |
 | `app/(console)/agent/` | The agent console, with its own root layout: no site shell, no consent banner, no tags |
 | `app/api/` | The chat, the enquiry forms' leads, the agent console's API, Pusher auth and the WhatsApp webhook |
 | `app/global-not-found.tsx` | The 404 for unmatched URLs, rendered in the site layout (the two root layouts leave no shared one) |
+| `app/robots.txt/`, `app/llms.txt/`, `app/llms-full.txt/`, `app/data/`, `app/md/`, `app/openapi.json/`, `app/.well-known/` | What crawlers and agents read, built from `lib/siteData.ts` and `lib/markdown.ts` |
+| `netlify/edge-functions/markdown-negotiation.ts` | Answers a page's URL in Markdown for `Accept: text/markdown`. Never do this in `next.config.ts` or `proxy.ts`: the file says why |
 | `app/globals.css` | Design tokens: the navy and cyan palette, and the light and dark themes. Light is the default. |
 | `constants/zan.ts` | The company (`site`, `office`) and all homepage content. Sections never hard-code copy. |
 | `constants/pages.ts`, `constants/legal.ts` | The copy for every other page, and the five policies |
@@ -93,6 +97,7 @@ Limits: 5 leads per IP in 10 minutes, 40 per hour across the site, and 3 confirm
 | `components/animations/`, `components/ui/` | The scroll scenes |
 | `server/` | The backend: environment, MongoDB models, Gemini, WhatsApp, Pusher, enquiry mail, rate limits |
 | `public/og-default.png` | The 1200x630 share card every page falls back to |
+| `app/og/[...path]/route.tsx` | One 1200x630 share card per public page, drawn at build time. `hasShareCard` in `lib/metadata.ts` decides which pages have one |
 | `assets-src/` | Source masters that are not served: the logo artwork as supplied, the original team portraits |
 | `ZAN_BRIEF.md` | The rules anyone editing a section follows |
 
@@ -104,7 +109,7 @@ Limits: 5 leads per IP in 10 minutes, 40 per hour across the site, and 3 confirm
 - **Conversions** count on the same `/thank-you`. That page sits under the site's root layout, so reaching it is a full page load; the form marks the preloader and the timed modal as seen first, so a new lead sees neither.
 - **The form:** name, UAE phone, email and "What do you need?" are required ("What do you need?" starts on "Not sure yet"); project details are optional. One component everywhere: hero, closing section and popup, on every page.
 - **Phone numbers** are UAE only, with `+971` fixed in the field (`lib/uaePhone.ts`).
-- **Tags:** the same `Analytics` as the rest of this build, on the production host and after consent: `GTM-KHWHV5DT`, the Google Ads tag `AW-17890514943`, Meta and LinkedIn. All four load on every page of the site and the landing pages, from `components/zan/analytics/TagLoader.tsx`: the container with either consent category, the other three with marketing consent. The Google Ads tag records visits, not conversions, and the container had no tags when it was added (4 Nov 2026), so a lead or a call counts in Google Ads only once a conversion is set up. In the container, its triggers have to listen for the events in `lib/analytics.ts`, spelled exactly: `generate_lead` (reaching `/thank-you`) for a lead and `phone Icon click` (any `tel:` link) for a call. `GTM-WKT2N6FF` holds those two conversions for the same account, but it stays off the UAE (decided 23 Oct 2026).
+- **Tags:** the same `Analytics` as the rest of this build, on the production host and after consent: `GTM-KHWHV5DT`, the Google Ads tag `AW-17890514943`, Meta and LinkedIn. All four load on every page of the site and the landing pages, from `components/zan/analytics/TagLoader.tsx`: the container with either consent category, the other three with marketing consent. The Google Ads tag records visits, not conversions, and the container had no tags when it was added (4 Nov 2026), so a lead or a call counts in Google Ads only once a conversion is set up. In the container, its triggers have to listen for the events in `lib/analytics.ts`, spelled exactly: `generate_lead` (a lead sent by a form's script reaching `/thank-you`: a cold visit, a reload, a bot in the trap and a plain post with no script fire nothing) for a lead and `phone Icon click` (any `tel:` link) for a call. `GTM-WKT2N6FF` holds those two conversions for the same account, but it stays off the UAE (decided 23 Oct 2026).
 - **Keywords and metadata** are per page in `seo` in `constants/landing.ts`. Google Ads scores the words on the page, not the keywords meta tag, so the service and the city are in the h1, the subhead, the hero's service list (`serviceTerms`), the section headings and leads, and the package descriptions. Keep a page's keywords to what it actually sells, and keep them in text a visitor can read.
 - **No prices or currency figures** appear anywhere on these pages, by design. Case-study results quoted in money are filtered out in `landingProjects`.
 - **Not indexed.** They carry `noindex, follow` and stay out of the sitemap, so they cannot compete with `/services/*`. This is permanent. To change it, see `app/(landing)/layout.tsx`.

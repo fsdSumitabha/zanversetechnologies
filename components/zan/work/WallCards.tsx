@@ -9,8 +9,18 @@ import { SiteLink } from "./SiteLink";
 
 /* ───────────────────────────────────────────────────────────────────────────
    The two kinds of card on the work wall — a case study and a service — both
-   real content. Each lifts on hover (and on keyboard focus) and reveals one
-   more detail.
+   real content. Each lifts on hover and reveals one more detail.
+
+   For a mouse or a finger these are ordinary links. For the keyboard and the
+   accessibility tree they are decoration: they drift with the marquee, so they
+   cannot be scrolled to. Hence tabIndex -1 here and aria-hidden on the rows
+   (hero-parallax.tsx), and a plain paragraph rather than a heading for the
+   title. The same links are in plain form on the page: every service here in
+   the deck above the wall, every case study in #case-studies below it. The
+   focus-visible classes stay, for a script that focuses a card.
+
+   The {" "} between blocks renders nothing. It keeps the words apart in the raw
+   text, which is what a crawler without a browser reads.
 
    Both are built the same way: a picture across the top of the card, a label
    chipped onto its corner, then the words underneath. A case study shows the
@@ -48,7 +58,7 @@ const bandSizes =
 export function CaseCard({ project }: { project: Project }) {
   const lead = project.results[0];
   return (
-    <a href={`#case-${project.id}`} className={cn(cardBase, linkFocus, "bg-surface text-foreground")}>
+    <a href={`#case-${project.id}`} tabIndex={-1} className={cn(cardBase, linkFocus, "bg-surface text-foreground")}>
       <div className="relative h-[42%] shrink-0 overflow-hidden bg-surface-muted">
         {project.screenshot ? (
           <Image
@@ -66,8 +76,7 @@ export function CaseCard({ project }: { project: Project }) {
         )}
         <span className={cn(mono, "absolute left-3 top-3 rounded-full border border-border bg-surface px-2.5 py-1 text-foreground")}>
           Case {project.index}
-        </span>
-
+        </span>{" "}
         {/* Detail reveal */}
         <div
           className={cn(
@@ -75,23 +84,22 @@ export function CaseCard({ project }: { project: Project }) {
             "transition-transform duration-500 ease-out-expo group-hover/card:translate-y-0 group-focus-visible/card:translate-y-0",
           )}
         >
-          <span className={cn(mono, "text-subtle")}>{project.timeline}</span>
+          <span className={cn(mono, "text-subtle")}>{project.timeline}</span>{" "}
           <span className="inline-flex items-center gap-1 text-small font-medium text-accent-ink">
             Read the case
             <ArrowUpRight aria-hidden="true" className="size-4" strokeWidth={2} />
           </span>
         </div>
-      </div>
-
+      </div>{" "}
       <div className="flex min-h-0 flex-1 flex-col justify-between gap-2 p-4 lg:p-5">
         <p className="flex items-end gap-3">
           <span className="font-sans text-[clamp(1.875rem,1.1rem+2.4vw,3.25rem)] font-bold leading-[0.9] tracking-[-0.04em] text-foreground">
             {lead.value}
-          </span>
+          </span>{" "}
           <span className="max-w-[15ch] pb-0.5 text-[0.8125rem] leading-tight text-muted lg:text-small">{lead.metric}</span>
-        </p>
+        </p>{" "}
         <div className="min-w-0">
-          <h3 className="line-clamp-2 text-[0.9375rem] font-semibold leading-snug lg:text-body">{project.name}</h3>
+          <p className="line-clamp-2 text-[0.9375rem] font-semibold leading-snug lg:text-body">{project.name}</p>{" "}
           <p className="mt-0.5 line-clamp-2 text-[0.8125rem] text-subtle">
             {project.discipline} · {project.industry}
           </p>
@@ -128,6 +136,7 @@ export function ServiceCard({
   return (
     <SiteLink
       href={service.href}
+      tabIndex={-1}
       className={cn(cardBase, linkFocus, TONES[tone], "justify-between", art ? "" : "p-5 lg:p-6")}
     >
       {art ? (
@@ -156,18 +165,17 @@ export function ServiceCard({
             )}
           >
             <ZanIcon name={service.icon} className="size-5 lg:size-6" />
-          </span>
+          </span>{" "}
           <span className={cn(mono, "pt-1 text-right", onBrand ? "text-action-foreground/80" : "text-subtle")}>
             {practice.title}
           </span>
         </div>
-      )}
-
+      )}{" "}
       <div className={art ? "min-h-0 flex-1 p-4 lg:p-5" : ""}>
-        <h3 className="text-h3 font-semibold text-balance">{service.title}</h3>
+        <p className="text-h3 font-semibold text-balance">{service.title}</p>{" "}
         <p className={cn("mt-1.5 text-small font-medium", onBrand ? "text-action-foreground/85" : "text-accent-ink")}>
           {service.tagline}
-        </p>
+        </p>{" "}
         <p
           className={cn(
             "mt-2 hidden text-[0.8125rem] leading-snug lg:line-clamp-2",
@@ -175,7 +183,7 @@ export function ServiceCard({
           )}
         >
           {service.description}
-        </p>
+        </p>{" "}
         {/* Detail reveal */}
         <div className="grid grid-rows-[0fr] opacity-0 transition-[grid-template-rows,opacity] duration-500 ease-out-expo group-hover/card:grid-rows-[1fr] group-hover/card:opacity-100 group-focus-visible/card:grid-rows-[1fr] group-focus-visible/card:opacity-100">
           <span className="overflow-hidden">

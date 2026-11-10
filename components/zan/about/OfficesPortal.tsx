@@ -115,9 +115,9 @@ export function OfficesPortal() {
         </div>
 
         <div className="[grid-area:city]">
-          <h3 className="font-display text-[min(24cqw,17svh)] leading-[0.86] font-semibold tracking-[-0.045em] text-foreground @3xl:text-[min(18cqw,28svh)]">
+          <p className="font-display text-[min(24cqw,17svh)] leading-[0.86] font-semibold tracking-[-0.045em] text-foreground @3xl:text-[min(18cqw,28svh)]">
             {office.city}
-          </h3>
+          </p>
           <p className="mt-[1.8svh] text-[clamp(1rem,4.6cqw,1.5rem)] tracking-[-0.01em] text-muted @3xl:text-[clamp(1.125rem,2cqw,1.875rem)]">
             {office.country}
           </p>
@@ -142,17 +142,20 @@ export function OfficesPortal() {
         <div className="zan-office-fact [grid-area:address]">
           <p className={label}>Address</p>
           <address className="mt-[1.4svh] text-small text-muted not-italic @3xl:text-[clamp(0.9375rem,1.25cqw,1.125rem)] @3xl:leading-relaxed">
-            {office.addressLines.map((line) => (
-              <span key={line} className="block">
-                {/* Words never break inside, so a narrow column wraps at a
-                    space and "91117-001" is never split at its hyphen. */}
-                {line.split(" ").map((word, i) => (
-                  <Fragment key={i}>
-                    {i > 0 && " "}
-                    <span className="whitespace-nowrap">{word}</span>
-                  </Fragment>
-                ))}
-              </span>
+            {office.addressLines.map((line, l) => (
+              <Fragment key={line}>
+                {l > 0 && " "}
+                <span className="block">
+                  {/* Words never break inside, so a narrow column wraps at a
+                      space and "91117-001" is never split at its hyphen. */}
+                  {line.split(" ").map((word, i) => (
+                    <Fragment key={i}>
+                      {i > 0 && " "}
+                      <span className="whitespace-nowrap">{word}</span>
+                    </Fragment>
+                  ))}
+                </span>
+              </Fragment>
             ))}
           </address>
         </div>

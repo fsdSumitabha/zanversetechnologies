@@ -6,7 +6,8 @@ import { notFoundPage } from "@/constants/pages";
 import { ctas, footerColumns } from "@/constants/zan";
 import { pageMetadata } from "@/lib/metadata";
 
-/* The same title and share card as every other page, minus the two fields
+/* The same title shape as every other page, with the default share card,
+   minus the two fields
    that name an address. A URL that does not exist has no canonical to claim,
    and an og:url would claim one anyway, so both are taken back out of what
    pageMetadata builds. The 404 status itself makes Next add the noindex. */
@@ -41,7 +42,7 @@ export default function NotFound() {
         <div className="mt-9 flex flex-wrap items-center gap-3">
           <SiteButtonLink href="/" size="lg">
             Back to the homepage
-          </SiteButtonLink>
+          </SiteButtonLink>{" "}
           <SiteButtonLink href={ctas.contact.href} variant="secondary" size="lg">
             {ctas.contact.label}
           </SiteButtonLink>

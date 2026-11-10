@@ -41,8 +41,6 @@ const frameKeys = (i: number) => ({
 type Props = {
   /** The chapter label, centred in the tunnel. */
   label: ReactNode;
-  /** Accessible name of the band. */
-  ariaLabel: string;
   /** Pin length on desktop and on touch/narrow screens. */
   distance?: string;
   mobileDistance?: string;
@@ -51,7 +49,6 @@ type Props = {
 
 export function ScrollWarpPortal({
   label,
-  ariaLabel,
   distance = "+=150%",
   mobileDistance = "+=100%",
   className,
@@ -175,7 +172,6 @@ export function ScrollWarpPortal({
   return (
     <section
       ref={sectionRef}
-      aria-label={ariaLabel}
       data-section="chapter-work"
       className={cn("relative w-full bg-surface-muted", className)}
     >

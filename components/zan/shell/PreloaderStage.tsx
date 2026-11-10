@@ -4,8 +4,9 @@ import { Fragment, useEffect, useRef, type CSSProperties } from "react";
 import { preloaderWords } from "@/constants/zan";
 import { ZanLogo } from "@/components/zan/ui/ZanLogo";
 import { getLenis } from "@/hooks/useLenis";
+import { lockScroll } from "@/lib/scrollLock";
 import { MQ } from "@/lib/gsap";
-import { announcePreloaded, PRELOADER_SEEN_KEY } from "./shellStore";
+import { announcePreloaded, isAutomated, PRELOADER_SEEN_KEY } from "./shellStore";
 import "./preloader.css";
 
 /** Fallbacks, ms from mount, for a browser without getAnimations(). They
@@ -101,17 +102,24 @@ export function PreloaderStage() {
     } catch {
       /* storage blocked: play it */
     }
-    if (seen || window.matchMedia(MQ.reduce).matches) {
+    // An automated browser skips it too, as SKIP_SCRIPT in Preloader.tsx does,
+    // so that agents are not blocked. People get the same sequence as ever.
+    if (seen || isAutomated() || window.matchMedia(MQ.reduce).matches) {
       root.style.display = "none";
       announcePreloaded();
       return;
     }
 
-    // Hold the page still while it is covered. Lenis is created in a sibling
-    // effect that runs after this one, so reach for it a frame later.
-    const html = document.documentElement;
-    const prevOverflow = html.style.overflow;
-    html.style.overflow = "hidden";
+    // Hold the page still while it is covered: overflow hidden on <html>, as it
+    // always was, but through the counted lock the overlays use
+    // (lib/scrollLock.ts), so an overlay opened under the cover keeps the page
+    // locked until it closes. Lenis is created in a sibling effect that runs
+    // after this one, so reach for it a frame later.
+    //
+    // The page behind is not made inert. The cover is aria-hidden, so a screen
+    // reader has the page at once, and a keyboard's first Tab still reaches the
+    // skip link, which shows above the cover.
+    const releaseScroll = lockScroll({ body: false });
     let locked = true;
     const stopLenis = requestAnimationFrame(() => {
       if (locked) getLenis()?.stop();
@@ -119,8 +127,7 @@ export function PreloaderStage() {
     const unlock = () => {
       if (!locked) return;
       locked = false;
-      html.style.overflow = prevOverflow;
-      getLenis()?.start();
+      releaseScroll();
     };
 
     // Play once a frame has really been painted: the second rAF runs after the

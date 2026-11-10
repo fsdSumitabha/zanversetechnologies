@@ -15,7 +15,17 @@ import { ChevronDown, Loader2, TriangleAlert } from "lucide-react";
 import { serviceOptions, site } from "@/constants/zan";
 import { Button } from "@/components/zan/ui/Button";
 import { rememberLead, trackFormSubmission } from "@/lib/analytics";
-import { EMAIL_PATTERN, leadsReady, sendLead } from "@/lib/leads";
+import {
+  AGENT_REPLY,
+  agentSubmit,
+  EMAIL_PATTERN,
+  formTool,
+  leadsReady,
+  scriptValidates,
+  sendLead,
+  toolParam,
+  TRAP_FIELD,
+} from "@/lib/leads";
 import { serviceFromPath } from "@/lib/services";
 import { useSiteHref } from "@/lib/useSiteHref";
 import { cn } from "@/lib/utils";
@@ -49,7 +59,16 @@ import { cn } from "@/lib/utils";
 
    Validation is still the browser's own constraint API (required, type=email,
    pattern, minLength) with the messages written out inline under each field,
-   instead of the native bubbles.
+   instead of the native bubbles. Each new message also goes through one hidden
+   live region, because someone who has already moved on is not there to hear it
+   read from the field.
+
+   With no script running it is still a working form. `action` and `method` post
+   the same fields to the same route, which answers with a redirect instead of
+   JSON (app/api/leads/route.ts), and the browser's own bubbles stand in for the
+   messages until the script takes over (scriptValidates). The script cancels that
+   post with preventDefault, so nobody with JavaScript ever reaches it after
+   hydration. A lead sent that way counts no conversion: see ThankYouConversion.
 
    It renders in three places: the homepage's contact section, /contact-us, and
    the contact modal, which asks for `compact`. There the dialog is the card and
@@ -74,6 +93,19 @@ const FORM_NAME = "enquiry_form";
  * visitor who skipped the field. Any international number is accepted.
  */
 const PHONE_HINT = `${site.dialCode} 5X XXX XXXX`;
+/** What each field is called, on its label and in the live region. */
+const LABELS: Record<Field, string> = {
+  name: "Name",
+  email: "Email",
+  phone: "Phone",
+  service: "Service",
+  message: "Project details",
+};
+/** Only on a form that sits in the page: the popup's copy would repeat the name (see lib/leads.ts). */
+const FORM_TOOL = formTool(
+  "enquiry_form",
+  `Fill in a project enquiry to ${site.name}. The visitor checks it and presses Send enquiry. We reply within 24 hours.`,
+);
 
 function isControl(el: unknown): el is Control {
   return el instanceof HTMLInputElement || el instanceof HTMLSelectElement || el instanceof HTMLTextAreaElement;
@@ -102,6 +134,13 @@ function messageFor(el: Control): string | undefined {
   }
 }
 
+/** For the live region: "3 fields need attention. Name: Please tell us your name." */
+function summarise(errors: Partial<Record<Field, string>>): string {
+  const bad = FIELDS.filter((f) => errors[f]);
+  const [first] = bad;
+  return `${bad.length} ${bad.length === 1 ? "field needs" : "fields need"} attention. ${LABELS[first]}: ${errors[first]}`;
+}
+
 const control =
   "w-full rounded-xl border border-border-field bg-surface px-4 text-body text-foreground placeholder:text-subtle " +
   "transition-[border-color,box-shadow] duration-200 hover:border-foreground/40 " +
@@ -128,7 +167,12 @@ function FieldShell({
     <div className={cn("flex min-w-0 flex-col gap-2", className)}>
       <label htmlFor={id} className="flex items-baseline justify-between gap-3 text-small font-medium text-foreground">
         {label}
-        {optional && <span className="font-mono text-[0.6875rem] tracking-[0.12em] text-subtle uppercase">Optional</span>}
+        {optional && (
+          <>
+            {" "}
+            <span className="font-mono text-[0.6875rem] tracking-[0.12em] text-subtle uppercase">Optional</span>
+          </>
+        )}
       </label>
       {children}
       {error && (
@@ -192,6 +236,10 @@ export function EnquiryForm({
   const [errors, setErrors] = useState<Partial<Record<Field, string>>>({});
   const [state, setState] = useState<State>("idle");
   const alertRef = useRef<HTMLDivElement>(null);
+  /** The live region's text. */
+  const [spoken, setSpoken] = useState("");
+  /** What it last said about each field, so leaving one again does not repeat it. */
+  const spokenFor = useRef<Partial<Record<Field, string>>>({});
 
   /* A failed send has to be seen and not only announced. In the contact modal
      the alert lands at the foot of a panel that scrolls on its own, so it can
@@ -212,6 +260,18 @@ export function EnquiryForm({
     setErrors((prev) => (prev[name] === msg ? prev : { ...prev, [name]: msg }));
   };
 
+  // A region only speaks when its text changes, so the same words again get a
+  // space no one can see. Fixed errors leave it empty, not holding stale text.
+  const say = (text: string) => setSpoken((prev) => (prev === text ? `${text}\u00a0` : text));
+  const announce = (el: Control) => {
+    const name = el.name as Field;
+    const msg = messageFor(el);
+    if (spokenFor.current[name] === msg) return;
+    spokenFor.current[name] = msg;
+    if (msg) say(`${LABELS[name]}: ${msg}`);
+    else setSpoken("");
+  };
+
   // A field is judged once the visitor leaves it with something in it, then
   // re-judged as they type so the error clears the moment it is fixed.
   const onBlur = (e: FocusEvent<HTMLFormElement>) => {
@@ -219,6 +279,7 @@ export function EnquiryForm({
     if (!isControl(el) || !el.name) return;
     if (el.value === "" && !errors[el.name as Field]) return;
     check(el);
+    announce(el);
   };
   const onInput: FormEventHandler<HTMLFormElement> = (e) => {
     const el = e.target;
@@ -228,6 +289,9 @@ export function EnquiryForm({
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
+    // Set when an agent filled the form through its tool and a person pressed
+    // the button: how to tell the agent what happened. Asked for now or never.
+    const reply = agentSubmit(e.nativeEvent);
 
     // Read the form NOW. "sending" re-renders every control with `disabled`,
     // and the HTML spec excludes disabled controls from FormData, so reading
@@ -247,16 +311,23 @@ export function EnquiryForm({
       }
     }
     setErrors(next);
+    // Before focus moves, whose blur would otherwise say one of these again.
+    spokenFor.current = next;
     if (firstInvalid) {
       setState("idle");
+      say(summarise(next));
+      reply?.(AGENT_REPLY.invalid(next));
       firstInvalid.focus();
       return;
     }
+    setSpoken("");
 
     // Honeypot: hidden from people, irresistible to bots. It is answered the
     // same way a real send is, so a bot learns nothing from the response about
-    // why nothing arrived.
-    if (String(data.get("website") ?? "").trim()) {
+    // why nothing arrived. No lead is stored, so /thank-you reports nothing.
+    // Not when an agent filled the form: its tool lists every named field, this
+    // one too, and a person still pressed the button.
+    if (!reply && String(data.get(TRAP_FIELD) ?? "").trim()) {
       router.push(href("/thank-you"));
       return;
     }
@@ -264,6 +335,7 @@ export function EnquiryForm({
     const lead = { name: get("name"), email: get("email"), phone: get("phone") };
     const chosen = get("service");
 
+    reply?.(AGENT_REPLY.sending);
     setState("sending");
     try {
       await sendLead({ ...lead, service: chosen, message: get("message"), source: FORM_NAME });
@@ -287,11 +359,14 @@ export function EnquiryForm({
 
   return (
     <form
-      noValidate
+      ref={scriptValidates}
+      action="/api/leads"
+      method="post"
       onSubmit={onSubmit}
       onBlur={onBlur}
       onInput={onInput}
       aria-labelledby={`${uid}-title`}
+      {...(compact ? {} : FORM_TOOL)}
       /* Read by the contact modal, which will not open over a form the visitor
          already has in front of them. */
       data-enquiry-form=""
@@ -317,7 +392,7 @@ export function EnquiryForm({
           fill && "lg:flex-auto lg:grid-rows-[auto_auto_1fr]",
         )}
       >
-        <FieldShell id={id("name")} label="Name" error={errors.name}>
+        <FieldShell id={id("name")} label={LABELS.name} error={errors.name}>
           <input
             id={id("name")}
             name="name"
@@ -327,11 +402,12 @@ export function EnquiryForm({
             disabled={busy}
             pattern=".*\S.*"
             className={cn(control, "h-12")}
+            {...toolParam("The visitor's name.")}
             {...invalid("name")}
           />
         </FieldShell>
 
-        <FieldShell id={id("email")} label="Email" error={errors.email}>
+        <FieldShell id={id("email")} label={LABELS.email} error={errors.email}>
           <input
             id={id("email")}
             name="email"
@@ -342,11 +418,12 @@ export function EnquiryForm({
             disabled={busy}
             pattern={EMAIL_PATTERN}
             className={cn(control, "h-12")}
+            {...toolParam("The email address to reply to.")}
             {...invalid("email")}
           />
         </FieldShell>
 
-        <FieldShell id={id("phone")} label="Phone" optional error={errors.phone}>
+        <FieldShell id={id("phone")} label={LABELS.phone} optional error={errors.phone}>
           <input
             id={id("phone")}
             name="phone"
@@ -357,11 +434,12 @@ export function EnquiryForm({
             pattern="[0-9+\s\(\)\-]{6,20}"
             placeholder={PHONE_HINT}
             className={cn(control, "h-12")}
+            {...toolParam("A phone number with its country code. Optional.")}
             {...invalid("phone")}
           />
         </FieldShell>
 
-        <FieldShell id={id("service")} label="Service" error={errors.service}>
+        <FieldShell id={id("service")} label={LABELS.service} error={errors.service}>
           <div className="relative">
             <select
               id={id("service")}
@@ -374,6 +452,7 @@ export function EnquiryForm({
               key={preset}
               defaultValue={preset}
               className={cn(control, "h-12 cursor-pointer appearance-none pr-11")}
+              {...toolParam(`The closest service in the list, or ${NOT_SURE}.`)}
               {...invalid("service")}
             >
               <option value="" disabled>
@@ -398,7 +477,7 @@ export function EnquiryForm({
           </div>
         </FieldShell>
 
-        <FieldShell id={id("message")} label="Project details" error={errors.message} className="sm:col-span-2">
+        <FieldShell id={id("message")} label={LABELS.message} error={errors.message} className="sm:col-span-2">
           <textarea
             id={id("message")}
             name="message"
@@ -413,6 +492,7 @@ export function EnquiryForm({
               // auto, not 0: a box the visitor drags taller still grows the card.
               fill && "lg:flex-auto",
             )}
+            {...toolParam("What the visitor wants built or run, in a few lines. At least 10 characters.")}
             {...invalid("message")}
           />
         </FieldShell>
@@ -422,8 +502,15 @@ export function EnquiryForm({
           fields that are not rendered. Hidden from assistive technology and
           skipped by the keyboard, so no person ever meets it. */}
       <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
-        <label htmlFor={`${uid}-website`}>Do not fill this in</label>
-        <input id={`${uid}-website`} name="website" type="text" tabIndex={-1} autoComplete="off" />
+        <label htmlFor={`${uid}-${TRAP_FIELD}`}>Do not fill this in</label>
+        <input
+          id={`${uid}-${TRAP_FIELD}`}
+          name={TRAP_FIELD}
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          {...toolParam("Do not fill this in.")}
+        />
       </div>
 
       <div
@@ -462,6 +549,12 @@ export function EnquiryForm({
           </p>
         )}
       </div>
+
+      {/* Already in the page when its text changes, or nothing would announce
+          it. sr-only takes it out of the flow, so it adds no height or gap. */}
+      <p aria-live="polite" aria-atomic="true" className="sr-only">
+        {spoken}
+      </p>
     </form>
   );
 }

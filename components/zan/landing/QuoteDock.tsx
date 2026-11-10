@@ -69,8 +69,11 @@ export function QuoteDock({ label, show }: { label: string; show: boolean }) {
     >
       <AnimatePresence>
         {show && (
-          <motion.div
+          // The bar itself is the landmark, not the wrapper round it: the wrapper
+          // stays when the bar steps aside, and would be an empty one then.
+          <motion.aside
             key="dock"
+            aria-label="Get a quote"
             initial={{ y: "130%", opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: "130%", opacity: 0 }}
@@ -113,7 +116,7 @@ export function QuoteDock({ label, show }: { label: string; show: boolean }) {
             >
               {copy.cta.primary}
             </QuoteButton>
-          </motion.div>
+          </motion.aside>
         )}
       </AnimatePresence>
     </div>

@@ -355,7 +355,8 @@
 
    If the flag never arrives, the failsafe shows everything after 5 s. Without
    JavaScript, the noscript rule in layout.tsx shows every [data-reveal]. The
-   h1 is never part of this: it paints from the server HTML at once. */
+   big line is never part of this: it paints from the server HTML at once. The
+   h1, the sentence under it, is: it enters with the rest of the copy. */
 
 @media (prefers-reduced-motion: no-preference) {
   html:not([data-preloaded]) .zan-hero-in {

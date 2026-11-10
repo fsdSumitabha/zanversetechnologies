@@ -2,7 +2,7 @@ import { ChevronRight } from "lucide-react";
 import { SiteLink } from "@/components/zan/services/SiteLinks";
 import { labels } from "@/constants/pages";
 import { absoluteUrl } from "@/lib/metadata";
-import { jsonLd } from "@/lib/schema";
+import { breadcrumbId, jsonLd } from "@/lib/schema";
 import { cn } from "@/lib/utils";
 
 export interface Crumb {
@@ -25,9 +25,12 @@ export interface Crumb {
  * nothing client-side imports it.
  */
 export function Breadcrumbs({ trail, className }: { trail: readonly Crumb[]; className?: string }) {
+  const last = trail.length - 1;
   const breadcrumbList = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
+    // What the page's WebPage node names as its breadcrumb (lib/schema.ts).
+    "@id": breadcrumbId(trail[last].href),
     itemListElement: trail.map((c, i) => ({
       "@type": "ListItem",
       position: i + 1,
@@ -35,7 +38,6 @@ export function Breadcrumbs({ trail, className }: { trail: readonly Crumb[]; cla
       item: absoluteUrl(c.href),
     })),
   };
-  const last = trail.length - 1;
   return (
     <nav aria-label={labels.breadcrumb} className={cn("min-w-0", className)}>
       <script

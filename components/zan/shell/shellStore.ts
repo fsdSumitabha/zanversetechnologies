@@ -1,11 +1,13 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import { usePathname } from "next/navigation";
 import { getLenis } from "@/hooks/useLenis";
 
 /* ───────────────────────────────────────────────────────────────────────────
    Small shared pieces for the shell: the preloader handshake, media queries
-   read without an effect, and the one way an in-page link scrolls.
+   read without an effect, where the logo goes, and the one way an in-page link
+   scrolls.
    ─────────────────────────────────────────────────────────────────────────── */
 
 /** Fired on window when the preloader has finished (or was skipped). */
@@ -36,6 +38,25 @@ export function announcePreloaded() {
   if (document.documentElement.dataset.preloaded === "1") return;
   document.documentElement.dataset.preloaded = "1";
   window.dispatchEvent(new Event(PRELOADED_EVENT));
+}
+
+/**
+ * True in a browser driven by automation (`navigator.webdriver`). Only that:
+ * it skips the preloader and the timed popup, which an agent acting on a loaded
+ * page would otherwise run into. A person's browser never answers true, so
+ * people see both exactly as they are. Browser only: call it from an effect.
+ */
+export function isAutomated(): boolean {
+  return navigator.webdriver === true;
+}
+
+/**
+ * Where the logo goes. On the homepage it glides back up this page, as an
+ * in-page anchor; on any other page it is a plain link to the homepage. Pass the
+ * result to SiteLink, which leaves both as they are.
+ */
+export function useLogoHref(): string {
+  return (usePathname() || "/") === "/" ? "#main" : "/";
 }
 
 /** A media query as a value, re-rendering when it flips. Server: false. */

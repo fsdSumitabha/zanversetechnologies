@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
 import "@/components/zan/team/teamPage.css";
+import { PageNotes, UpdatedLine } from "@/components/zan/page/ContentBlocks";
 import { PageHero } from "@/components/zan/page/PageHero";
 import { Reveal } from "@/components/zan/page/Reveal";
-import { Section } from "@/components/zan/page/Section";
+import { Section, toneAt } from "@/components/zan/page/Section";
 import { HeroPanel } from "@/components/zan/page/HeroPanel";
 import { SiteButtonLink } from "@/components/zan/services/SiteLinks";
 import { TeamLeadCard, TeamPersonCard } from "@/components/zan/team/TeamPageCard";
+import { pageUpdated } from "@/constants/freshness";
 import { labels, ourTeamPage, pageTrail } from "@/constants/pages";
 import { ctas, teamGroups, teamLead } from "@/constants/zan";
 import { pageMetadata } from "@/lib/metadata";
+import { jsonLd, webPageSchema } from "@/lib/schema";
 
 export const metadata: Metadata = pageMetadata({
   title: ourTeamPage.seoTitle,
@@ -40,6 +43,19 @@ export const metadata: Metadata = pageMetadata({
 export default function OurTeamPage() {
   return (
     <main id="main">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: jsonLd(
+            webPageSchema({
+              path: "/our-team",
+              name: ourTeamPage.title.join(" "),
+              description: ourTeamPage.seoDescription,
+              type: "AboutPage",
+            }),
+          ),
+        }}
+      />
       <PageHero
         eyebrow={ourTeamPage.eyebrow}
         title={ourTeamPage.title}
@@ -54,7 +70,7 @@ export default function OurTeamPage() {
         <div className="mt-9 flex flex-wrap items-center gap-3">
           <SiteButtonLink href={ctas.consultation.href} size="lg">
             {ctas.consultation.label}
-          </SiteButtonLink>
+          </SiteButtonLink>{" "}
           <SiteButtonLink href="/how-we-work" variant="secondary" size="lg">
             How we work
           </SiteButtonLink>
@@ -94,6 +110,10 @@ export default function OurTeamPage() {
           </SiteButtonLink>
         </Reveal>
       </Section>
+
+      <PageNotes tone={toneAt(teamGroups.length + 1)}>
+        <UpdatedLine date={pageUpdated("/our-team")} />
+      </PageNotes>
     </main>
   );
 }

@@ -38,6 +38,12 @@
    should add whatever UAE law or the free zone requires a policy to state.
    Edits belong with counsel, not in a design pass.
 
+   One label is not counsel's text: on 5 November 2026 the terms page's title
+   and h1 became "Terms of Service", to match its URL and the footer. The
+   operative text still calls that document the "Terms and Conditions", in its
+   own opening and in the refund policy and the disclaimer. Whether to bring
+   those in line is for counsel.
+
    Structure is flattened to tagged blocks so one renderer can lay out all five
    pages consistently.
    ─────────────────────────────────────────────────────────────────────────── */
@@ -145,7 +151,7 @@ export const legalDocuments: Record<string, LegalDocument> = {
     ],
   },
   "terms-of-service": {
-    title: "Terms & Conditions",
+    title: "Terms of Service",
     effective: "October 23, 2026",
     blocks: [
       { tag: "p", text: "These Terms and Conditions (\"Terms,\" \"Agreement\") govern your access to and use of the website zanversetechnologies.com (\"Website\") and the services provided by Zan Verse Technologies (\"we,\" \"us,\" \"our,\" or \"Zan Verse Technologies\"), a company located at IFZA Business Park, DDP, Premises Number 91117-001, Dubai Silicon Oasis, Dubai, United Arab Emirates. Our services include, but are not limited to, web development, mobile application development, blockchain and Web3 solutions, AI and machine learning services, digital marketing, IT consulting, software development, and related digital solutions (\"Services\")." },
@@ -267,7 +273,7 @@ export const legalDocuments: Record<string, LegalDocument> = {
       { tag: "li", text: "Blockchain/Web3/AI projects involving deployment or live testing (high irreversibility and resource commitment)." },
       { tag: "li", text: "After project sign-off/handover or 7 days post-delivery (whichever is earlier), unless major defects due to our fault (see Warranty below)." },
       { tag: "h2", text: "5. Cancellation Procedure" },
-      { tag: "li", text: `Cancellation must be requested in writing via email to ${site.email} with clear subject: "Project Cancellation Request – [Project Name]".` },
+      { tag: "li", text: `Cancellation must be requested in writing via email to ${site.email} with clear subject: "Project Cancellation Request: [Project Name]".` },
       { tag: "li", text: "Provide reasons and current status." },
       { tag: "li", text: "We will acknowledge within 2 business days and provide a final invoice/settlement statement showing work completed, any refund due, and outstanding balance." },
       { tag: "li", text: "You must settle any outstanding payments before cancellation takes effect." },

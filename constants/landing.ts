@@ -79,7 +79,7 @@ const fromMetrics = (id: LandingStatId, label: string, suffix = ""): LandingStat
 /** The six in the proof grid. The support figure is the three months the process promises. */
 export const landingStats: readonly LandingStat[] = [
   fromMetrics("projects", "Projects delivered"),
-  fromMetrics("clients", "Clients worldwide"),
+  fromMetrics("clients", "Clients served"),
   fromMetrics("rating", "Client rating", "/5"),
   fromMetrics("on-time", "On-time delivery"),
   { id: "support", value: "3 months", label: "Post-launch support" },
@@ -857,7 +857,8 @@ export const landingCopy = {
     points: ["NDA on request", "You own the IP", "No hidden costs"],
   },
 
-  clients: { label: "Trusted by brands and businesses worldwide" },
+  /* Shorter than the line it replaced, so it wraps at no width where that did not. */
+  clients: { label: "Trusted by businesses across industries" },
 
   packages: { eyebrow: "Services", popular: "Popular", action: "Get a quote for this" },
 

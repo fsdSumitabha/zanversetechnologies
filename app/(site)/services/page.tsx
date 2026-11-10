@@ -1,17 +1,19 @@
 import type { Metadata } from "next";
 import { ArrowUpRight } from "lucide-react";
 import { FaqAccordion } from "@/components/zan/contact/FaqAccordion";
+import { inlineLink, PageNotes, UpdatedLine } from "@/components/zan/page/ContentBlocks";
 import { PageHero } from "@/components/zan/page/PageHero";
 import { Section } from "@/components/zan/page/Section";
 import { Reveal } from "@/components/zan/page/Reveal";
 import { FactCard, ServiceCard, StepCard } from "@/components/zan/page/cards";
 import { HeroLinks, HeroPanel } from "@/components/zan/page/HeroPanel";
 import { SiteButtonLink, SiteLink } from "@/components/zan/services/SiteLinks";
+import { pageUpdated } from "@/constants/freshness";
 import { areaPages, childrenOf, pageTrail, servicesPage } from "@/constants/pages";
 import { getReasonArt } from "@/constants/serviceArt";
 import { ctas, faqIntro, processIntro, processSteps, servicesFaqs, whyUs } from "@/constants/zan";
 import { pageMetadata } from "@/lib/metadata";
-import { faqSchema, jsonLd } from "@/lib/schema";
+import { faqSchema, jsonLd, webPageSchema } from "@/lib/schema";
 
 export const metadata: Metadata = pageMetadata({
   title: servicesPage.seoTitle,
@@ -36,12 +38,23 @@ const groups = [
 export default function ServicesPage() {
   return (
     <main id="main">
-      {/* The questions the #faq band below renders, marked up from the same
-          array. They are this page's own set, not a slice of the homepage's,
-          so there is no duplicate for Google to discard. */}
+      {/* What this URL is, and the questions the #faq band below renders,
+          marked up from the same array. They are this page's own set, not a
+          slice of the homepage's, so there is no duplicate for Google to
+          discard. */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: jsonLd(faqSchema(servicesFaqs)) }}
+        dangerouslySetInnerHTML={{
+          __html: jsonLd(
+            webPageSchema({
+              path: "/services",
+              name: servicesPage.title.join(" "),
+              description: servicesPage.seoDescription,
+              type: "CollectionPage",
+            }),
+            faqSchema(servicesFaqs),
+          ),
+        }}
       />
       <PageHero
         eyebrow={servicesPage.eyebrow}
@@ -53,7 +66,8 @@ export default function ServicesPage() {
             <HeroLinks
               items={groups.map((g) => ({
                 label: g.title,
-                href: g.parent ? g.parent.href : "#catalogue",
+                // With its path: SiteLink sends a bare "#catalogue" to the homepage.
+                href: g.parent ? g.parent.href : "/services#catalogue",
                 note: `${g.pages.length} ${g.pages.length === 1 ? "page" : "pages"}`,
               }))}
             />
@@ -63,7 +77,7 @@ export default function ServicesPage() {
         <div className="mt-9 flex flex-wrap items-center gap-3">
           <SiteButtonLink href={ctas.consultation.href} size="lg">
             {ctas.consultation.label}
-          </SiteButtonLink>
+          </SiteButtonLink>{" "}
           <SiteButtonLink href={ctas.portfolio.href} variant="secondary" size="lg">
             {ctas.portfolio.label}
           </SiteButtonLink>
@@ -170,8 +184,21 @@ export default function ServicesPage() {
       >
         <div className="lg:mx-auto lg:max-w-4xl">
           <FaqAccordion items={servicesFaqs} />
+          {/* The way to the list of guides, since the header and the footer stay
+              as they are. A service page's copy links to the single guides. */}
+          <p className="mt-8 text-body text-muted">
+            Longer answers, such as what a website costs in Dubai, are in our{" "}
+            <SiteLink href="/guides" className={inlineLink}>
+              guides
+            </SiteLink>
+            .
+          </p>
         </div>
       </Section>
+
+      <PageNotes tone="bg">
+        <UpdatedLine date={pageUpdated("/services")} />
+      </PageNotes>
     </main>
   );
 }

@@ -7,7 +7,8 @@ import { Eyebrow } from "@/components/zan/ui/Eyebrow";
 import { focusables } from "@/components/zan/shell/shellStore";
 import { landingCopy } from "@/constants/landing";
 import { office } from "@/constants/zan";
-import { getLenis } from "@/hooks/useLenis";
+import { lockScroll } from "@/lib/scrollLock";
+import { inertOutside } from "@/lib/backgroundInert";
 import { MQ } from "@/lib/gsap";
 import { cn } from "@/lib/utils";
 import { LandingForm } from "./LandingForm";
@@ -19,12 +20,12 @@ const EASE = [0.16, 1, 0.3, 1] as const;
  * The form, brought to the visitor by the sticky button or a package card.
  *
  * A real dialog, built as the site's contact modal is: focus moves in and is
- * trapped, Escape and the backdrop close it, the page behind cannot scroll, and
- * focus goes back to the button that opened it. It differs in one way. That
- * modal arrives uninvited, so it never drops a cursor into a field; this one
- * was asked for, so with a mouse the name field is ready to type in. On a phone
- * focus still goes to the panel, so the keyboard does not cover the form before
- * the visitor has seen it.
+ * trapped, Escape and the backdrop close it, the page behind cannot scroll and
+ * is inert, and focus goes back to the button that opened it. It differs in one
+ * way. That modal arrives uninvited, so it never drops a cursor into a field;
+ * this one was asked for, so with a mouse the name field is ready to type in. On
+ * a phone focus still goes to the panel, so the keyboard does not cover the form
+ * before the visitor has seen it.
  *
  * On a phone it is a sheet from the bottom edge, where the thumb already is.
  *
@@ -43,12 +44,8 @@ export function QuoteModal({ request, onClose }: { request: QuoteRequest | null;
     const active = document.activeElement;
     const back = active instanceof HTMLElement && active !== document.body ? active : null;
 
-    const html = document.documentElement;
-    const prevHtml = html.style.overflow;
-    const prevBody = document.body.style.overflow;
-    html.style.overflow = "hidden";
-    document.body.style.overflow = "hidden";
-    getLenis()?.stop();
+    const unlockScroll = lockScroll();
+    const wakePage = panelRef.current ? inertOutside(panelRef.current) : null;
 
     const focusIn = requestAnimationFrame(() => {
       const panel = panelRef.current;
@@ -60,6 +57,10 @@ export function QuoteModal({ request, onClose }: { request: QuoteRequest | null;
     });
 
     const onKey = (e: KeyboardEvent) => {
+      // Another overlay on top, such as the timed popup, owns the keys: it has
+      // made this one inert, or, if this one mounted after it, it has already
+      // handled the key. Tab and Escape are its, not this one's.
+      if (e.defaultPrevented || panelRef.current?.closest("[inert]")) return;
       if (e.key === "Escape") {
         e.preventDefault();
         onClose();
@@ -87,9 +88,9 @@ export function QuoteModal({ request, onClose }: { request: QuoteRequest | null;
     return () => {
       cancelAnimationFrame(focusIn);
       document.removeEventListener("keydown", onKey);
-      html.style.overflow = prevHtml;
-      document.body.style.overflow = prevBody;
-      getLenis()?.start();
+      // First, because an inert element cannot take the focus handed back below.
+      wakePage?.();
+      unlockScroll();
       if (back?.isConnected) back.focus({ preventScroll: true });
     };
   }, [open, onClose]);

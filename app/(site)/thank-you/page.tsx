@@ -11,14 +11,14 @@ import { pageMetadata } from "@/lib/metadata";
    /thank-you
 
    Where the enquiry form goes on a send that resolved. It is not decoration:
-   reaching this URL is the event Google Ads counts as a conversion, and the
-   only place the site fires `generate_lead`. Sending the form's success state
-   here rather than swapping a panel in place is what makes the conversion
-   countable at all.
+   a lead the forms' script sent reaching this URL is the event Google Ads
+   counts as a conversion, and the only place the site fires `generate_lead`.
+   Sending the form's success state here rather than swapping a panel in place
+   is what makes the conversion countable at all.
 
    NOINDEX, PERMANENTLY. A thank-you page has nothing to offer a search
-   result, and one that is indexed gets landed on cold, which reports a
-   conversion for a visitor who never enquired.
+   result, and one that is indexed gets landed on cold, which thanks a visitor
+   who never enquired. ThankYouConversion reports no conversion for them.
    ─────────────────────────────────────────────────────────────────────────── */
 
 export const metadata: Metadata = {
@@ -70,7 +70,7 @@ export default function ThankYouPage() {
         <div className="mt-9 flex flex-wrap items-center gap-3">
           <SiteButtonLink href="/portfolio" size="lg">
             See what we have built
-          </SiteButtonLink>
+          </SiteButtonLink>{" "}
           <SiteButtonLink href="/" variant="secondary" size="lg">
             Back to the homepage
           </SiteButtonLink>

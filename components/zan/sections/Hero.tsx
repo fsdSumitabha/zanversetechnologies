@@ -8,21 +8,27 @@ import { hero, metrics, office, site, type Metric } from "@/constants/zan";
 /* ───────────────────────────────────────────────────────────────────────────
    HERO — the previous site's UAE hero, word for word, as a parallax scene.
 
-   A server component: the badge, the h1, the subtitle, the phone number and
-   the figures are all in the server HTML. The h1 is the page's only h1 and
-   its LCP element. Its entrance moves and focuses the words (transform and
+   A server component: the badge, the big line, the h1, the phone number and
+   the figures are all in the server HTML.
+
+   The big line, "Transform Your" and a typed word, is a paragraph and the
+   page's LCP element. Its entrance moves and focuses the words (transform and
    blur only, never opacity), so the text is painted from the first frame and
    counts as the LCP at once; the typewriter takes over after hydration.
+
+   The h1 is the sentence under it, set as a subtitle: the one line on the
+   screen that says what the company is and where. It is the page's only h1,
+   and #hero-title, which labels the section (HeroScene).
 
    Type: Bricolage Grotesque (font-hero), heavy and slightly condensed, so the
    headline has a voice of its own rather than the default system sans.
 
-   The subtitle opens with site.heroOwner ("Dubai's") and the number under it
-   is the Dubai office's, both plain server HTML. The two calls to action are
+   The h1 opens with site.heroOwner ("Dubai's") and the number under it is the
+   Dubai office's, both plain server HTML. The two calls to action are
    HeroActions, a client component for the WhatsApp click's analytics event.
    ─────────────────────────────────────────────────────────────────────────── */
 
-/** The h1's stable accessible name: every typed word, said once. */
+/** What the typed line says to a screen reader: every typed word, said once. */
 const words = hero.typingWords;
 const TYPED_NAME = `${words.slice(0, -1).join(", ")} and ${words[words.length - 1]}`;
 
@@ -32,9 +38,9 @@ const STATS = (["projects", "clients", "rating"] as const)
   .filter((m): m is Metric => Boolean(m));
 
 /**
- * The subtitle's emphasis, resolved once. Only the FIRST accent phrase gets
- * the brand colour: three coloured phrases in two lines is scattered emphasis
- * and fights the headline.
+ * The h1's emphasis, resolved once. Only the FIRST accent phrase gets the
+ * brand colour: three coloured phrases in two lines is scattered emphasis and
+ * fights the big line.
  */
 let accents = 0;
 const SUBTITLE = hero.subtitle.map((part) => {
@@ -49,7 +55,7 @@ const SUBTITLE = hero.subtitle.map((part) => {
 /** Shorter labels than the metrics carry, so the row stays one line each. */
 const STAT_LABEL: Record<string, string> = {
   projects: "Projects delivered",
-  clients: "Clients worldwide",
+  clients: "Clients served",
   rating: "Client rating",
 };
 
@@ -66,14 +72,11 @@ export function Hero() {
         style={delay(0)}
       >
         <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-accent" />
-        <span className="hidden sm:inline">{hero.badge}</span>
+        <span className="hidden sm:inline">{hero.badge}</span>{" "}
         <span className="sm:hidden">{hero.badgeShort}</span>
       </p>
 
-      <h1
-        id="hero-title"
-        className="mt-6  text-[clamp(2.25rem,0.8rem+5.4vw,5.25rem)] leading-[0.95] font-extrabold tracking-[-0.042em] text-foreground [font-stretch:92%] sm:mt-7"
-      >
+      <p className="mt-6  text-[clamp(2.25rem,0.8rem+5.4vw,5.25rem)] leading-[0.95] font-extrabold tracking-[-0.042em] text-foreground [font-stretch:92%] sm:mt-7">
         <span className="block">
           {lead.map((word, i) => (
             <span key={word}>
@@ -84,13 +87,14 @@ export function Hero() {
             </span>
           ))}
         </span>{" "}
-        <span className="sr-only">{TYPED_NAME}</span>
+        <span className="sr-only">{TYPED_NAME}</span>{" "}
         <span className="zan-hero-word block" style={{ "--zan-w": lead.length } as CSSProperties}>
           <Typewriter words={words} />
         </span>
-      </h1>
+      </p>
 
-      <p
+      <h1
+        id="hero-title"
         data-reveal
         className="zan-hero-in mx-auto mt-6 max-w-[36rem] text-[1.0625rem] leading-relaxed text-pretty text-muted sm:mt-7 sm:text-[1.1875rem] lg:mx-0"
         style={delay(1)}
@@ -101,7 +105,7 @@ export function Hero() {
             {part.text}
           </span>
         ))}
-      </p>
+      </h1>
 
       <div data-reveal className="zan-hero-in mt-7 flex justify-center sm:mt-8 lg:justify-start" style={delay(2)}>
         <a

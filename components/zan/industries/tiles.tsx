@@ -9,7 +9,8 @@ import { cn } from "@/lib/utils";
 /* The carousel's two kinds of card. An industry card leads with a photograph
    of the sector bled to the card's top edge, then the sector and what we build
    for it. A case card pairs a case study with its own screenshot. Both fill
-   the card frame the carousel gives them (3:4, ~300px wide). */
+   the card frame the carousel gives them (3:4, ~300px wide). The {" "} between
+   blocks renders nothing: it keeps the words apart in the raw text. */
 
 export type Tone = "soft" | "paper" | "surface" | "brand";
 
@@ -60,11 +61,11 @@ export function IndustryTile({ industry, index, tone }: { industry: Industry; in
             {index}
           </span>
         </div>
-      )}
+      )}{" "}
       <div className="relative">
         <h3 className="font-display text-[clamp(1.375rem,1.2rem+0.5vw,1.625rem)] leading-[1.12] font-semibold text-balance">
           {industry.label}
-        </h3>
+        </h3>{" "}
         <p className={cn("mt-2.5 text-small", onBrand ? "text-action-foreground" : "text-muted")}>{industry.description}</p>
       </div>
     </article>
@@ -96,8 +97,8 @@ export function CaseCaption({ project }: { project: Project }) {
             aria-hidden="true"
             className="size-4 shrink-0 text-foreground transition-transform duration-300 ease-out-expo group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
           />
-        </span>
-        <span className="mt-2 block text-h3 text-foreground">{project.name}</span>
+        </span>{" "}
+        <span className="mt-2 block text-h3 text-foreground">{project.name}</span>{" "}
         <span className="mt-1 block text-small text-subtle">{project.discipline}</span>
       </span>
     </a>

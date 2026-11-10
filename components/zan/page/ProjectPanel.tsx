@@ -46,7 +46,7 @@ export function ProjectPanel({ project, flip = false }: { project: Project; flip
                 <dd>
                   <span className="block font-sans text-[clamp(1.5rem,1.2rem+1.2vw,2rem)] leading-none font-bold tracking-[-0.03em] text-foreground tabular-nums">
                     {r.value}
-                  </span>
+                  </span>{" "}
                   <span className="mt-2 block text-[0.8125rem] leading-snug text-subtle">{r.metric}</span>
                 </dd>
               </div>

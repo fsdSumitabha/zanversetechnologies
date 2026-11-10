@@ -13,7 +13,7 @@ export function ContactDirect({ className }: { className?: string }) {
         icon={<Phone aria-hidden="true" className="size-4 shrink-0" strokeWidth={1.8} />}
       >
         Call {office.phoneDisplay}
-      </ButtonLink>
+      </ButtonLink>{" "}
       <ButtonLink
         href={`mailto:${site.email}`}
         variant="ghost"

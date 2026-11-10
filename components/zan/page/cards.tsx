@@ -14,6 +14,9 @@ import { Reveal } from "./Reveal";
 const cardBase =
   "group/card relative flex h-full flex-col rounded-3xl border border-border bg-surface p-6 transition-[border-color,box-shadow,transform] duration-500 ease-out-expo sm:p-7";
 const cardHover = "hover:-translate-y-0.5 hover:border-border-strong hover:shadow-lift";
+/** The global focus ring, on a card whose title link has keyboard focus. */
+const cardRing =
+  "has-[a:focus-visible]:[outline:2px_solid_var(--color-focus)] has-[a:focus-visible]:[outline-offset:3px]";
 
 /** A square glyph plate: the fallback for a subject with no photograph yet. */
 export function IconPlate({ name, className }: { name: IconKey; className?: string }) {
@@ -70,9 +73,21 @@ function CardBanner({ art, index }: { art: CardArt; index?: string }) {
 }
 
 /**
- * One service, as a link. Used for the catalogue on /services, the disciplines
- * under a practice page, and the "other services" list at the foot of a
- * service page.
+ * One service or guide, as a link. Used for the catalogue on /services, the
+ * disciplines under a practice page, the "other services" list at the foot of a
+ * service page, and the guides.
+ *
+ * The card is a box and its title is the link, stretched over the whole card by
+ * the link's ::after, so the card is pressed, hovered and opened exactly as it
+ * was when the whole card was the link. The link is named by the title, which is
+ * also all the text it holds (WCAG 2.5.3, label in name), and the rest of the
+ * card reads as plain text around it. Before, the link held the whole card and
+ * was named by everything in it, down to "Read more".
+ *
+ * The overlay covers the border box with the card's own corners, as the link's
+ * box did, and `isolate` keeps its z-index inside the card. The keyboard ring is
+ * the global one (app/globals.css: 2px, 3px out), drawn on the card while its
+ * link has focus, where it always was.
  */
 export function ServiceCard({
   href,
@@ -100,7 +115,7 @@ export function ServiceCard({
   const art = getServiceArt(href.slice(href.lastIndexOf("/") + 1));
   return (
     <Reveal delay={delay} className="h-full">
-      <SiteLink href={href} className={cn(cardBase, cardHover)}>
+      <div className={cn(cardBase, cardHover, cardRing, "isolate")}>
         {art ? (
           <CardBanner art={art} index={index} />
         ) : (
@@ -110,7 +125,14 @@ export function ServiceCard({
           </div>
         )}
 
-        <h3 className={cn("font-display text-h3 font-semibold text-foreground", !art && (icon || index) ? "mt-5" : "")}>{title}</h3>
+        <h3 className={cn("font-display text-h3 font-semibold text-foreground", !art && (icon || index) ? "mt-5" : "")}>
+          <SiteLink
+            href={href}
+            className="after:absolute after:-inset-px after:z-10 after:rounded-3xl focus-visible:outline-none"
+          >
+            {title}
+          </SiteLink>
+        </h3>
         {tagline && <p className="mt-1.5 font-mono text-eyebrow text-accent-ink uppercase">{tagline}</p>}
         {description && <p className="mt-4 text-body text-muted">{description}</p>}
 
@@ -136,7 +158,7 @@ export function ServiceCard({
             className="size-4 text-accent-ink transition-transform duration-300 ease-out-expo group-hover/card:translate-x-0.5 group-hover/card:-translate-y-0.5"
           />
         </span>
-      </SiteLink>
+      </div>
     </Reveal>
   );
 }
@@ -248,12 +270,15 @@ export function MetricRow({
 
 /** A numbered step with its deliverables — the four-stage process. */
 export function StepCard({
+  id,
   index,
   title,
   description,
   deliverables,
   delay = 0,
 }: {
+  /** The step's address, on the one page whose HowTo markup links to each step. */
+  id?: string;
   index: string;
   title: string;
   description: string;
@@ -265,7 +290,7 @@ export function StepCard({
   const art = getProcessArt(index);
   return (
     <Reveal delay={delay} className="h-full">
-      <article className="group/card flex h-full flex-col rounded-3xl border border-border bg-surface p-6 sm:p-7">
+      <article id={id} className="group/card flex h-full scroll-mt-nav flex-col rounded-3xl border border-border bg-surface p-6 sm:p-7">
         {art ? (
           <CardBanner art={art} index={index} />
         ) : (

@@ -13,8 +13,9 @@ import { office, site } from "@/constants/zan";
  *
  * The word is drawn as a hole in a sheet of --color-surface rather than as type, so
  * it is invisible to a screen reader. The heading carries the section as real
- * text and names it, so the outline and the landmark list say what this is
- * rather than repeating the company name alone.
+ * text, so the outline says what this is rather than repeating the company name
+ * alone. It does not name the section: this scene is not one of the page's main
+ * parts, so it stays out of the landmark list.
  *
  * No lead line: every short sentence in the content is already a heading or a
  * lead further down this page.
@@ -25,10 +26,8 @@ import { office, site } from "@/constants/zan";
  */
 export function Showreel() {
   return (
-    <section id="showreel" aria-labelledby="showreel-title" className="relative bg-canvas">
-      <h2 id="showreel-title" className="sr-only">
-        {`${site.name} in ${office.city}`}
-      </h2>
+    <section id="showreel" className="relative bg-canvas">
+      <h2 className="sr-only">{`${site.name} in ${office.city}`}</h2>
       <ShowreelStage eyebrow={`${office.city}, ${office.country}`} still="/images/uae/uae_landscape.webp" />
     </section>
   );

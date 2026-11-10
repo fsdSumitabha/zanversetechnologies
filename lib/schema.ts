@@ -1,7 +1,8 @@
+import { pageUpdated } from "@/constants/freshness";
 import type { ServicePage } from "@/constants/pages";
 import type { FAQ } from "@/constants/zan";
-import { everyone, office, processSteps, practices, site, socialLinks } from "@/constants/zan";
-import { absoluteUrl, OG_IMAGE } from "@/lib/metadata";
+import { credentials, ctas, everyone, office, processSteps, practices, site, socialLinks } from "@/constants/zan";
+import { absoluteUrl, OG_IMAGE, shareImage } from "@/lib/metadata";
 
 /* ═══════════════════════════════════════════════════════════════════════════
    STRUCTURED DATA
@@ -15,14 +16,17 @@ import { absoluteUrl, OG_IMAGE } from "@/lib/metadata";
      Organization + ProfessionalService   who the company is
      WebSite                              what this site is
 
-   The rest is per page: Service on the sixteen service pages, HowTo on
-   /how-we-work, FAQPage wherever a page renders a question set of its own,
-   BreadcrumbList wherever a trail is rendered
+   The rest is per page: WebPage, saying what kind of page it is and when it
+   last changed; Service on the sixteen service pages, Article on the guides,
+   HowTo on /how-we-work, FAQPage wherever a page renders a question set of its
+   own, BreadcrumbList wherever a trail is rendered
    (components/zan/page/Breadcrumbs.tsx).
 
    Every URL in here is built with `absoluteUrl` (lib/metadata.ts), the same
    helper the canonicals and the sitemap use, so the three can never name the
-   same page two different ways.
+   same page two different ways. Every date comes from constants/freshness.ts or
+   from the guide it describes, so the markup, the sitemap and the "Last updated"
+   line can never disagree.
 
    NOT PORTED from the previous site's index.html, deliberately:
 
@@ -42,11 +46,22 @@ const postalAddress = {
   "@type": "PostalAddress",
   streetAddress: office.addressLines.join(", "),
   addressLocality: office.city,
+  // The emirate, which has the city's name.
+  addressRegion: office.city,
   addressCountry: office.countryCode,
 } as const;
 
 /** The one market the company sells into. */
 const areaServed = { "@type": "Country", name: office.country } as const;
+
+/**
+ * The Google Maps search the office card's Directions row opens, for the
+ * address as the card prints it (components/zan/contact/OfficeCard.tsx). A
+ * search rather than a pin, because no coordinates have been confirmed.
+ */
+const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+  [...office.addressLines, office.city, office.country].join(", "),
+)}`;
 
 /** Every discipline the company sells, flattened out of the three practices. */
 const everyService = practices.flatMap((p) => p.items);
@@ -56,12 +71,14 @@ const everyService = practices.flatMap((p) => p.items);
  * crawler that lands on any URL of the site gets the same identity with it.
  *
  * Everything in it is something the site already says in its own copy: the
- * Dubai office's address and number, the inbox, the services, the people.
+ * Dubai office's address and number, the inbox, the services, the people, the
+ * two ISO certificates.
  *
- * LEFT OUT until someone confirms them: opening hours, a founding date, map
- * coordinates and a registration number. None of them is published anywhere
- * on the site, and a node that states a fact the pages do not is the drift
- * this file exists to prevent. Each one is a line here the day it is known.
+ * LEFT OUT until someone confirms them: opening hours, a founding date, a postal
+ * code, map coordinates, a headcount and a registration number. None of them is
+ * published anywhere on the site, and a node that states a fact the pages do not
+ * is the drift this file exists to prevent. Each one is a line here the day it
+ * is known.
  */
 export function organizationSchema() {
   return {
@@ -77,6 +94,7 @@ export function organizationSchema() {
     email: site.email,
     telephone: office.phoneTel,
     address: postalAddress,
+    hasMap: mapUrl,
     location: {
       "@type": "Place",
       name: `${site.name}, ${office.city}`,
@@ -90,6 +108,22 @@ export function organizationSchema() {
       areaServed: office.countryCode,
       availableLanguage: ["en"],
     },
+    /* How to reach the company, for a machine: the page with the enquiry form. */
+    potentialAction: {
+      "@type": "CommunicateAction",
+      name: ctas.contact.label,
+      target: absoluteUrl(ctas.contact.href),
+    },
+    /* The two certificates /about-us prints, with the numbers it prints. No
+       issuing body, because the site names none. */
+    hasCredential: credentials.map((c) => ({
+      "@type": "EducationalOccupationalCredential",
+      name: c.name,
+      description: c.body,
+      credentialCategory: "certificate",
+      identifier: c.ref,
+      url: `${absoluteUrl("/about-us")}#credentials`,
+    })),
     areaServed,
     knowsAbout: everyService.map((s) => s.title),
     /* The named colleagues /our-team and the homepage's rail render, the
@@ -136,26 +170,124 @@ export function websiteSchema() {
 }
 
 /**
+ * What one page is and when it last changed, tied to the two sitewide nodes by
+ * their @id. `dateModified` falls back to the page's entry in
+ * constants/freshness.ts. The company is the author and the publisher, because
+ * no person has been credited as the writer of a page.
+ *
+ * `type: "FAQPage"` is for a page with no faqSchema node of its own. Google's
+ * rich results check rejects two FAQPage nodes on one URL.
+ */
+/**
+ * The @id of a page's BreadcrumbList (components/zan/page/Breadcrumbs.tsx), which
+ * its WebPage node points to. Every page that calls webPageSchema renders a
+ * trail, apart from the homepage.
+ */
+export const breadcrumbId = (path: string) => `${absoluteUrl(path)}#breadcrumb`;
+
+export function webPageSchema({
+  path,
+  name,
+  description,
+  type = "WebPage",
+  dateModified,
+}: {
+  path: string;
+  name: string;
+  description: string;
+  type?: "WebPage" | "AboutPage" | "ContactPage" | "CollectionPage" | "FAQPage";
+  dateModified?: string;
+}) {
+  const url = absoluteUrl(path);
+  return {
+    "@context": "https://schema.org",
+    "@type": type,
+    // The slash the two sitewide @ids have, which the homepage's bare URL does not.
+    "@id": `${path === "/" ? `${site.url}/` : url}#webpage`,
+    url,
+    name,
+    description,
+    inLanguage: site.lang,
+    isPartOf: { "@id": SITE_ID },
+    about: { "@id": ORG_ID },
+    author: { "@id": ORG_ID },
+    publisher: { "@id": ORG_ID },
+    dateModified: dateModified ?? pageUpdated(path),
+    ...(path === "/" ? {} : { breadcrumb: { "@id": breadcrumbId(path) } }),
+  };
+}
+
+/**
  * One `Service` node per service page. This is what makes a service page
  * eligible in its own right rather than only as part of the homepage —
  * without it the sixteen would carry a BreadcrumbList and nothing else.
+ *
+ * `opts` carries the page's own h1 and lead where its copy has them, so the
+ * markup says what the page says. Without them it falls back to the service's
+ * short name and description.
  *
  * No OfferCatalog. The site publishes no figures, and an `Offer` with no
  * price attached is a claim about what is for sale that the page itself does
  * not make.
  */
-export function serviceSchema(page: ServicePage) {
+export function serviceSchema(page: ServicePage, opts: { name?: string; description?: string } = {}) {
   const url = absoluteUrl(page.href);
   return {
     "@context": "https://schema.org",
     "@type": "Service",
     "@id": `${url}#service`,
-    name: page.title,
+    name: opts.name ?? page.title,
     serviceType: page.title,
-    description: page.description,
+    description: opts.description ?? page.description,
     url,
     provider: { "@id": ORG_ID },
     areaServed,
+  };
+}
+
+/**
+ * One `Article` node per guide. Its image is the guide's share card, and
+ * `citations` are the outside sources the guide lists.
+ *
+ * The company is the author and the publisher. The name rides along with the
+ * @id here, because Article is the one node Google shows an author for, and the
+ * Organization node it points at sits in another script block.
+ */
+export function articleSchema({
+  path,
+  headline,
+  description,
+  datePublished,
+  dateModified,
+  citations,
+}: {
+  path: string;
+  headline: string;
+  description: string;
+  datePublished: string;
+  dateModified: string;
+  citations?: readonly string[];
+}) {
+  const url = absoluteUrl(path);
+  const company = { "@type": "Organization", "@id": ORG_ID, name: site.name } as const;
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "@id": `${url}#article`,
+    // The page itself, so that its trail (components/zan/page/Breadcrumbs.tsx)
+    // hangs off it: Article has no breadcrumb property of its own.
+    mainEntityOfPage: { "@type": "WebPage", "@id": `${url}#webpage`, url, breadcrumb: { "@id": breadcrumbId(path) } },
+    url,
+    headline,
+    description,
+    image: absoluteUrl(shareImage(path)),
+    inLanguage: site.lang,
+    datePublished,
+    dateModified,
+    author: company,
+    publisher: company,
+    isPartOf: { "@id": SITE_ID },
+    ...(citations?.length ? { citation: [...citations] } : {}),
   };
 }
 
@@ -192,9 +324,8 @@ export function howToSchema() {
  * FAQPage for a set of questions.
  *
  * Emitted wherever a page renders a question set OF ITS OWN: the homepage
- * (`faqs`), /services (`servicesFaqs`), and the three service pages that carry
- * their own set (`faqsForService` — web development, mobile apps, digital
- * marketing).
+ * (`faqs`), /services (`servicesFaqs`), the service pages (`faqsForService` and
+ * the page's own copy), /about-us, /how-we-work and the guides.
  *
  * WITHHELD on /contact-us, which renders the homepage's list outright. Two
  * URLs carrying byte-identical Q&A pairs give Google one node to keep and one

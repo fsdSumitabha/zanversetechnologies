@@ -1,13 +1,16 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useCallback, useId, useState } from "react";
 import { Plus } from "lucide-react";
-import { FaqAccordion } from "@/components/zan/contact/FaqAccordion";
+import { FaqAccordion, UntilFound, useFindablePanel } from "@/components/zan/contact/FaqAccordion";
 import { Reveal } from "@/components/zan/page/Reveal";
 import { Button } from "@/components/zan/ui/Button";
 import { landingCopy, type splitFaqs } from "@/constants/landing";
 import { cn } from "@/lib/utils";
 import { useQuote } from "./quoteContext";
+
+/** The tab's grid-template-rows transition: duration-700 below. */
+const PANEL_MS = 700;
 
 /**
  * Two questions answered on the page, the rest behind one tab.
@@ -16,8 +19,9 @@ import { useQuote } from "./quoteContext";
  * it takes, and they are always open: there is no reason to make anyone click
  * for those. Everything else stays one press away and out of the way of the
  * form below. Every answer is in the DOM from the server render either way; the
- * closed tab collapses to `0fr` and is inert, so nothing in it can be tabbed
- * into while it is shut.
+ * closed tab collapses to `0fr` and what it holds is hidden="until-found", so
+ * nothing in it can be tabbed into while it is shut, and the browser's find can
+ * still reach it and open it.
  *
  * NO FAQPage MARKUP. The same questions are marked up on the service page, which
  * is the URL that should rank for them.
@@ -27,6 +31,8 @@ export function LandingFaq({ faqs }: { faqs: ReturnType<typeof splitFaqs> }) {
   const { ask } = useQuote();
   const [open, setOpen] = useState(false);
   const panelId = useId();
+  const onFound = useCallback(() => setOpen(true), []);
+  const { attach, onTransitionEnd, inert, hidden } = useFindablePanel(open, PANEL_MS, onFound);
 
   return (
     <>
@@ -43,7 +49,7 @@ export function LandingFaq({ faqs }: { faqs: ReturnType<typeof splitFaqs> }) {
       </div>
 
       <Reveal className="mt-5">
-        <div className="overflow-hidden rounded-3xl border border-border bg-surface">
+        <div className="scroll-mt-nav overflow-hidden rounded-3xl border border-border bg-surface">
           <button
             type="button"
             aria-expanded={open}
@@ -67,16 +73,19 @@ export function LandingFaq({ faqs }: { faqs: ReturnType<typeof splitFaqs> }) {
             </span>
           </button>
 
+          {/* zan-faq-panel is what the noscript rule in the layout opens. */}
           <div
+            ref={attach}
             id={panelId}
-            inert={!open}
-            className="grid transition-[grid-template-rows] duration-700 ease-out-expo"
+            inert={inert}
+            onTransitionEnd={onTransitionEnd}
+            className="zan-faq-panel grid transition-[grid-template-rows] duration-700 ease-out-expo"
             style={{ gridTemplateRows: open ? "1fr" : "0fr" }}
           >
             <div className="overflow-hidden">
-              <div className="px-6 pb-2 sm:px-8">
+              <UntilFound hidden={hidden} className="px-6 pb-2 sm:px-8">
                 <FaqAccordion items={faqs.rest} numberFrom={faqs.featured.length + 1} startClosed />
-              </div>
+              </UntilFound>
             </div>
           </div>
         </div>

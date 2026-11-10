@@ -3,7 +3,9 @@
 import { useRef, useState, type ReactNode } from "react";
 import { useGSAP } from "@gsap/react";
 import { gsap, MQ, ScrollTrigger } from "@/lib/gsap";
+import { isMotionPaused } from "@/lib/motionPause";
 import { MarqueeToggle } from "@/components/zan/work/MarqueeToggle";
+import { useHydrated } from "@/components/zan/work/useHydrated";
 import { cn } from "@/lib/utils";
 import "./logo-loop.css";
 
@@ -15,10 +17,15 @@ import "./logo-loop.css";
    own width (xPercent -100), so the loop is seamless at any viewport width
    without measuring anything but the duration.
 
+   The echoes mount right after hydration, so the server HTML carries each logo
+   once. They add no height: every group is the same row of fixed-size plates.
+   Nothing moves before then, and the loop is built once, on all the groups.
+
    · Desktop: scroll velocity boosts the speed (ScrollTrigger.getVelocity →
      timeScale, clamped 1–3) and it eases back to cruising.
-   · A mouse hovering it, or the pause toggle under it, brings it smoothly to
-     a stop (the toggle is the keyboard route, WCAG 2.2.2).
+   · A mouse hovering it, the pause toggle under it, or the page's pause control
+     (lib/motionPause.ts) brings it smoothly to a stop (the toggle is the keyboard
+     route, WCAG 2.2.2).
    · Off-screen it is paused.
    · Reduced motion: nothing moves; the first group sits as a centred,
      wrapping row, the echoes and the toggle are hidden (logo-loop.css).
@@ -59,6 +66,7 @@ export function LogoLoop({
   const [paused, setPaused] = useState(false);
   // Read by the ticker, which lives outside React; written only in the handler.
   const pausedRef = useRef(false);
+  const echoed = useHydrated();
 
   const toggle = () => {
     const next = !paused;
@@ -69,7 +77,10 @@ export function LogoLoop({
   useGSAP(
     () => {
       const el = root.current;
-      if (!el) return;
+      // Not before the echoes exist. The tween takes every group it finds, and
+      // useGSAP does not revert on a dependency change, so a first build on the
+      // one group would stay running beside the real one.
+      if (!el || !echoed) return;
       const mm = gsap.matchMedia();
 
       mm.add(
@@ -89,7 +100,7 @@ export function LogoLoop({
           const tick = () => {
             const k = 1 - Math.pow(0.955, gsap.ticker.deltaRatio());
             boost += (1 - boost) * k;
-            const target = pausedRef.current ? 0 : hoverTarget;
+            const target = pausedRef.current || isMotionPaused() ? 0 : hoverTarget;
             hover += (target - hover) * Math.min(1, k * 3);
             loop.timeScale(boost * hover);
           };
@@ -135,14 +146,14 @@ export function LogoLoop({
 
       return () => mm.revert();
     },
-    { scope: root, dependencies: [speed, velocityBoost, pauseOnHover, copies] },
+    { scope: root, dependencies: [speed, velocityBoost, pauseOnHover, copies, echoed] },
   );
 
   return (
     <div className={cn("relative", className)}>
       <div ref={root} className={cn("zan-partners-loop relative overflow-hidden", viewportClassName)}>
         <div className="zan-partners-track flex w-max">
-          {Array.from({ length: copies }, (_, g) => (
+          {Array.from({ length: echoed ? copies : 1 }, (_, g) => (
             <ul
               key={g}
               data-loop-group

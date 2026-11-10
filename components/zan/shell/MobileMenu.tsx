@@ -7,15 +7,16 @@ import { ctas, mainNav, office, practices, site } from "@/constants/zan";
 import { ButtonLink } from "@/components/zan/ui/Button";
 import { ZanLogo } from "@/components/zan/ui/ZanLogo";
 import { SiteLink } from "@/components/zan/services/SiteLinks";
-import { getLenis } from "@/hooks/useLenis";
+import { lockScroll } from "@/lib/scrollLock";
 import { trackWhatsAppClick } from "@/lib/analytics";
+import { inertOutside } from "@/lib/backgroundInert";
 import { MQ } from "@/lib/gsap";
 import { waLink } from "@/lib/links";
 import { useSiteHref } from "@/lib/useSiteHref";
 import { cn } from "@/lib/utils";
 import { MenuToggle } from "./MenuToggle";
 import { SocialIcon } from "./SocialIcon";
-import { focusables, scrollToHash, useMediaQuery } from "./shellStore";
+import { focusables, scrollToHash, useLogoHref, useMediaQuery } from "./shellStore";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 const CINEMA = [0.76, 0, 0.24, 1] as const;
@@ -70,7 +71,8 @@ const OFFICE_ACTION =
  * Lenis ignores scrollTo while stopped, so the unlock comes first.
  *
  * While open: page scroll is locked (Lenis stopped, overflow hidden), focus
- * is trapped inside and Escape closes.
+ * is trapped inside, Escape closes, and the page behind is inert. The sheet is a
+ * sibling of the header, not a child, so the header goes inert with the rest.
  */
 export function MobileMenu({
   open,
@@ -84,19 +86,20 @@ export function MobileMenu({
   const [servicesOpen, setServicesOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const href = useSiteHref();
+  const logoHref = useLogoHref();
   // The menu only ever opens after hydration, so the store has the real
   // answer by the time it is read for the sheet.
   const reduce = useMediaQuery(MQ.reduce);
 
-  // Scroll lock, focus trap and Escape — only while open.
+  /** The open menu's hold on the scroll, for an anchor link to give back early. */
+  const releaseScroll = useRef<(() => void) | null>(null);
+
+  // Scroll lock, focus trap, Escape and the inert page behind — only while open.
   useEffect(() => {
     if (!open) return;
-    const html = document.documentElement;
-    const prevHtml = html.style.overflow;
-    const prevBody = document.body.style.overflow;
-    html.style.overflow = "hidden";
-    document.body.style.overflow = "hidden";
-    getLenis()?.stop();
+    const unlockScroll = lockScroll();
+    releaseScroll.current = unlockScroll;
+    const wakePage = panelRef.current ? inertOutside(panelRef.current) : null;
 
     // Focus the dialog itself (no ring); the first Tab lands on its first link.
     const focusFirst = requestAnimationFrame(() => {
@@ -104,6 +107,10 @@ export function MobileMenu({
     });
 
     const onKey = (e: KeyboardEvent) => {
+      // Another overlay on top, such as the timed popup, owns the keys: it has
+      // made this one inert, or, if this one mounted after it, it has already
+      // handled the key. Tab and Escape are its, not this one's.
+      if (e.defaultPrevented || panelRef.current?.closest("[inert]")) return;
       if (e.key === "Escape") {
         e.preventDefault();
         onClose({ restoreFocus: true });
@@ -137,9 +144,11 @@ export function MobileMenu({
       cancelAnimationFrame(focusFirst);
       document.removeEventListener("keydown", onKey);
       wide.removeEventListener("change", onWide);
-      html.style.overflow = prevHtml;
-      document.body.style.overflow = prevBody;
-      getLenis()?.start();
+      // Before focus returns: closeMobile hands it to the header's toggle a
+      // frame after this, and an inert button cannot take it.
+      wakePage?.();
+      unlockScroll();
+      releaseScroll.current = null;
     };
   }, [open, onClose]);
 
@@ -150,9 +159,9 @@ export function MobileMenu({
       return;
     }
     e.preventDefault();
-    document.documentElement.style.overflow = "";
-    document.body.style.overflow = "";
-    getLenis()?.start();
+    // The scroll back now, so the glide can run. Through the counted lock, so a
+    // panel still open under the menu keeps the page locked.
+    releaseScroll.current?.();
     onClose();
     requestAnimationFrame(() => scrollToHash(target));
   };
@@ -177,7 +186,7 @@ export function MobileMenu({
         >
           <div className="container-zan flex h-nav shrink-0 items-center justify-between">
             <SiteLink
-              href="#main"
+              href={logoHref}
               onClick={(e) => go(e, href("#top"))}
               aria-label={`${site.name} home`}
               className="rounded-lg"
@@ -215,7 +224,7 @@ export function MobileMenu({
                             type="button"
                             onClick={() => setServicesOpen((v) => !v)}
                             aria-expanded={servicesOpen}
-                            aria-controls={`${id}-services`}
+                            aria-controls={servicesOpen ? `${id}-services` : undefined}
                             aria-label={`${servicesOpen ? "Hide" : "Show"} ${item.label.toLowerCase()}`}
                             className="grid size-11 shrink-0 place-items-center rounded-full border border-border text-muted transition-colors duration-300 hover:bg-surface-muted"
                           >

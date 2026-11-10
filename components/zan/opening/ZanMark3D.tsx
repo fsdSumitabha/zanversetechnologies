@@ -5,6 +5,7 @@ import * as THREE from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { SVGLoader, type SVGResult } from "three/examples/jsm/loaders/SVGLoader.js";
 import { gsap } from "@/lib/gsap";
+import { isMotionPaused } from "@/lib/motionPause";
 
 /* ───────────────────────────────────────────────────────────────────────────
    The Zan mark in three.js: a TypeScript port of the previous site's hero
@@ -547,7 +548,10 @@ export default function ZanMark3D({ src, span, className, onReady, onFail }: Zan
       const now = performance.now();
       const dt = Math.min((now - last) / 1000, 0.05);
       last = now;
-      elapsed += dt;
+      // The slow bob, sway and pulse run on this clock, so Pause animations
+      // (lib/motionPause.ts) holds them where they are. The pointer, a drag and
+      // the scroll still turn the mark: those move only when the visitor does.
+      if (!isMotionPaused()) elapsed += dt;
       const t = elapsed;
 
       const sk = 1 - Math.pow(0.0015, dt);

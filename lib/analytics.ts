@@ -17,9 +17,10 @@
 
      form_submission   an enquiry was sent: the form name and the service,
                        nothing personal
-     generate_lead     the /thank-you page was reached — the Google Ads
-                       conversion, with the user_data block Enhanced
-                       Conversions hashes and matches on
+     generate_lead     a lead the forms' script sent has reached /thank-you —
+                       the Google Ads conversion, with the user_data block
+                       Enhanced Conversions hashes and matches on. Nothing else
+                       that reaches that page fires it
      whatsapp_click    a WhatsApp link was followed
      contact_click     a tel: or mailto: link was followed
      phone Icon click  a tel: link was followed, under the name the container's
@@ -71,12 +72,13 @@ export function trackFormSubmission(
 }
 
 /**
- * The conversion itself, fired once on /thank-you.
+ * The conversion itself, fired once on /thank-you, and only for a lead takeLead()
+ * handed back.
  *
  * `user_data` is what Google Ads Enhanced Conversions matches on: the address
  * and number the visitor gave, hashed by the tag before they leave the
- * browser. Without it the conversion still counts, but it cannot be tied back
- * to the click that produced it, which is the whole point of the page.
+ * browser. That is what ties the conversion back to the click that produced it,
+ * which is the whole point of the page.
  */
 export function trackGenerateLead(user: { email?: string; phone?: string }) {
   push({
@@ -128,20 +130,37 @@ export function trackPopupView(popupName: string) {
  * put an address and a phone number into the URL, the referrer, the server
  * logs and every analytics hit on the page. sessionStorage keeps them in the
  * one tab, for the one navigation, and the page clears them on read.
+ *
+ * It is also what makes a visit a conversion. A lead stored here is the only
+ * thing that fires `generate_lead`, so a cold visit, a reload, a bot in the trap
+ * and a plain post with no script all reach /thank-you and report nothing.
  */
 const LEAD_KEY = "zan.lead";
+
+/**
+ * Storage refused: the same details, held for a navigation inside this document,
+ * which is how the site's form reaches /thank-you. A landing page's form reaches
+ * it by a full page load, which this does not survive, so with storage blocked
+ * there that lead is sent and not counted.
+ */
+let heldLead: { email: string; phone: string } | null = null;
 
 export function rememberLead(user: { email: string; phone: string }) {
   try {
     sessionStorage.setItem(LEAD_KEY, JSON.stringify(user));
   } catch {
-    // Private mode or blocked storage. The conversion still fires, just
-    // without the details that would let Ads match it to a click.
+    heldLead = user;
   }
 }
 
-/** Reads and clears, so a reload of /thank-you cannot report the lead twice. */
+/**
+ * The lead this tab has just sent, or null if there is none. Reads and clears,
+ * so a reload of /thank-you cannot report the lead twice.
+ */
 export function takeLead(): { email: string; phone: string } | null {
+  const held = heldLead;
+  heldLead = null;
+  if (held) return held;
   try {
     const raw = sessionStorage.getItem(LEAD_KEY);
     sessionStorage.removeItem(LEAD_KEY);
@@ -149,10 +168,9 @@ export function takeLead(): { email: string; phone: string } | null {
     const parsed: unknown = JSON.parse(raw);
     if (!parsed || typeof parsed !== "object") return null;
     const { email, phone } = parsed as Record<string, unknown>;
-    return {
-      email: typeof email === "string" ? email : "",
-      phone: typeof phone === "string" ? phone : "",
-    };
+    // Both forms require an address, so anything without one is not their lead.
+    if (typeof email !== "string" || !email) return null;
+    return { email, phone: typeof phone === "string" ? phone : "" };
   } catch {
     return null;
   }

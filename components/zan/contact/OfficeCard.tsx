@@ -283,7 +283,7 @@ function Way({
           {icon}
         </span>
         <span className="min-w-0 flex-1">
-          <span className="block font-mono text-[0.6875rem] tracking-[0.14em] text-subtle uppercase">{label}</span>
+          <span className="block font-mono text-[0.6875rem] tracking-[0.14em] text-subtle uppercase">{label}</span>{" "}
           <span className="mt-0.5 block truncate text-body font-medium text-foreground transition-colors duration-300 group-hover/way:text-accent-ink">
             {children}
           </span>
@@ -369,9 +369,9 @@ function OfficeCard() {
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0 pt-6">
               <p className="truncate font-mono text-eyebrow text-subtle uppercase">{office.country}</p>
-              <h3 id={titleId} className="mt-3 font-display text-h2 text-foreground">
+              <p id={titleId} className="mt-3 font-display text-h2 text-foreground">
                 {office.city}
-              </h3>
+              </p>
             </div>
             {/* Half over the band, half over the card. */}
             <div className="-mt-9 shrink-0 sm:-mt-10">
@@ -382,7 +382,7 @@ function OfficeCard() {
           <address className="mt-4 text-small text-muted not-italic">
             {office.addressLines.map((line) => (
               <span key={line} className="block">
-                {line}
+                {line}{" "}
               </span>
             ))}
             <span className="block">{office.city}</span>

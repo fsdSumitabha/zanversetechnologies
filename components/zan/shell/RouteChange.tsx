@@ -3,34 +3,90 @@
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { getLenis } from "@/hooks/useLenis";
+import { EARLY_FIND_ATTRIBUTE } from "@/lib/earlyInput";
 import { ScrollTrigger } from "@/lib/gsap";
+import { holdTarget } from "./holdTarget";
 
 /**
- * Housekeeping after a client-side navigation: every new route opens at the top.
+ * A page opened directly on a section link (/#contact, in a new tab, from an ad
+ * or by a reload), held on that section while the page is built (holdTarget.ts).
  *
- * Setting the scroll once is not enough. For a few frames after the pathname
- * changes the old page is still unmounting and the new one is laying out —
- * pins are torn down, spacers inserted, images decoding — and the browser's
- * scroll anchoring moves the viewport to keep some surviving element (often
- * the footer) where it was. Lenis then adopts that position. Measured: a
- * footer link clicked 41,633px down opened /about-us at its bottom, 3,839px.
+ * It does nothing at all with no hash, and nothing on Back, Forward or a reload,
+ * where the browser puts back the visitor's own position. Nor when the visitor
+ * searched the page before hydration (lib/earlyInput.ts): they are looking for
+ * something else. Returns the function that ends it, if it started.
+ */
+function holdHashTarget(): (() => void) | undefined {
+  const { hash } = window.location;
+  if (hash.length < 2 || document.documentElement.hasAttribute(EARLY_FIND_ATTRIBUTE)) return undefined;
+  const [entry] = performance.getEntriesByType("navigation") as PerformanceNavigationTiming[];
+  // Safari 14 and older have no such entry: the older API says the same thing.
+  const legacy = (performance as Performance & { navigation?: { type: number } }).navigation?.type;
+  const type = entry?.type ?? (legacy === 1 ? "reload" : legacy === 2 ? "back_forward" : "navigate");
+  if (type === "back_forward" || type === "reload") return undefined;
+
+  let id = hash.slice(1);
+  try {
+    id = decodeURIComponent(id);
+  } catch {
+    // Not valid percent-encoding, so it can only be the id as written.
+  }
+  return holdTarget(() => document.getElementById(id));
+}
+
+/**
+ * Hands keyboard focus to the new page after a client-side navigation. Without
+ * this it stays on the link just pressed, often in the footer, so the next Tab
+ * starts from the old page's position. preventScroll, because the top of the page
+ * is already being held by the code below. `#main:focus` has no outline
+ * (app/globals.css), so nothing shows.
+ *
+ * The tabindex lasts only until focus moves on, so afterwards a click on the page
+ * focuses what it always did. Left alone if focus is already inside the new page.
+ */
+function focusMain() {
+  const main = document.getElementById("main");
+  if (!main || main.contains(document.activeElement)) return;
+  main.setAttribute("tabindex", "-1");
+  main.focus({ preventScroll: true });
+  main.addEventListener("blur", () => main.removeAttribute("tabindex"), { once: true });
+}
+
+/**
+ * Housekeeping after a navigation.
+ *
+ * Every new route opens at the top. Setting the scroll once is not enough. For a
+ * few frames after the pathname changes the old page is still unmounting and the
+ * new one is laying out — pins are torn down, spacers inserted, images decoding —
+ * and the browser's scroll anchoring moves the viewport to keep some surviving
+ * element (often the footer) where it was. Lenis then adopts that position.
+ * Measured: a footer link clicked 41,633px down opened /about-us at its bottom,
+ * 3,839px.
  *
  * So the top is re-asserted, on both the window and Lenis, across those frames
  * and after the ScrollTrigger refresh the new page triggers, and any scroll
- * input from the visitor cancels it at once.
+ * input from the visitor cancels it at once. Keyboard focus moves to the new page
+ * at the same moment.
  *
- * Left alone: a link with a hash (the anchor handling takes it to its section),
- * and Back/Forward, where the browser restoring the previous position is the
- * behaviour people expect.
+ * Left alone, for the scroll and for focus: a link with a hash (the anchor
+ * handling takes it to its section), and Back/Forward, where the browser
+ * restoring the previous position is the behaviour people expect. A click on a
+ * link to the page already open changes no pathname, so nothing here runs.
+ *
+ * On the first load the browser owns the scroll position and focus, except for a
+ * section link, which holdHashTarget looks after.
  */
 export function RouteChange() {
   const pathname = usePathname();
-  const firstRender = useRef(true);
+  /** The path last seen by the effect below. */
+  const seenPath = useRef<string | null>(null);
   const fromHistory = useRef(false);
 
   useEffect(() => {
     const onPopState = () => {
-      fromHistory.current = true;
+      // Back or Forward between two hashes of one page changes no pathname, so
+      // the effect below would never clear this for the next real page change.
+      fromHistory.current = window.location.pathname !== seenPath.current;
     };
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
@@ -39,12 +95,15 @@ export function RouteChange() {
   useEffect(() => {
     const lenis = getLenis();
 
-    // A full page load: the browser owns the scroll position there.
-    if (firstRender.current) {
-      firstRender.current = false;
+    // A full page load. The same path a second time is React's development
+    // double run of this effect, which is still that load.
+    const firstLoad = seenPath.current === null || seenPath.current === pathname;
+    seenPath.current = pathname;
+    if (firstLoad) {
+      const endHold = holdHashTarget();
       lenis?.resize();
       ScrollTrigger.refresh();
-      return;
+      return endHold;
     }
 
     if (window.location.hash || fromHistory.current) {
@@ -75,6 +134,7 @@ export function RouteChange() {
     };
 
     toTop();
+    focusMain();
     frameA = requestAnimationFrame(() => {
       toTop();
       frameB = requestAnimationFrame(toTop);

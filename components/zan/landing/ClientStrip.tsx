@@ -16,7 +16,7 @@ export function ClientStrip() {
       <LogoLoop
         className="mt-8 lg:mt-10"
         /* Three groups still cover the widest screen with one to spare, and each
-           group left out is eleven images fewer to parse before the first paint. */
+           group left out is eleven images fewer once the copies mount. */
         copies={3}
         viewportClassName="py-5"
         ariaLabel="Clients"

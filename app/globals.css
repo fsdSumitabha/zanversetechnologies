@@ -521,3 +521,51 @@ html.lenis body {
     scroll-behavior: auto !important;
   }
 }
+
+/* ── Pause animations ─────────────────────────────────────────────────────────
+   The control is components/zan/shell/MotionPauseControl.tsx, and lib/motionPause.ts
+   sets the attribute. This stops every CSS loop.
+
+   The second rule lets the one-off entrances run. They hold their first frame
+   until they play, and a pause is saved between visits, so without it the hero
+   would load at opacity 0 and stay there, and the preloader would never finish
+   and would leave the page locked. All of them are over within a few seconds. */
+
+html[data-motion-paused] *,
+html[data-motion-paused] *::before,
+html[data-motion-paused] *::after {
+  animation-play-state: paused !important;
+}
+
+html[data-motion-paused]
+  :is(
+    #zan-preloader,
+    #zan-preloader *,
+    .zan-hero-word,
+    .zan-hero-in,
+    .scroll-float-glyph,
+    .zan-oc-hand-hour,
+    .zan-oc-hand-minute,
+    .zan-lp-rise,
+    [data-lp-form][data-attention]
+  ) {
+  animation-play-state: running !important;
+}
+
+/* ── Keyboard ─────────────────────────────────────────────────────────────── */
+
+/* RouteChange hands focus to the new page's <main> after a navigation. That is a
+   place to start tabbing from, not a control, so it wears no ring. */
+#main:focus {
+  outline: none;
+}
+
+/* Phones: a link that Tab brings into view stops above the floating dock (48px
+   plus its offset) or the landing pages' sticky bar, not under it. It only
+   changes where a focused element is scrolled to. Lenis reads scroll-padding-top
+   alone, so anchors land where they did. */
+@media (max-width: 767.98px) {
+  html {
+    scroll-padding-bottom: calc(5.5rem + env(safe-area-inset-bottom));
+  }
+}

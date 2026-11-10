@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from "react";
+import { Fragment, type CSSProperties, type ReactNode } from "react";
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { ctas, whyUs, type Practice } from "@/constants/zan";
@@ -67,7 +67,6 @@ export function DeckPanelBody({
   tone,
   eyebrow,
   meta,
-  headingId,
   srPrefix,
   headline,
   lead,
@@ -81,7 +80,6 @@ export function DeckPanelBody({
   tone: DeckTone;
   eyebrow: string;
   meta?: string;
-  headingId: string;
   /** Read before the headline by screen readers, e.g. the practice name. */
   srPrefix?: string;
   headline: readonly string[];
@@ -113,12 +111,15 @@ export function DeckPanelBody({
 
       <div className="zan-deck-lede">
         <div className="zan-deck-headcell">
-          <h2 id={headingId} className="zan-deck-headline font-sans font-bold text-giant uppercase">
+          <h2 className="zan-deck-headline font-sans font-bold text-giant uppercase">
             {srPrefix && <span className="sr-only">{srPrefix}: </span>}
             {headline.map((line, i) => (
-              <span key={i} className="block">
-                {accentLast && i === headline.length - 1 ? <span className="text-accent-ink">{line}</span> : line}
-              </span>
+              <Fragment key={i}>
+                {i > 0 && " "}
+                <span className="block">
+                  {accentLast && i === headline.length - 1 ? <span className="text-accent-ink">{line}</span> : line}
+                </span>
+              </Fragment>
             ))}
           </h2>
         </div>
@@ -202,7 +203,7 @@ export function PracticeGrid({ practice, tone }: { practice: Practice; tone: Dec
             <p className="zan-deck-meta text-small">
               <span aria-hidden="true" className={`zan-deck-index font-mono text-eyebrow ${t.index}`}>
                 {pad(i + 1)}
-              </span>
+              </span>{" "}
               <span className="font-medium text-foreground">{item.tagline}</span>
             </p>
             {practice.id === "development" && item.capabilities ? (
@@ -238,7 +239,7 @@ export function WhyUsGrid({ tone }: { tone: DeckTone }) {
               <p className="zan-deck-meta text-small">
                 <span aria-hidden="true" className={`zan-deck-index font-mono text-eyebrow ${t.index}`}>
                   {item.index}
-                </span>
+                </span>{" "}
                 <span className="font-medium text-foreground">{item.tagline}</span>
               </p>
               <p className="zan-deck-note text-small text-muted">{item.description}</p>
@@ -250,7 +251,7 @@ export function WhyUsGrid({ tone }: { tone: DeckTone }) {
       <div className="zan-deck-actions flex flex-wrap items-center gap-3">
         <SiteButtonLink href={ctas.project.href} size="lg">
           {ctas.project.label}
-        </SiteButtonLink>
+        </SiteButtonLink>{" "}
         <SiteButtonLink href={ctas.work.href} variant="secondary" size="lg">
           {ctas.work.label}
         </SiteButtonLink>

@@ -66,7 +66,7 @@ export const site = {
   /** Digits only, for wa.me links: the Dubai desk. */
   whatsapp: "971547867600",
   /**
-   * Opens the hero subtitle, which continues " trusted IT partner for …", so
+   * Opens the hero subtitle, which continues " trusted IT company for …", so
    * whatever goes here has to read into that.
    */
   heroOwner: "Dubai's",
@@ -116,10 +116,10 @@ export const hero = {
   typingWords: ["Digital Future", "Web Experiences", "Mobile Apps", "AI Solutions", "Blockchain dApps"],
   /**
    * Follows site.heroOwner ("Dubai's"), so the first part has to start with a
-   * space: "Dubai's trusted IT partner for …". `accent` parts are highlighted.
+   * space: "Dubai's trusted IT company for …". `accent` parts are highlighted.
    */
   subtitle: [
-    { text: " trusted IT partner for " },
+    { text: " trusted IT company for " },
     { text: "Web & Mobile Development", accent: true },
     { text: ", " },
     { text: "Blockchain & AI", accent: true },
@@ -777,7 +777,7 @@ export const metricsIntro = {
 
 export const metrics: readonly Metric[] = [
   { id: "projects", value: "80+", label: "Projects delivered", detail: "Across web, mobile & AI" },
-  { id: "clients", value: "50+", label: "Clients worldwide", detail: "From healthcare to real estate" },
+  { id: "clients", value: "50+", label: "Clients served", detail: "From healthcare to real estate" },
   { id: "rating", value: "4.9", label: "Average client rating", detail: "Out of 5" },
   { id: "on-time", value: "99%", label: "On-time delivery", detail: "Against agreed timelines" },
   { id: "response", value: "24 hrs", label: "Response time", detail: "To every new enquiry" },
@@ -795,10 +795,10 @@ export interface Client {
   src: string;
 }
 
-/** The old site's heading for this band. */
+/** The old site's heading for this band, reworded for a site that serves one market. */
 export const partnersIntro = {
   eyebrow: "Partners",
-  title: ["Trusted by partners", "worldwide"],
+  title: ["Trusted by partners", "across industries"],
   lead: "Brands and businesses that have grown with us.",
 } as const;
 
@@ -1295,8 +1295,9 @@ export const credentials: readonly Credential[] = [
    The 48 answered questions the production site publishes (src/data/faq.ts),
    carried over whole. They are the largest SEO asset the site has: every one
    is eligible for a rich result and quotable by an answer engine, so the sets
-   below are rendered on the home page, /services and the three service pages
-   that have a set of their own.
+   below are rendered on the home page, /services and three of the service
+   pages. Every service page adds the questions in its own copy file
+   (constants/services), and /about-us and /how-we-work have constants/pageFaqs.ts.
 
    House rules applied to the migrated text. Visitor-facing copy on this site
    carries no em dashes, so five questions and one answer use a colon or a
@@ -1395,7 +1396,7 @@ export const servicesFaqs: readonly FAQ[] = [
   {
     question: "What IT services does Zan Verse Technologies offer?",
     answer:
-      "We offer three core IT service pillars: web development, mobile app development, and digital marketing. Under web development we deliver everything from single-page landing sites to complex SaaS platforms. Our mobile team builds cross-platform and native apps for both Android and iOS. On the marketing side we cover SEO, PPC advertising, social media management, and AI Engine Optimization. Each pillar can operate independently or work together as an integrated digital strategy. Roughly 45% of our clients use two or more services, which unlocks better consistency across their entire digital ecosystem.",
+      "We offer three core IT service pillars: web development, mobile app development, and digital marketing. Under web development we deliver everything from single-page landing sites to complex SaaS platforms. Our mobile team builds cross-platform and native apps for both Android and iOS. On the marketing side we cover SEO, PPC advertising, social media management, and Answer Engine Optimization. Each pillar can operate independently or work together as an integrated digital strategy. Roughly 45% of our clients use two or more services, which keeps their website, app and marketing consistent with each other.",
   },
   {
     question: "How do I choose the right IT service for my business?",
@@ -1405,17 +1406,17 @@ export const servicesFaqs: readonly FAQ[] = [
   {
     question: "What is the difference between web development and web design?",
     answer:
-      "Web design focuses on the visual layout, color schemes, typography, and user experience of a website, while web development handles the underlying code, functionality, databases, and server infrastructure. Think of design as the blueprint and development as the construction. In practice, approximately 30% of a typical project budget goes to design and 70% to development. Modern workflows integrate both disciplines using tools like Figma for design handoff and component-based frameworks like React for development. At Zan Verse Technologies, designers and developers collaborate from day one to ensure pixel-perfect results that also perform flawlessly under load.",
+      "Web design focuses on the visual layout, color schemes, typography, and user experience of a website, while web development handles the underlying code, functionality, databases, and server infrastructure. Think of design as the blueprint and development as the construction. Modern workflows integrate both disciplines using tools like Figma for design handoff and component-based frameworks like React for development. At Zan Verse Technologies, designers and developers collaborate from day one to ensure pixel-perfect results that also perform flawlessly under load.",
   },
   {
     question: "Can Zan Verse Technologies handle end-to-end digital transformation?",
     answer:
-      "Yes, end-to-end digital transformation is one of our core strengths. We take businesses from legacy processes or zero online presence through to fully digitized operations. This typically involves auditing existing workflows, designing a digital roadmap, building the necessary platforms, migrating data, training staff, and providing ongoing optimization. Studies show that companies investing in holistic digital transformation see up to 40% improvement in operational efficiency within the first year. Our approach is phased, so you start generating ROI from early deliverables while longer-term components are still in development.",
+      "Yes, end-to-end digital transformation is one of our core strengths. We take businesses from legacy processes or zero online presence through to fully digitized operations. This typically involves auditing existing workflows, designing a digital roadmap, building the necessary platforms, migrating data, training staff, and providing ongoing optimization. Our approach is phased, so you start generating ROI from early deliverables while longer-term components are still in development.",
   },
   {
     question: "What is the advantage of hiring a full-service IT company?",
     answer:
-      "A full-service IT company eliminates the coordination overhead of managing multiple vendors. When your website, mobile app, and marketing campaigns are handled by one team, design language stays consistent, data flows cleanly between platforms, and strategic pivots happen faster. Research from Gartner indicates that businesses using a single integrated IT partner reduce project delays by up to 25% compared to multi-vendor setups. You also benefit from a unified point of accountability. If an issue spans your website and your ad campaigns, there is no finger-pointing between agencies because one team owns the outcome.",
+      "A full-service IT company eliminates the coordination overhead of managing multiple vendors. When your website, mobile app, and marketing campaigns are handled by one team, design language stays consistent, data flows cleanly between platforms, and strategic pivots happen faster. You also benefit from a unified point of accountability. If an issue spans your website and your ad campaigns, there is no finger-pointing between agencies because one team owns the outcome.",
   },
   {
     question: "How does Zan Verse Technologies ensure project quality?",
@@ -1439,12 +1440,12 @@ export const webDevFaqs: readonly FAQ[] = [
   {
     question: "What is responsive web design and why does it matter?",
     answer:
-      "Responsive web design is a development approach where a website automatically adjusts its layout, images, and navigation to fit any screen size, from smartphones to large desktop monitors. With mobile devices accounting for over 60% of global web traffic, a non-responsive site risks losing the majority of its visitors. Google also uses mobile-friendliness as a ranking factor, meaning a responsive design directly impacts your search engine visibility. Modern responsive techniques like CSS Grid, Flexbox, and container queries allow precise control over how content reflows, ensuring a smooth experience across hundreds of device variations.",
+      "Responsive web design is a development approach where a website automatically adjusts its layout, images, and navigation to fit any screen size, from smartphones to large desktop monitors. With mobile devices accounting for about 60% of web page views worldwide (StatCounter, October 2026), a non-responsive site risks losing more than half of its visitors. Google also uses the mobile version of a page for indexing and ranking, so what a phone shows is what Search reads. Modern responsive techniques like CSS Grid, Flexbox, and container queries allow precise control over how content reflows, ensuring a smooth experience across hundreds of device variations.",
   },
   {
     question: "WordPress vs custom website development: which is better?",
     answer:
-      "WordPress is better for budget-conscious projects that need a quick launch with standard features like blogs, portfolios, or small business sites. Custom development is better when you need unique functionality, high performance, or complete control over the codebase. WordPress powers roughly 43% of the web, making it familiar and plugin-rich, but heavy plugin use can slow page speed and introduce security vulnerabilities. Custom-built sites, using frameworks like React or Next.js, score significantly higher on Core Web Vitals and scale more gracefully. The right choice depends on your budget, timeline, and long-term technical ambitions.",
+      "WordPress is better for budget-conscious projects that need a quick launch with standard features like blogs, portfolios, or small business sites. Custom development is better when you need unique functionality, high performance, or complete control over the codebase. WordPress runs about 40% of all websites (W3Techs, November 2026), so it is familiar and plugin-rich, but heavy plugin use can slow page speed and introduce security vulnerabilities. A custom build with a framework like React or Next.js gives you control over everything that loads, which makes good Core Web Vitals easier to reach. The right choice depends on your budget, timeline, and long-term technical ambitions.",
   },
   {
     question: "How much does website development cost?",
@@ -1474,7 +1475,7 @@ export const webDevFaqs: readonly FAQ[] = [
   {
     question: "What is server-side rendering and why does it matter for SEO?",
     answer:
-      "Server-side rendering, or SSR, is a technique where web pages are generated on the server before being sent to the browser, rather than being built entirely in the browser using JavaScript. SSR matters for SEO because search engine crawlers can immediately read the fully rendered HTML without waiting for JavaScript to execute. Pages that use SSR typically achieve 30% to 50% faster First Contentful Paint, which directly improves user experience and search rankings. Frameworks like Next.js make SSR straightforward while still allowing client-side interactivity after the initial page load, combining the best of both approaches.",
+      "Server-side rendering, or SSR, is a technique where web pages are generated on the server before being sent to the browser, rather than being built entirely in the browser using JavaScript. SSR matters for SEO because search engine crawlers can immediately read the fully rendered HTML without waiting for JavaScript to execute. Because the HTML arrives ready, the first content usually appears sooner. Frameworks like Next.js make SSR straightforward while still allowing client-side interactivity after the initial page load, combining the best of both approaches.",
   },
   {
     question: "How do you ensure website security during development?",
@@ -1493,17 +1494,17 @@ export const appDevFaqs: readonly FAQ[] = [
   {
     question: "Native vs cross-platform app development: which should I choose?",
     answer:
-      "Native app development builds separate apps for iOS and Android using platform-specific languages, while cross-platform development uses a single codebase that runs on both. Choose native if your app demands peak performance, complex animations, or deep hardware integration like AR or Bluetooth. Choose cross-platform if you need faster time-to-market and a shared codebase to reduce maintenance costs. Cross-platform frameworks now cover about 90% of use cases with near-native performance. For most business apps, cross-platform development saves 30% to 40% in development cost while reaching both audiences simultaneously, making it the practical default for startups and mid-size companies.",
+      "Native app development builds separate apps for iOS and Android using platform-specific languages, while cross-platform development uses a single codebase that runs on both. Choose native if your app demands peak performance, complex animations, or deep hardware integration like AR or Bluetooth. Choose cross-platform if you need faster time-to-market and a shared codebase to reduce maintenance costs. Cross-platform frameworks now give near-native performance for most apps. For most business apps, one shared codebase costs less than two native apps and reaches both audiences, which makes it the practical default for startups and mid-size companies.",
   },
   {
     question: "How long does mobile app development take?",
     answer:
-      "Mobile app development typically takes 10 to 20 weeks from concept to store submission, depending on feature complexity and platform scope. A simple utility app with 5 to 8 screens can be ready in 10 weeks, while a feature-rich app with real-time messaging, payment processing, and third-party integrations may take 16 to 20 weeks. The process follows four phases: discovery and design (roughly 25% of the timeline), core development (45%), testing and QA (20%), and deployment and store submission (10%). Apple App Store review alone can take 1 to 3 days, so we always factor in review time when planning launch dates.",
+      "Mobile app development typically takes 10 to 20 weeks from concept to store submission, depending on feature complexity and platform scope. A simple utility app with 5 to 8 screens can be ready in 10 weeks, while a feature-rich app with real-time messaging, payment processing, and third-party integrations may take 16 to 20 weeks. The process follows four phases: discovery and design (roughly 25% of the timeline), core development (45%), testing and QA (20%), and deployment and store submission (10%). Apple says it reviews 90% of submissions within 48 hours, so we always factor in review time when planning launch dates.",
   },
   {
     question: "React Native vs Flutter: which is better for my project?",
     answer:
-      "React Native is better if your team already works with JavaScript or React and you want close integration with web codebases. Flutter is better if you prioritize pixel-perfect custom UI and high-performance animations, as its rendering engine bypasses native UI components entirely. React Native has a larger ecosystem with over 2 million weekly npm downloads, while Flutter has been growing rapidly and offers a more consistent look across platforms. We are proficient in both and recommend based on your project's specific requirements. For most business applications the performance difference is negligible, so team expertise and ecosystem fit often drive the decision.",
+      "React Native is better if your team already works with JavaScript or React and you want close integration with web codebases. Flutter is better if you prioritize pixel-perfect custom UI and high-performance animations, as its rendering engine bypasses native UI components entirely. React Native has a larger ecosystem, because it shares npm with the rest of JavaScript, while Flutter has been growing rapidly and offers a more consistent look across platforms. We are proficient in both and recommend based on your project's specific requirements. For most business applications the performance difference is negligible, so team expertise and ecosystem fit often drive the decision.",
   },
   {
     question: "How much does it cost to develop a mobile app?",
@@ -1513,12 +1514,12 @@ export const appDevFaqs: readonly FAQ[] = [
   {
     question: "What is an MVP and why should I build one first?",
     answer:
-      "An MVP, or minimum viable product, is the simplest version of your app that includes only the core features needed to validate your idea with real users. Building an MVP first saves you from investing heavily in features that users may not need. Statistics show that 42% of startups fail because there is no market need, and an MVP helps you test demand before committing your full budget. A typical MVP takes 6 to 10 weeks to build and costs a fraction of a full product. The feedback you gather from early users directly shapes the feature roadmap, leading to a stronger final product backed by real data rather than assumptions.",
+      "An MVP, or minimum viable product, is the simplest version of your app that includes only the core features needed to validate your idea with real users. Building an MVP first saves you from investing heavily in features that users may not need. In a 2014 CB Insights review of 101 failed startups, 42% named a lack of market need as a reason, and an MVP helps you test demand before committing your full budget. A typical MVP takes 6 to 10 weeks to build and costs a fraction of a full product. The feedback you gather from early users directly shapes the feature roadmap, leading to a stronger final product backed by real data rather than assumptions.",
   },
   {
     question: "Do you publish apps to Google Play Store and Apple App Store?",
     answer:
-      "Yes, we handle the complete app store submission process for both Google Play Store and Apple App Store, including account setup, asset preparation, metadata optimization, and compliance review. Google Play reviews typically take a few hours to 3 days, while Apple App Store reviews average 1 to 2 days but can extend if issues are flagged. We prepare all required assets including screenshots in multiple device sizes, promotional graphics, privacy policy links, and app descriptions optimized for App Store Optimization. Our first-submission approval rate exceeds 95% because we rigorously test against both platforms' guidelines before uploading.",
+      "Yes, we handle the complete app store submission process for both Google Play Store and Apple App Store, including account setup, asset preparation, metadata optimization, and compliance review. Apple says it reviews 90% of submissions within 48 hours, and Google says a Play review can take up to 7 days, or longer in exceptional cases. We prepare all required assets including screenshots in multiple device sizes, promotional graphics, privacy policy links, and app descriptions optimized for App Store Optimization. Our first-submission approval rate exceeds 95% because we rigorously test against both platforms' guidelines before uploading.",
   },
   {
     question: "What is the difference between hybrid and native apps?",
@@ -1547,7 +1548,7 @@ export const digitalMarketingFaqs: readonly FAQ[] = [
   {
     question: "What is SEO and how does it help my business?",
     answer:
-      "SEO, or search engine optimization, is the practice of improving your website's visibility in organic search results so that potential customers find you when they search for relevant terms. Businesses that invest in SEO see an average of 53% of their total website traffic come from organic search, making it the single largest digital traffic channel. SEO works by optimizing your site structure, content, page speed, and backlink profile to align with search engine algorithms. Unlike paid ads that stop delivering the moment you stop spending, SEO builds compounding returns over time, often delivering a 5x to 10x return on investment within 12 months of consistent effort.",
+      "SEO, or search engine optimization, is the practice of improving your website's visibility in organic search results so that potential customers find you when they search for relevant terms. In BrightEdge's 2019 channel study, organic search brought 53% of trackable website traffic, the largest single channel. SEO works by optimizing your site structure, content, page speed, and backlink profile to align with search engine algorithms. Unlike paid ads that stop delivering the moment you stop spending, SEO builds returns that compound over time.",
   },
   {
     question: "How does PPC advertising work?",
@@ -1557,12 +1558,12 @@ export const digitalMarketingFaqs: readonly FAQ[] = [
   {
     question: "Social media marketing vs Google Ads: which is more effective?",
     answer:
-      "Social media marketing is more effective for brand awareness, community building, and visual storytelling, while Google Ads is more effective for capturing high-intent search traffic from users actively looking for your product or service. Google Ads typically delivers higher conversion rates, averaging 3% to 5% for search campaigns, because the user has already expressed intent. Social media excels at reaching new audiences who may not yet know they need your solution. The most effective strategy uses both channels together: Google Ads captures demand that already exists, while social media creates new demand. Budget allocation should reflect your business stage and goals.",
+      "Social media marketing is more effective for brand awareness, community building, and visual storytelling, while Google Ads is more effective for capturing high-intent search traffic from users actively looking for your product or service. Google Ads typically delivers higher conversion rates for search campaigns, because the user has already expressed intent. Social media excels at reaching new audiences who may not yet know they need your solution. The most effective strategy uses both channels together: Google Ads captures demand that already exists, while social media creates new demand. Budget allocation should reflect your business stage and goals.",
   },
   {
-    question: "What is AI Engine Optimization (AEO)?",
+    question: "What is Answer Engine Optimization (AEO)?",
     answer:
-      "AI Engine Optimization, or AEO, is the practice of structuring your content so that AI-powered search engines, chatbots, and voice assistants can accurately find, understand, and cite your information. As AI tools like ChatGPT, Google AI Overviews, and Perplexity handle an increasing share of search queries, traditional SEO alone is no longer sufficient. AEO involves writing clear, direct answers in your content, using structured data markup, building topical authority, and ensuring factual accuracy. We build AEO into our SEO work rather than selling it separately, structuring content and markup so that an AI system can find a direct answer on your site and attribute it to you.",
+      "Answer Engine Optimization, or AEO, is the practice of structuring your content so that AI-powered search engines, chatbots, and voice assistants can accurately find, understand, and cite your information. As AI tools like ChatGPT, Google AI Overviews, and Perplexity handle an increasing share of search queries, traditional SEO alone is no longer sufficient. AEO involves writing clear, direct answers in your content, using structured data markup, building topical authority, and ensuring factual accuracy. We build AEO into our SEO work rather than selling it separately, structuring content and markup so that an AI system can find a direct answer on your site and attribute it to you.",
   },
   {
     question: "How long does SEO take to show results?",
@@ -1572,17 +1573,17 @@ export const digitalMarketingFaqs: readonly FAQ[] = [
   {
     question: "What is conversion rate optimization (CRO)?",
     answer:
-      "Conversion rate optimization is the systematic process of increasing the percentage of website visitors who complete a desired action, such as making a purchase, filling out a form, or signing up for a newsletter. The average website conversion rate across industries is about 2.5%, meaning there is substantial room for improvement on most sites. CRO uses data from analytics, heatmaps, session recordings, and A/B testing to identify friction points in the user journey and test solutions. Even a 1% improvement in conversion rate can dramatically increase revenue without any additional ad spend. It is one of the highest-ROI marketing activities because it maximizes the value of traffic you already have.",
+      "Conversion rate optimization is the systematic process of increasing the percentage of website visitors who complete a desired action, such as making a purchase, filling out a form, or signing up for a newsletter. Most visitors leave most websites without converting, so there is usually room to improve. CRO uses data from analytics, heatmaps, session recordings, and A/B testing to identify friction points in the user journey and test solutions. Even a 1% improvement in conversion rate can dramatically increase revenue without any additional ad spend. It is one of the highest-ROI marketing activities because it maximizes the value of traffic you already have.",
   },
   {
     question: "How much should I budget for digital marketing?",
     answer:
-      "Digital marketing budgets vary based on business size, goals, and channels. A reasonable starting point is allocating 7% to 10% of your gross revenue to marketing, with 50% to 60% of that going to digital channels. New businesses can start with focused campaigns covering SEO and Google Ads, while established businesses benefit from multi-channel campaigns across search, social, and content marketing. We build the budget in phases against revenue targets, so the spend grows with what it is returning rather than being set once at the start. Contact us for a budget plan costed to your own numbers.",
+      "Digital marketing budgets vary based on business size, goals, and channels. For comparison, Gartner's 2025 survey of chief marketing officers found that marketing budgets at large companies averaged 7.7% of revenue. New businesses can start with focused campaigns covering SEO and Google Ads, while established businesses benefit from multi-channel campaigns across search, social, and content marketing. We build the budget in phases against revenue targets, so the spend grows with what it is returning rather than being set once at the start. Contact us for a budget plan costed to your own numbers.",
   },
   {
     question: "What is the difference between organic and paid marketing?",
     answer:
-      "Organic marketing earns attention through non-paid channels like SEO, content marketing, social media posts, and email newsletters, while paid marketing purchases attention through advertising platforms like Google Ads, Meta Ads, and sponsored content. Organic marketing builds long-term brand equity and typically has a lower cost per acquisition over time, but it requires patience and consistent effort. Paid marketing delivers immediate visibility and precise audience targeting but stops generating results when the budget runs out. Data shows that organic search drives approximately 53% of website traffic on average, while paid search accounts for about 27%. The strongest marketing strategies blend both for sustainable, scalable growth.",
+      "Organic marketing earns attention through non-paid channels like SEO, content marketing, social media posts, and email newsletters, while paid marketing purchases attention through advertising platforms like Google Ads, Meta Ads, and sponsored content. Organic marketing builds long-term brand equity and typically has a lower cost per acquisition over time, but it requires patience and consistent effort. Paid marketing delivers immediate visibility and precise audience targeting but stops generating results when the budget runs out. In BrightEdge's 2019 channel study, organic search drove 53% of trackable website traffic and paid search 15%. The strongest marketing strategies blend both for sustainable, scalable growth.",
   },
   {
     question: "How do you measure digital marketing ROI?",
@@ -1592,13 +1593,16 @@ export const digitalMarketingFaqs: readonly FAQ[] = [
   {
     question: "What is marketing automation and how can it help my business?",
     answer:
-      "Marketing automation uses software to execute repetitive marketing tasks like email sequences, lead scoring, social media posting, and customer segmentation without manual intervention. Businesses that implement marketing automation see an average 14.5% increase in sales productivity and a 12.2% reduction in marketing overhead. Tools like HubSpot, Mailchimp, and ActiveCampaign allow you to build automated workflows that nurture leads from first contact through to purchase. For example, when a visitor downloads a guide from your website, automation can trigger a personalized email sequence over the following two weeks. This ensures no lead falls through the cracks while freeing your team to focus on strategy and creative work.",
+      "Marketing automation uses software to execute repetitive marketing tasks like email sequences, lead scoring, social media posting, and customer segmentation without manual intervention. It takes repetitive work off your team, so no lead waits for a manual follow-up. Tools like HubSpot, Mailchimp, and ActiveCampaign allow you to build automated workflows that nurture leads from first contact through to purchase. For example, when a visitor downloads a guide from your website, automation can trigger a personalized email sequence over the following two weeks. This ensures no lead falls through the cracks while freeing your team to focus on strategy and creative work.",
   },
 ];
 
 /**
- * Which set belongs to which service page, keyed by the page's `priceKey`.
- * A page with no set of its own simply does not show the section.
+ * The sets carried over for three service pages, keyed by the page's `priceKey`.
+ * The page template shows these first, then the questions in the page's copy
+ * file (constants/services), which is where the other thirteen get theirs. Keep
+ * the two free of each other's wording: a question that appears in both would
+ * reach the accordion twice under one key.
  */
 export const faqsForService: Record<string, readonly FAQ[]> = {
   "web-development": webDevFaqs,
