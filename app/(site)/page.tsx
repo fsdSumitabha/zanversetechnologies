@@ -19,7 +19,9 @@ import { Team } from "@/components/zan/sections/Team";
 import { FAQ } from "@/components/zan/sections/FAQ";
 import { Contact } from "@/components/zan/sections/Contact";
 import { homeSeo } from "@/constants/pages";
+import { faqs } from "@/constants/zan";
 import { HOME_TITLE, pageMetadata } from "@/lib/metadata";
+import { faqSchema, jsonLd, webPageSchema } from "@/lib/schema";
 
 /* The homepage's title is the whole <title>, with the company name already
    in it, so it is not suffixed a second time. Its canonical is the bare
@@ -56,10 +58,23 @@ export const metadata: Metadata = pageMetadata({
  *   Team               the people who do the work             #team
  *   FAQ                                                       #faq
  *   Contact            light rays, enquiry, the Dubai office  #contact
+ *
+ * The page's structured data comes first in <main>, ahead of the scenes: this
+ * HTML is long, the FAQ is near its end, and some readers stop before they get
+ * there. The same `faqs` array goes to the FAQ section's accordion.
  */
 export default function Home() {
   return (
     <main id="main" className="relative">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: jsonLd(
+            webPageSchema({ path: "/", name: HOME_TITLE, description: homeSeo.description }),
+            faqSchema(faqs),
+          ),
+        }}
+      />
       <Hero />
       <Board />
       <ChapterWhatWeDo />

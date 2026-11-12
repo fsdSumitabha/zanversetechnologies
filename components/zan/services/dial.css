@@ -105,10 +105,17 @@
   }
 }
 
-/* A short phone: the lead steps aside so the whole card still fits. */
+/* A short phone: the lead steps aside so the whole card still fits. Out of flow
+   and clipped to nothing rather than display: none, so the layout is the same
+   and the words stay in the page. */
 @media (prefers-reduced-motion: no-preference) and (min-height: 540px) and (max-height: 700px) and (max-width: 1023.98px) {
   .zan-dial-lead {
-    display: none;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 }
 

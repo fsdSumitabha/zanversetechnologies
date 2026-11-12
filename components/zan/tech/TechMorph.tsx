@@ -6,6 +6,7 @@ import { techDomains, techIntro, techLogos } from "@/constants/zan";
 import { SectionHeading } from "@/components/zan/ui/SectionHeading";
 import { useMediaQuery } from "@/components/zan/process/useMediaQuery";
 import { MQ } from "@/lib/gsap";
+import { isMotionPaused } from "@/lib/motionPause";
 import "./tech.css";
 
 /* ───────────────────────────────────────────────────────────────────────────
@@ -15,7 +16,8 @@ import "./tech.css";
    and close into a ring around the heading (a timed intro). Scrolling then
    morphs the ring into a wide arc along the bottom of the stage and turns it;
    the pointer adds parallax, hovering pauses the drift and flips a plate to
-   its tool name and domain.
+   its tool name and domain. The page's Pause animations control
+   (lib/motionPause.ts) stops the drift too.
 
    The stage is decoration — aria-hidden — and the heading sits in it as real
    text. The same stack is listed accessibly in the domain grid below.
@@ -165,7 +167,7 @@ function MorphStage() {
       morph += (smoothstep(0.02, 0.4, p) - morph) * k;
       turn += (clamp01((p - 0.4) / 0.6) - turn) * k;
       par += (parTarget - par) * (1 - Math.exp(-dt / 260));
-      if (morph > 0.95 && !paused) drift += dt * 0.004;
+      if (morph > 0.95 && !paused && !isMotionPaused()) drift += dt * 0.004;
 
       const cx = w / 2;
       const cy = mobile ? h * 0.62 : h / 2;

@@ -3,19 +3,22 @@
 import { useEffect, useReducer, useRef } from "react";
 import { usePreloaded } from "@/components/zan/shell/shellStore";
 import { MQ } from "@/lib/gsap";
+import { useMotionPaused } from "@/lib/useMotionPaused";
 import { useMedia, useOnScreen } from "./hooks";
 
 /* ───────────────────────────────────────────────────────────────────────────
-   The h1's second line: type, pause, delete, next — the old site's rhythm.
+   The big line's second row: type, pause, delete, next — the old site's rhythm.
 
    The server renders the first word in full, so the headline is complete
    and stable in the HTML (it is the page's LCP element). Typing starts only
    once the preloader has uncovered the page, holds the first word a beat
-   first, and stops while the hero is off screen.
+   first, and stops while the hero is off screen or the visitor has paused
+   animations (lib/motionPause.ts).
 
-   The whole line is aria-hidden: the h1 carries the full sentence in an
-   sr-only span, so a screen reader hears it once rather than letter by
-   letter. Reduced motion: no typing and no caret, just the first word.
+   The whole line is aria-hidden: the paragraph it sits in carries the full
+   sentence in an sr-only span, so a screen reader hears it once rather than
+   letter by letter. Reduced motion: no typing and no caret, just the first
+   word.
    ─────────────────────────────────────────────────────────────────────────── */
 
 type Phase = "hold" | "delete" | "type";
@@ -37,7 +40,7 @@ function advance(s: State, words: readonly string[]): State {
   if (s.phase === "hold") return { ...s, phase: "delete" };
   if (s.phase === "delete") {
     // Stop at three characters: deleting to nothing leaves an 84px hole in
-    // the h1 with a lone caret, which reads as broken.
+    // the headline with a lone caret, which reads as broken.
     if (s.n > 3) return { ...s, n: s.n - 1 };
     return { i: (s.i + 1) % words.length, n: 0, phase: "type", cycles: s.cycles + 1 };
   }
@@ -59,8 +62,9 @@ export function Typewriter({ words }: { words: readonly string[] }) {
   const preloaded = usePreloaded();
   const reduce = useMedia(MQ.reduce);
   const onScreen = useOnScreen(host);
+  const paused = useMotionPaused();
   const [state, step] = useReducer(advance, { i: 0, n: words[0].length, phase: "hold", cycles: 0 });
-  const running = preloaded && !reduce && onScreen;
+  const running = preloaded && !reduce && onScreen && !paused;
 
   useEffect(() => {
     if (!running) return;

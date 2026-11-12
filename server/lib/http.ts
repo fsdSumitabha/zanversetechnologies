@@ -19,6 +19,50 @@ export const tooMany = (retryAfterSeconds: number) =>
     { status: 429, headers: { "Retry-After": String(retryAfterSeconds) } },
   );
 
+/** Names what would have worked. `allow` is the Allow header's value. */
+export const methodNotAllowed = (allow: string) =>
+  NextResponse.json({ error: `Method not allowed. Use ${allow}.` }, { status: 405, headers: { Allow: allow } });
+
+/**
+ * A 303, so a browser that posted a form follows it with a GET.
+ *
+ * The Location goes out relative, because a path cannot name another host. The
+ * exception is two leading slashes, so a path built from anything a request said
+ * has to pass isLocalPath() first.
+ */
+export const seeOther = (path: string) => new Response(null, { status: 303, headers: { Location: path } });
+
+/** One slash and then a path. "//other.site" and "/\other.site" both leave this site. */
+export const isLocalPath = (path: string) => /^\/(?![/\\])/.test(path);
+
+/** For a browser that posted a form: the answer is the page its visitor sees, so a sentence and not JSON. */
+export const plainText = (status: number, text: string, headers?: Record<string, string>) =>
+  new Response(text, { status, headers: { "Content-Type": "text/plain; charset=utf-8", ...headers } });
+
+const mediaType = (request: Request) =>
+  (request.headers.get("content-type") ?? "").split(";")[0].trim().toLowerCase();
+
+export const isJsonPost = (request: Request) => mediaType(request) === "application/json";
+
+/** What a browser sends for a plain <form>, with no script involved. */
+export function isFormPost(request: Request): boolean {
+  const type = mediaType(request);
+  return type === "application/x-www-form-urlencoded" || type === "multipart/form-data";
+}
+
+/**
+ * A form post's text fields. A field sent twice keeps its last value and a file
+ * is dropped. A body that will not parse gives no fields, which a schema refuses.
+ */
+export async function readFormFields(request: Request): Promise<Record<string, string>> {
+  try {
+    const form = await request.formData();
+    return Object.fromEntries([...form].filter((entry): entry is [string, string] => typeof entry[1] === "string"));
+  } catch {
+    return {};
+  }
+}
+
 /**
  * Parse and validate a JSON body.
  *

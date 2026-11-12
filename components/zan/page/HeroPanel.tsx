@@ -60,7 +60,7 @@ export function HeroLinks({
             <span className="min-w-0">
               <span className="block text-body font-medium text-foreground transition-colors duration-300 group-hover/row:text-accent-ink">
                 {item.label}
-              </span>
+              </span>{" "}
               {item.note && <span className="mt-0.5 block text-small text-subtle">{item.note}</span>}
             </span>
             <ArrowUpRight

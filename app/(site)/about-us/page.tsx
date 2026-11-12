@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { FaqAccordion } from "@/components/zan/contact/FaqAccordion";
+import { PageNotes, UpdatedLine } from "@/components/zan/page/ContentBlocks";
 import { PageHero } from "@/components/zan/page/PageHero";
 import { Reveal } from "@/components/zan/page/Reveal";
 import { Section } from "@/components/zan/page/Section";
@@ -7,6 +9,7 @@ import { FactCard, FactList, MetricRow } from "@/components/zan/page/cards";
 import { HeroFacts, HeroPanel } from "@/components/zan/page/HeroPanel";
 import { OfficeCards } from "@/components/zan/contact/OfficeCard";
 import { SiteButtonLink } from "@/components/zan/services/SiteLinks";
+import { aboutFaqs } from "@/constants/pageFaqs";
 import { aboutPage, labels, pageTrail } from "@/constants/pages";
 import { getIndustryArt } from "@/constants/serviceArt";
 import {
@@ -14,6 +17,7 @@ import {
   credentials,
   credentialsIntro,
   ctas,
+  faqIntro,
   industries,
   industriesIntro,
   metrics,
@@ -22,6 +26,7 @@ import {
   site,
 } from "@/constants/zan";
 import { pageMetadata } from "@/lib/metadata";
+import { faqSchema, jsonLd, webPageSchema } from "@/lib/schema";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = pageMetadata({
@@ -50,6 +55,22 @@ const reachUs = [
 export default function AboutPage() {
   return (
     <main id="main">
+      {/* What this URL is, and the questions the #faq band renders, from the same
+          array. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: jsonLd(
+            webPageSchema({
+              path: "/about-us",
+              name: about.heading.join(" "),
+              description: aboutPage.seoDescription,
+              type: "AboutPage",
+            }),
+            faqSchema(aboutFaqs),
+          ),
+        }}
+      />
       <PageHero
         eyebrow={about.eyebrow}
         title={about.heading}
@@ -65,7 +86,7 @@ export default function AboutPage() {
         <div className="mt-9 flex flex-wrap items-center gap-3">
           <SiteButtonLink href={ctas.contact.href} size="lg">
             {ctas.contact.label}
-          </SiteButtonLink>
+          </SiteButtonLink>{" "}
           <SiteButtonLink href={ctas.portfolio.href} variant="secondary" size="lg">
             {ctas.portfolio.label}
           </SiteButtonLink>
@@ -178,6 +199,21 @@ export default function AboutPage() {
           ))}
         </ul>
       </Section>
+
+      <Section
+        id="faq"
+        eyebrow={faqIntro.eyebrow}
+        title="Questions about the company"
+        lead="Who we are, what we are certified to, and who you work with."
+      >
+        <div className="lg:mx-auto lg:max-w-4xl">
+          <FaqAccordion items={aboutFaqs} />
+        </div>
+      </Section>
+
+      <PageNotes tone="surface">
+        <UpdatedLine path="/about-us" />
+      </PageNotes>
     </main>
   );
 }

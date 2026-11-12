@@ -4,10 +4,12 @@ import { Pause, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
- * The quiet pause/play toggle an auto-moving strip carries (WCAG 2.2.2). The
- * accessible name stays fixed and aria-pressed carries the state; the global
- * :focus-visible ring marks it for keyboard users. Hidden for reduced motion,
- * where nothing moves.
+ * The quiet pause/play toggle for anything that moves by itself (WCAG 2.2.2):
+ * the auto-moving strips, the Industries carousel, and in the homepage hero
+ * the switch for every animation on the site (shell/MotionPauseControl.tsx).
+ * The accessible name stays fixed and aria-pressed carries the state; the
+ * global :focus-visible ring marks it for keyboard users. Hidden for reduced
+ * motion, where nothing moves.
  */
 export function MarqueeToggle({
   paused,

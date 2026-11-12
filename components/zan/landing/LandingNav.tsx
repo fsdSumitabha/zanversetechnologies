@@ -141,7 +141,7 @@ export function LandingNav() {
             <Phone aria-hidden="true" className="size-4 shrink-0 text-accent-ink" />
             <span className="sr-only">Call the {office.city} office: </span>
             <span className="tabular-nums">{office.phoneDisplay}</span>
-          </a>
+          </a>{" "}
           <a
             href={`tel:${office.phoneTel}`}
             aria-label={`Call the ${office.city} office: ${office.phoneDisplay}`}
@@ -157,7 +157,7 @@ export function LandingNav() {
             arrow={false}
             className="h-10 px-3.5 text-small sm:h-11 sm:px-5 sm:text-[0.9375rem]"
           >
-            <span className="sm:hidden">{hero.primary.short}</span>
+            <span className="sm:hidden">{hero.primary.short}</span>{" "}
             <span className="hidden sm:inline">{cta.nav}</span>
           </QuoteButton>
         </div>

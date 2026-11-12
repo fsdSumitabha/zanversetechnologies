@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { animate, motion, useMotionValue, useTransform, type MotionValue, type Variants } from "framer-motion";
 import { ArrowUp, Mail, Phone, ShieldCheck } from "lucide-react";
 import {
@@ -24,12 +24,18 @@ import { MQ } from "@/lib/gsap";
 import { waLink } from "@/lib/links";
 import { useSiteHref } from "@/lib/useSiteHref";
 import { cn } from "@/lib/utils";
-import { useMediaQuery } from "./shellStore";
+import { useLogoHref, useMediaQuery } from "./shellStore";
 import { SocialIcon } from "./SocialIcon";
 
 /** Module scope, so render stays pure. suppressHydrationWarning covers the
  *  one night a year the server and the browser disagree. */
 const YEAR = new Date().getFullYear();
+
+/** The columns that have a page of their own to point at. Company has none. */
+const COLUMN_HREF: Record<string, string> = {
+  Services: "/services",
+  Marketing: "/services/digital-marketing",
+};
 
 /** The contact lead's first sentence as the line, the rest beneath it. */
 const [CTA_LINE, ...CTA_REST] = contactIntro.lead.split(/(?<=\.)\s+/);
@@ -144,14 +150,14 @@ function OfficeClock({ timeZone, still }: { timeZone: string; still: boolean }) 
         <span className="absolute top-1/2 left-1/2 size-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-foreground" />
       </span>
       <span className="flex flex-col">
-        <span className="font-mono text-[0.6875rem] tracking-[0.14em] text-subtle uppercase">
+        <span className="font-mono text-[0.75rem] tracking-[0.14em] text-subtle uppercase">
           Local time in {office.city}
         </span>
         <span className="mt-1 flex items-baseline gap-2">
           <time dateTime={iso} className="font-mono text-h3 text-foreground tabular-nums">
             {time}
           </time>
-          {offset && <span className="font-mono text-[0.6875rem] tracking-[0.06em] text-subtle">{offset}</span>}
+          {offset && <span className="font-mono text-[0.75rem] tracking-[0.06em] text-subtle">{offset}</span>}
         </span>
       </span>
     </p>
@@ -183,7 +189,7 @@ const contactGlyph =
  */
 export function Footer() {
   const href = useSiteHref();
-  const officeId = useId();
+  const logoHref = useLogoHref();
   const markRef = useRef<HTMLDivElement>(null);
   // A media-query store rather than framer's useReducedMotion: that one
   // already answers during hydration, so server and client would disagree.
@@ -230,7 +236,7 @@ export function Footer() {
           <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap lg:shrink-0">
             <ButtonLink href={href(ctas.project.href)} size="lg">
               {ctas.project.label}
-            </ButtonLink>
+            </ButtonLink>{" "}
             <ButtonLink
               href={`mailto:${site.email}`}
               variant="secondary"
@@ -247,7 +253,7 @@ export function Footer() {
       {/* ── Brand + link columns ───────────────────────────────────────── */}
       <div className="container-zan grid gap-12 pt-16 pb-12 sm:pt-20 lg:grid-cols-12 lg:gap-8">
         <div className="lg:col-span-4">
-          <SiteLink href="#main" aria-label={`${site.name} home`} className="inline-flex rounded-lg">
+          <SiteLink href={logoHref} aria-label={`${site.name} home`} className="inline-flex rounded-lg">
             <ZanLogo className="h-9" />
           </SiteLink>
           <p className="mt-5 max-w-sm text-lead text-muted">{site.tagline}</p>
@@ -276,7 +282,7 @@ export function Footer() {
               <li key={c.id}>
                 <SiteLink
                   href="/about-us#credentials"
-                  className="inline-flex h-11 items-center gap-2 rounded-full border border-dashed border-border-strong pr-4 pl-3 font-mono text-[0.6875rem] font-medium tracking-[0.06em] text-muted md:h-9 transition-colors duration-300 hover:border-solid hover:border-foreground hover:text-foreground"
+                  className="inline-flex h-11 items-center gap-2 rounded-full border border-dashed border-border-strong pr-4 pl-3 font-mono text-[0.75rem] font-medium tracking-[0.06em] text-muted md:h-9 transition-colors duration-300 hover:border-solid hover:border-foreground hover:text-foreground"
                 >
                   <ShieldCheck aria-hidden="true" className="size-4 shrink-0 text-accent-ink" strokeWidth={1.8} />
                   {c.name}
@@ -288,14 +294,25 @@ export function Footer() {
 
         {/* Services, Company and Marketing. Marketing is the only sitewide
             link into the four marketing discipline pages; on a phone it takes
-            the full width under the other two. */}
+            the full width under the other two. A heading with a page of its own
+            links to it and looks no different: the link inherits the heading's
+            type and colour, and inline padding grows the tap area to 24px
+            without touching the line. */}
         <nav
           aria-label="Footer"
           className="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-3 lg:col-span-8 lg:grid-cols-[1.1fr_0.9fr_1.25fr] lg:gap-y-8"
         >
           {footerColumns.map((col, i) => (
             <div key={col.title} className={cn(i === footerColumns.length - 1 && "col-span-2 sm:col-span-1")}>
-              <h2 className="font-mono text-eyebrow text-subtle uppercase">{col.title}</h2>
+              <h2 className="font-mono text-eyebrow text-subtle uppercase">
+                {COLUMN_HREF[col.title] ? (
+                  <SiteLink href={COLUMN_HREF[col.title]} className="py-1.5">
+                    {col.title}
+                  </SiteLink>
+                ) : (
+                  col.title
+                )}
+              </h2>
               <ul className="mt-4 md:mt-5 md:space-y-3">
                 {col.links.map((link) => (
                   <li key={link.label}>
@@ -320,7 +337,6 @@ export function Footer() {
           the left, the address and the ways to reach it on the right. */}
       <div className="container-zan pb-14">
         <section
-          aria-labelledby={officeId}
           className="relative isolate overflow-hidden rounded-3xl border border-border bg-surface px-6 py-8 shadow-lift sm:px-10 sm:py-10"
         >
           {/* A soft bloom behind the city name. Decorative. */}
@@ -335,11 +351,11 @@ export function Footer() {
               1024px. */}
           <div className="grid gap-y-10 lg:grid-cols-12 lg:gap-x-8">
             <div className="lg:col-span-4">
-              <h2 id={officeId} className="flex items-center gap-2.5 font-mono text-eyebrow text-subtle uppercase">
+              <h2 className="flex items-center gap-2.5 font-mono text-eyebrow text-subtle uppercase">
                 <span aria-hidden="true" className="size-1.5 shrink-0 rounded-full bg-accent" />
                 Office
               </h2>
-              <motion.h3
+              <motion.p
                 initial="hidden"
                 whileInView="visible"
                 viewport={VIEWPORT}
@@ -350,7 +366,7 @@ export function Footer() {
                     {office.city}
                   </motion.span>
                 </span>
-              </motion.h3>
+              </motion.p>
               <p className="mt-2 font-mono text-eyebrow text-subtle uppercase">{office.country}</p>
               <OfficeClock timeZone={office.timeZone} still={reduce} />
             </div>
@@ -361,7 +377,7 @@ export function Footer() {
                 <p className="mt-4 text-body text-muted">
                   {office.addressLines.map((line) => (
                     <span key={line} className="block">
-                      {line}
+                      {line}{" "}
                     </span>
                   ))}
                 </p>

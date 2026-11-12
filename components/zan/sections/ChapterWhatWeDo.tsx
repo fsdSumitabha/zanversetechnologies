@@ -1,5 +1,6 @@
 "use client";
 
+import { Fragment } from "react";
 import { ArrowDownRight } from "lucide-react";
 import { ScrollRevealCurtain } from "@/components/animations/ScrollRevealCurtain";
 import { Eyebrow } from "@/components/zan/ui/Eyebrow";
@@ -28,10 +29,11 @@ export function ChapterWhatWeDo() {
         <div className="flex flex-col items-center gap-6">
           <Eyebrow>{chapter.eyebrow}</Eyebrow>
           <p className="font-sans text-giant font-bold text-foreground uppercase">
-            {chapter.label.map((line) => (
-              <span key={line} className="block">
-                {line}
-              </span>
+            {chapter.label.map((line, i) => (
+              <Fragment key={line}>
+                {i > 0 && " "}
+                <span className="block">{line}</span>
+              </Fragment>
             ))}
           </p>
         </div>
@@ -54,11 +56,11 @@ function PracticesIntro() {
                 href={href(practiceAnchor(p.id))}
                 className="group/row flex items-center gap-5 py-3.5 transition-colors duration-300 sm:gap-7 sm:py-5"
               >
-                <span className="w-6 shrink-0 font-mono text-eyebrow text-accent-ink">{p.index}</span>
+                <span className="w-6 shrink-0 font-mono text-eyebrow text-accent-ink">{p.index}</span>{" "}
                 <span className="min-w-0 flex-1">
                   <span className="block text-h3 text-foreground transition-colors duration-300 group-hover/row:text-accent-ink">
                     {p.title}
-                  </span>
+                  </span>{" "}
                   <span className="mt-0.5 block text-small text-muted">{p.tagline}</span>
                 </span>
                 <ArrowDownRight

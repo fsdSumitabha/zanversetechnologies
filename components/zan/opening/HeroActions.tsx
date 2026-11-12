@@ -26,9 +26,9 @@ export function HeroActions() {
   return (
     <>
       <ButtonLink href={href(hero.primary.href)} size="lg" className={SIZE}>
-        <span className="hidden sm:inline">{hero.primary.label}</span>
+        <span className="hidden sm:inline">{hero.primary.label}</span>{" "}
         <span className="sm:hidden">{hero.primary.short}</span>
-      </ButtonLink>
+      </ButtonLink>{" "}
 
       <ButtonLink
         href={WHATSAPP}
@@ -40,7 +40,7 @@ export function HeroActions() {
         icon={<MessageCircle aria-hidden="true" className="size-[1.125rem] shrink-0 text-whatsapp-ink" strokeWidth={2} />}
         className={cn(SIZE, "bg-surface")}
       >
-        <span className="hidden sm:inline">{hero.whatsapp.label}</span>
+        <span className="hidden sm:inline">{hero.whatsapp.label}</span>{" "}
         <span className="sm:hidden">{hero.whatsapp.short}</span>
         <span className="sr-only"> (opens in a new tab)</span>
       </ButtonLink>

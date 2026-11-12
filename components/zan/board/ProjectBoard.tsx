@@ -8,6 +8,7 @@ import { useContainerScroll } from "@/components/ui/container-scroll-animation";
 import { ZanIcon } from "@/components/zan/ui/icons";
 import { ZanLogo } from "@/components/zan/ui/ZanLogo";
 import { cn } from "@/lib/utils";
+import { useMotionPaused } from "@/lib/useMotionPaused";
 import { formatClock, formatOffset, useMinute } from "./clock";
 import { CountUp } from "./CountUp";
 import { CARDS, LANES, layoutAt, type Placement } from "./kanban";
@@ -27,9 +28,10 @@ import { CARDS, LANES, layoutAt, type Placement } from "./kanban";
                        card — 800×600 compact (no sidebar) below 1024px,
                        1280×800 on a reduced-motion desktop
 
-   Motion (paused off-screen and for reduced motion): a card walks across the
-   lanes on a timer, and the figures count up when the frame reaches full
-   screen (or, without the pinned scene, when the board scrolls into view).
+   Motion (paused off-screen, for reduced motion, and by the page's Pause
+   animations control): a card walks across the lanes on a timer, and the
+   figures count up when the frame reaches full screen (or, without the
+   pinned scene, when the board scrolls into view).
    ═══════════════════════════════════════════════════════════════════════════ */
 
 const TICK_MS = 2600;
@@ -42,6 +44,7 @@ export function ProjectBoard() {
   const fitRef = useRef<HTMLDivElement>(null);
   const boardRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
+  const motionPaused = useMotionPaused();
   const visible = useInView(boardRef, { amount: 0.15 });
   const seen = useInView(boardRef, { amount: 0.5 });
   const [tick, setTick] = useState(0);
@@ -73,10 +76,10 @@ export function ProjectBoard() {
   }, []);
 
   useEffect(() => {
-    if (!visible || reduced !== false) return;
+    if (!visible || reduced !== false || motionPaused) return;
     const id = window.setInterval(() => setTick((t) => t + 1), TICK_MS);
     return () => window.clearInterval(id);
-  }, [visible, reduced]);
+  }, [visible, reduced, motionPaused]);
 
   const placement = layoutAt(tick);
   const counts = Array.from({ length: LANES }, (_, lane) =>

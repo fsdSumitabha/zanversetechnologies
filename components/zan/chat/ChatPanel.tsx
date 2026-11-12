@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUp, Headset, RotateCcw, WifiOff, X } from "lucide-react";
 import { office, site } from "@/constants/zan";
-import { getLenis } from "@/hooks/useLenis";
+import { lockScroll } from "@/lib/scrollLock";
 import { cn } from "@/lib/utils";
 import { useMediaQuery } from "@/components/zan/shell/shellStore";
 import { AssistantMark } from "./AssistantMark";
@@ -64,13 +64,23 @@ export function ChatPanel({ open, onClose }: { open: boolean; onClose: () => voi
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
+      // Another overlay on top, such as the timed popup, owns the keys: it has
+      // made this one inert, or, if this one mounted after it, it has already
+      // handled the key. Tab and Escape are its, not this one's.
+      if (e.defaultPrevented || panelRef.current?.closest("[inert]")) return;
       if (e.key === "Escape") {
         e.preventDefault();
         onClose();
       }
     };
     document.addEventListener("keydown", onKey);
-    const focus = requestAnimationFrame(() => panelRef.current?.focus({ preventScroll: true }));
+    // Not when a dialog is already open over the page: the chat opened under it,
+    // its code having arrived late, and focus stays with the dialog.
+    const focus = requestAnimationFrame(() => {
+      const panel = panelRef.current;
+      const other = [...document.querySelectorAll('[aria-modal="true"]')].some((d) => d !== panel && !panel?.contains(d));
+      if (!other) panel?.focus({ preventScroll: true });
+    });
     return () => {
       cancelAnimationFrame(focus);
       document.removeEventListener("keydown", onKey);
@@ -82,17 +92,7 @@ export function ChatPanel({ open, onClose }: { open: boolean; onClose: () => voi
      card in the corner and locking the page would be an overreach. */
   useEffect(() => {
     if (!open || !phone) return;
-    const html = document.documentElement;
-    const prevHtml = html.style.overflow;
-    const prevBody = document.body.style.overflow;
-    html.style.overflow = "hidden";
-    document.body.style.overflow = "hidden";
-    getLenis()?.stop();
-    return () => {
-      html.style.overflow = prevHtml;
-      document.body.style.overflow = prevBody;
-      getLenis()?.start();
-    };
+    return lockScroll();
   }, [open, phone]);
 
   const submit = () => {
@@ -157,7 +157,7 @@ export function ChatPanel({ open, onClose }: { open: boolean; onClose: () => voi
         >
           {/* Header. Who you are talking to is the most important fact in here, so
               the identity changes the moment a person picks the thread up. */}
-          <header className="flex items-center gap-3 border-b border-border bg-surface-muted px-4 py-3">
+          <div className="flex items-center gap-3 border-b border-border bg-surface-muted px-4 py-3">
             <span
               className={cn(
                 "grid size-9 shrink-0 place-items-center rounded-full",
@@ -175,7 +175,7 @@ export function ChatPanel({ open, onClose }: { open: boolean; onClose: () => voi
               <p className="truncate text-small font-semibold text-foreground">
                 {human ? (chat.agentName ?? `${site.name} team`) : "Zan assistant"}
               </p>
-              <p className="flex items-center gap-1.5 text-[0.6875rem] text-subtle">
+              <p className="flex items-center gap-1.5 text-[0.75rem] text-subtle">
                 {chat.connection === "connecting" && !chat.ready ? (
                   <>
                     <span aria-hidden="true" className="size-1.5 animate-pulse rounded-full bg-subtle" />
@@ -211,7 +211,7 @@ export function ChatPanel({ open, onClose }: { open: boolean; onClose: () => voi
             >
               <X aria-hidden="true" className="size-4" />
             </button>
-          </header>
+          </div>
 
           {/* The transcript, on the wallpaper. The wallpaper is this element's own
               background rather than a child: an absolutely-positioned child scrolls
@@ -232,15 +232,21 @@ export function ChatPanel({ open, onClose }: { open: boolean; onClose: () => voi
                 </div>
               )}
 
-              {groupMessages(chat.messages).map(({ message, firstOfGroup, lastOfGroup }) => (
-                <MessageBubble
-                  key={message.id}
-                  message={message}
-                  agentName={chat.agentName}
-                  firstOfGroup={firstOfGroup}
-                  lastOfGroup={lastOfGroup}
-                />
-              ))}
+              {/* Round the messages, so a new one is read out and a screen reader
+                  or an agent can tell the reply has arrived. No padding, margin or
+                  border, so the bubbles sit where they did. The dots and the
+                  contact card stay outside it: it is the log of what was said. */}
+              <div role="log" aria-live="polite" aria-label="Conversation">
+                {groupMessages(chat.messages).map(({ message, firstOfGroup, lastOfGroup }) => (
+                  <MessageBubble
+                    key={message.id}
+                    message={message}
+                    agentName={chat.agentName}
+                    firstOfGroup={firstOfGroup}
+                    lastOfGroup={lastOfGroup}
+                  />
+                ))}
+              </div>
 
               {(chat.aiTyping || chat.agentTyping) && (
                 <div className="mb-2 flex">
@@ -268,12 +274,24 @@ export function ChatPanel({ open, onClose }: { open: boolean; onClose: () => voi
               )}
 
               {chat.error && (
-                <p className="mb-2 rounded-lg border border-border bg-surface/90 px-4 py-2.5 text-center text-eyebrow tracking-normal text-muted">
+                <p
+                  role="alert"
+                  className="mb-2 rounded-lg border border-border bg-surface/90 px-4 py-2.5 text-center text-eyebrow tracking-normal text-muted"
+                >
                   {chat.error}
                 </p>
               )}
             </div>
           </div>
+
+          {/* What the dots say on screen, for a screen reader. Always in the
+              panel and only its text changes, because a live region has to exist
+              before its content does. Out of the flow, so it takes no room. */}
+          <p role="status" className="sr-only">
+            {chat.aiTyping || chat.agentTyping
+              ? `${human ? (chat.agentName ?? "The team") : "The assistant"} is typing`
+              : ""}
+          </p>
 
           {/* Composer */}
           {!closed ? (

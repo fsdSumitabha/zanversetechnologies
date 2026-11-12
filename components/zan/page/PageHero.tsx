@@ -35,6 +35,13 @@ const ACCENTABLE = 15;
  * heading, the lead and the buttons are all above it at every width and none
  * of them is ever read off a picture.
  *
+ * The heading block enters with CSS from the first frame of the server HTML
+ * (SectionHeading's entrance="css"), not as it scrolls into view. It is the
+ * top of the page, so it is on screen at load, and on a phone the lead is
+ * often the largest text there: an entrance that waited for the scripts kept
+ * it off the screen until they ran, and held the page's largest paint back
+ * with it.
+ *
  * `pt-nav` clears the fixed navbar. The ground is the brand wash, and the
  * section that follows draws the hairline between them.
  */
@@ -83,6 +90,7 @@ export function PageHero({
               accentLine={
                 title.length > 1 && title[title.length - 1].length <= ACCENTABLE ? title.length - 1 : undefined
               }
+              entrance="css"
               leadClassName="max-w-[56ch]"
             />
             {children}
@@ -104,11 +112,16 @@ export function PageHero({
  * the small end, because 4:3 takes a quarter off the width and the pictures
  * that fill the frame edge to edge lost the ends of themselves.
  *
- * `preload` because this is the largest thing above the fold and therefore the
- * page's LCP element — `priority` is the Next 15 spelling and is deprecated in
- * 16 (node_modules/next/dist/docs/01-app/03-api-reference/02-components/image.md).
- * Nothing here animates in: a reveal on the LCP element would hold the paint
- * back for the sake of a fade.
+ * `fetchPriority="high"` and `loading="eager"`, because this is the largest
+ * thing above the fold and therefore the page's LCP element. Not `preload`:
+ * Next 16 writes that preload link with no fetch priority, so the photo was
+ * fetched at an ordinary image's priority, and the image docs advise these
+ * two instead "in most cases" (node_modules/next/dist/docs/01-app/
+ * 03-api-reference/02-components/image.md, under `preload`). React's server
+ * render still writes a preload link in the head for an eager image, and it
+ * now carries fetchpriority="high", as the logo's does. (`priority` is the
+ * Next 15 spelling, deprecated in 16.) Nothing here animates in: a reveal on
+ * the LCP element would hold the paint back for the sake of a fade.
  */
 export function PageHeroPhoto({ photo }: { photo: ServiceHero }) {
   return (
@@ -118,7 +131,8 @@ export function PageHeroPhoto({ photo }: { photo: ServiceHero }) {
         alt={photo.alt}
         width={photo.width}
         height={photo.height}
-        preload
+        loading="eager"
+        fetchPriority="high"
         sizes="(min-width: 82.5rem) 1224px, (min-width: 64rem) calc(100vw - 6rem), calc(100vw - 2.5rem)"
         className="absolute inset-0 size-full object-cover"
       />

@@ -31,7 +31,7 @@ export function LoginForm() {
     "w-full rounded-xl border border-border-field bg-surface px-4 py-3 text-small text-foreground outline-none transition-colors focus:border-accent-ink";
 
   return (
-    <div className="grid min-h-svh place-items-center px-5">
+    <main className="grid min-h-svh place-items-center px-5">
       <form onSubmit={submit} className="w-full max-w-sm rounded-2xl border border-border bg-surface p-7 shadow-[var(--shadow-lift)]">
         <h1 className="text-h3 tracking-[-0.02em]">Agent console</h1>
         <p className="mt-2 text-small text-muted">Sign in to pick up waiting leads.</p>
@@ -77,6 +77,6 @@ export function LoginForm() {
           {busy ? "Signing in…" : "Sign in"}
         </button>
       </form>
-    </div>
+    </main>
   );
 }

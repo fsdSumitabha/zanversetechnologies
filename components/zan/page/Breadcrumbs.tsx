@@ -2,7 +2,7 @@ import { ChevronRight } from "lucide-react";
 import { SiteLink } from "@/components/zan/services/SiteLinks";
 import { labels } from "@/constants/pages";
 import { absoluteUrl } from "@/lib/metadata";
-import { jsonLd } from "@/lib/schema";
+import { breadcrumbId, jsonLd } from "@/lib/schema";
 import { cn } from "@/lib/utils";
 
 export interface Crumb {
@@ -25,9 +25,12 @@ export interface Crumb {
  * nothing client-side imports it.
  */
 export function Breadcrumbs({ trail, className }: { trail: readonly Crumb[]; className?: string }) {
+  const last = trail.length - 1;
   const breadcrumbList = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
+    // What the page's WebPage node names as its breadcrumb (lib/schema.ts).
+    "@id": breadcrumbId(trail[last].href),
     itemListElement: trail.map((c, i) => ({
       "@type": "ListItem",
       position: i + 1,
@@ -35,14 +38,19 @@ export function Breadcrumbs({ trail, className }: { trail: readonly Crumb[]; cla
       item: absoluteUrl(c.href),
     })),
   };
-  const last = trail.length - 1;
   return (
     <nav aria-label={labels.breadcrumb} className={cn("min-w-0", className)}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLd(breadcrumbList) }}
       />
-      <ol className="flex flex-wrap items-center gap-x-1.5 gap-y-1 font-mono text-eyebrow text-subtle uppercase">
+      {/* Phones: the row gap matches the links' padding (below), so a trail
+          that wraps starts its next row where this row's tap areas end, not
+          over them. Only a link that wraps reaches back: its own padding
+          shares those 14px with the row above, and as the later box it takes
+          them, which still leaves each link 26px of its own. From md the links
+          lose that padding and the gap is 4px. */}
+      <ol className="flex flex-wrap items-center gap-x-1.5 gap-y-3.5 font-mono text-eyebrow text-subtle uppercase md:gap-y-1">
         {trail.map((crumb, i) => (
           <li key={crumb.href} className="flex items-center gap-1.5">
             {i > 0 && <ChevronRight aria-hidden="true" className="size-3 shrink-0 text-border-strong" />}
@@ -53,9 +61,10 @@ export function Breadcrumbs({ trail, className }: { trail: readonly Crumb[]; cla
             ) : (
               <SiteLink
                 href={crumb.href}
-                // The padding only grows the tap area on phones; the negative
-                // margin keeps the trail's line height as it was.
-                className="-my-4 inline-block rounded py-4 transition-colors duration-300 hover:text-accent-ink md:my-0 md:py-0"
+                // The padding only grows the tap area on phones, to 40px round
+                // the 12px line; the negative margin keeps the trail's line
+                // height as it was. 14px each way, and the row gap is 14px too.
+                className="-my-3.5 inline-block rounded py-3.5 transition-colors duration-300 hover:text-accent-ink md:my-0 md:py-0"
               >
                 {crumb.label}
               </SiteLink>

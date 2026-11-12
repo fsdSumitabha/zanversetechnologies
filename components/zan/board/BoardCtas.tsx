@@ -15,7 +15,7 @@ export function BoardCtas() {
     <div className="mt-8 flex w-full max-w-sm flex-col gap-3 sm:w-auto sm:max-w-none sm:flex-row sm:justify-center">
       <ButtonLink href={href(ctas.project.href)} size="lg">
         {ctas.project.label}
-      </ButtonLink>
+      </ButtonLink>{" "}
       <ButtonLink href={href(ctas.work.href)} size="lg" variant="secondary">
         {ctas.work.label}
       </ButtonLink>

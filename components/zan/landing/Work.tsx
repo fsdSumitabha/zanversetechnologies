@@ -39,10 +39,10 @@ function CaseStudy({ project, flip }: { project: Project; flip: boolean }) {
 
           <div className="min-w-0 p-6 sm:p-8 lg:col-span-7 lg:p-10">
             <p className={cn(mono, "flex flex-wrap items-center gap-x-2.5 gap-y-1 text-subtle")}>
-              <span className="text-accent-ink">{project.discipline}</span>
-              <span aria-hidden="true">/</span>
-              <span>{project.industry}</span>
-              <span aria-hidden="true">/</span>
+              <span className="text-accent-ink">{project.discipline}</span>{" "}
+              <span aria-hidden="true">/</span>{" "}
+              <span>{project.industry}</span>{" "}
+              <span aria-hidden="true">/</span>{" "}
               <span>{project.timeline}</span>
             </p>
             <h3 className="mt-4 font-display text-h2 text-balance text-foreground">{project.name}</h3>

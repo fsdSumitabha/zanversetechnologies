@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { Mesh, Program, Renderer, Triangle } from "ogl";
+import { isMotionPaused } from "@/lib/motionPause";
 import "./LightRays.css";
 
 /* ───────────────────────────────────────────────────────────────────────────
@@ -268,7 +269,7 @@ export default function LightRays({
       raf = requestAnimationFrame(loop);
       if (t - last < FRAME_MS) return;
       last = t;
-      uniforms.iTime.value = t * 0.001;
+      if (!isMotionPaused()) uniforms.iTime.value = t * 0.001;
       smooth.x += (mouse.x - smooth.x) * 0.08;
       smooth.y += (mouse.y - smooth.y) * 0.08;
       uniforms.mousePos.value = [smooth.x, smooth.y];

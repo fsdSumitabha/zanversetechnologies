@@ -11,7 +11,7 @@ export function FaqAside() {
     <div className="mt-8 flex flex-col items-start gap-3">
       <ButtonLink href={href(ctas.contact.href)} variant="secondary" arrow>
         {ctas.contact.label}
-      </ButtonLink>
+      </ButtonLink>{" "}
       <a
         href={`mailto:${site.email}`}
         className="inline-flex min-h-11 items-center text-small text-muted underline decoration-border-strong underline-offset-4 transition-colors md:min-h-0 hover:text-accent-ink hover:decoration-current"

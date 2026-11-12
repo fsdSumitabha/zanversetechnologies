@@ -36,7 +36,8 @@ export const MenuToggle = forwardRef<
       onClick={onClick}
       aria-label={open ? "Close menu" : "Open menu"}
       aria-expanded={open}
-      aria-controls={controls}
+      // The sheet is only in the page while it is open.
+      aria-controls={open ? controls : undefined}
       className={cn(
         "relative grid size-11 shrink-0 place-items-center rounded-full border border-border bg-surface text-foreground",
         "transition-colors duration-300 hover:border-border-strong hover:bg-surface-muted",

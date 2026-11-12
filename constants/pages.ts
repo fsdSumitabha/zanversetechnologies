@@ -58,9 +58,11 @@ export interface ServicePage {
 }
 
 /**
- * Search title and description for each page: the production site's own
- * (src/data/services.ts, `seo`), in the form the previous build served on its
- * /ae pages, which name Dubai as the place.
+ * THE FALLBACK search title and description for each page: the production
+ * site's own (src/data/services.ts, `seo`), in the form the previous build
+ * served on its /ae pages. A service page's real ones are `seoTitle` and
+ * `seoDescription` in its copy file (constants/services), written from the
+ * keyword research. These only speak for a page added before its copy file is.
  *
  * pageMetadata (lib/metadata.ts) appends " — Zan Verse Technologies", 25
  * characters, to every title, so none of these runs past 37 characters and
@@ -338,20 +340,28 @@ export interface PageIntro {
 }
 
 /**
- * SEARCH TITLES — keyword-bearing, not page names.
+ * THE h1s AND SEARCH TITLES — keyword-bearing, not slogans or page names.
+ *
+ * Each `title` is the page's h1, one string per line of the display heading, so
+ * the h1 says what the page's search title says. Two lines each: PageHero sets
+ * the last line in the accent if it is short enough. `servicesIntro`, `workIntro`
+ * and the others in constants/zan.ts are the homepage's headings, and are separate
+ * from these on purpose.
  *
  * Bare page names ("Services", "Portfolio") would throw away the keywords
  * these pages rank on and leave most of the usable characters unused. The
- * strings below are the previous site's own (vite-react-shift/vite.config.ts,
- * `routeSeoMeta`), naming Dubai where they name a place, and short enough that
- * the rendered title, `<seoTitle> — Zan Verse Technologies`, stays at or under
- * 62 characters. The services index lost a word to get there: "IT Services &
- * Digital Solutions in Dubai" rendered at 65.
+ * titles began as the previous site's own (vite-react-shift/vite.config.ts,
+ * `routeSeoMeta`), naming Dubai where they name a place, and stay short enough
+ * that the rendered title, `<seoTitle> — Zan Verse Technologies`, stays at or
+ * under 62 characters. So at most 37 characters here. One separator each: a colon
+ * inside the title, and the dash pageMetadata adds before the company name. The
+ * services index lost a word to get there: "IT Services & Digital Solutions in
+ * Dubai" rendered at 65.
  *
  * Descriptions are all <= 160 characters, the point past which Google
- * truncates. The company name takes 22 of them wherever it appears, which is
- * why the portfolio and process descriptions are worded more tightly than the
- * production site's, and the services one names the place instead.
+ * truncates, and lead with the phrases in docs/SEO_KEYWORDS.md: `it company
+ * dubai`, `it services dubai`, `it companies in dubai silicon oasis`. The company
+ * name takes 22 of them wherever it appears.
  */
 
 /**
@@ -363,34 +373,34 @@ export interface PageIntro {
  */
 export const homeSeo = {
   description:
-    "Zan Verse Technologies builds web platforms, mobile apps, AI systems and blockchain products, and runs digital marketing. Based in Dubai Silicon Oasis, UAE.",
+    "Zan Verse Technologies is an IT company in Dubai Silicon Oasis. We build websites, mobile apps, AI systems and blockchain products, and run digital marketing.",
 } as const;
 
 export const servicesPage: PageIntro = {
   eyebrow: "Services",
-  title: ["Powerful solutions", "we can create"],
+  title: ["IT services", "in Dubai"],
   lead: "From MVPs to enterprise platforms, here is what we are equipped to build. Each project is customized to your exact requirements.",
   seoTitle: "IT Services & Solutions in Dubai",
   seoDescription:
-    "Development, digital marketing and design in Dubai: web and mobile apps, AI, blockchain, cloud, cybersecurity, SEO, paid media, branding and UI/UX.",
+    "IT services in Dubai: web and mobile development, AI, blockchain, cloud, cyber security, SEO, Google Ads, social media, branding and UI/UX design.",
 };
 
 export const portfolioPage: PageIntro = {
   eyebrow: "Selected work",
-  title: ["Projects we have", "delivered"],
+  title: ["Portfolio and", "case studies"],
   lead: "Recent engagements: the problem we were given, what we built, and what changed afterwards.",
-  seoTitle: "Portfolio - Projects & Case Studies",
+  seoTitle: "Portfolio: Projects & Case Studies",
   seoDescription:
-    "Case studies from Zan Verse Technologies in e-commerce, AI support, logistics, mobile and B2B marketing: the brief, the build and the outcome of each.",
+    "Case studies from Zan Verse Technologies, an IT company in Dubai: web development, mobile apps, AI and digital marketing. The brief, the build and the results.",
 };
 
 export const howWeWorkPage: PageIntro = {
   eyebrow: "Process",
-  title: ["How we turn ideas", "into reality"],
+  title: ["How we build", "your software"],
   lead: "Four steps, weekly progress updates and a live staging environment. You are involved at every stage.",
-  seoTitle: "How We Work - Our Development Process",
+  seoTitle: "How We Work: Our Development Process",
   seoDescription:
-    "How a project runs at Zan Verse Technologies: discovery and strategy, design and prototype, development and testing, then launch and three months of support.",
+    "How a software project runs at Zan Verse Technologies: discovery, design, development and testing, then launch and three months of post-launch support.",
 };
 
 /**
@@ -402,9 +412,9 @@ export const aboutPage: PageIntro = {
   eyebrow: "About Zan Verse Technologies",
   title: ["Based in Dubai.", "Development, marketing", "and design."],
   lead: site.description,
-  seoTitle: "About Us - IT Company in Dubai",
+  seoTitle: "About Us: IT Company in Dubai",
   seoDescription:
-    "Zan Verse Technologies is a digital engineering company in Dubai Silicon Oasis, building web, mobile, AI and blockchain products and running digital marketing.",
+    "About Zan Verse Technologies, an IT company in Dubai Silicon Oasis: what we build, our two ISO certificates, who you work with and how to reach the office.",
 };
 
 /**
@@ -413,20 +423,33 @@ export const aboutPage: PageIntro = {
  */
 export const ourTeamPage: PageIntro = {
   eyebrow: "Our team",
-  title: ["The people", "who do the work"],
+  title: ["Our developers", "and marketers"],
   lead: "Developers and marketers, by name, under the practice they work in. The people who scope your project are the people who build it, and you talk to them directly from the first call through to launch.",
-  seoTitle: "Our Team - Developers & Marketers",
+  seoTitle: "Our Team: Developers & Marketers",
   seoDescription:
-    "Meet the developers and marketers at Zan Verse Technologies. Names, roles and experience for the people who scope, build and run your project, start to finish.",
+    "Meet the blockchain and full stack developers and digital marketers at Zan Verse Technologies, by name and role: the people who scope and build your project.",
 };
 
 export const contactPage: PageIntro = {
   eyebrow: "Get in touch",
-  title: ["Let's build", "something together"],
+  title: ["Contact us in", "Dubai Silicon Oasis"],
   lead: "Tell us about your project. Free consultation, no obligation, and a reply within 24 hours.",
-  seoTitle: "Contact Us - Get a Free Consultation",
+  seoTitle: "Contact Us: Get a Free Consultation",
   seoDescription:
-    "Talk to Zan Verse Technologies about a project. An office in Dubai Silicon Oasis, a reply within 24 hours and a free consultation with the people who build it.",
+    "Contact Zan Verse Technologies in Dubai Silicon Oasis: a free consultation, a reply within 24 hours and a written proposal within 3 to 5 business days.",
+};
+
+/**
+ * /guides, the list. The guides themselves are in constants/guides, which this
+ * file must not import, so this is only the page's own header.
+ */
+export const guidesPage: PageIntro = {
+  eyebrow: "Guides",
+  title: ["Guides for businesses", "in Dubai"],
+  lead: "Plain answers to the questions businesses in Dubai and across the UAE ask about websites, search, security testing, smart contracts, AI agents and Google Ads.",
+  seoTitle: "Guides: Websites, SEO, Security & AI",
+  seoDescription:
+    "Guides for businesses in Dubai and the UAE: website cost, SEO, AEO and GEO, VAPT, smart contracts, AI agents and Google Ads budgets, in plain answers.",
 };
 
 /* ── Section labels used by the new pages ─────────────────────────────────── */
@@ -447,6 +470,12 @@ export const labels = {
   atAGlance: "At a glance",
   breadcrumb: "Breadcrumb",
   effective: "Effective",
+  guides: "Guides",
+  guide: "Guide",
+  inThisGuide: "In this guide",
+  relatedServices: "Related services",
+  seeAlso: "See also",
+  sources: "Sources",
 } as const;
 
 /** The closing call to action every standing page ends on. */
@@ -499,41 +528,31 @@ export const homeCrumb = { label: "Home", href: "/" } as const;
 export const pageTrail = (label: string, href: string) => [homeCrumb, { label, href }] as const;
 
 /* ── The route registry ───────────────────────────────────────────────────────
-   Every path this site actually serves, with its sitemap weighting. app/sitemap.ts
-   is generated from this and nothing else, so a URL can never be advertised
-   without a page behind it. Weightings mirror the previous site's.
+   Every public path this site serves, apart from the guides themselves.
+   app/sitemap.ts, the share cards, the Markdown copies and /llms.txt are all
+   generated from this, so a URL can never be advertised without a page behind it.
 
    Keep in step with app/: the five legal routes, the six standing pages, the
-   services index and the sixteen pages /services/[...slug] resolves.
+   services index, the guides index and the sixteen pages /services/[...slug]
+   resolves. The pages under /guides are not listed, because this file is in the
+   browser bundle and must not import their copy. The readers of this list add
+   them from constants/guides.
    ─────────────────────────────────────────────────────────────────────────── */
 
 export interface SiteRoute {
   /** Path with a leading slash; the homepage is "/". */
   path: string;
-  priority: number;
-  changeFrequency: "daily" | "weekly" | "monthly" | "yearly";
 }
 
 export const siteRoutes: readonly SiteRoute[] = [
-  { path: "/", priority: 1.0, changeFrequency: "weekly" },
-  { path: "/services", priority: 0.9, changeFrequency: "monthly" },
-  { path: "/portfolio", priority: 0.8, changeFrequency: "monthly" },
-  { path: "/contact-us", priority: 0.8, changeFrequency: "monthly" },
-  { path: "/about-us", priority: 0.7, changeFrequency: "monthly" },
-  { path: "/how-we-work", priority: 0.7, changeFrequency: "monthly" },
-  /* A band below the pages a buyer lands on, and the one page here that
-     changes when a person joins or leaves rather than when the offer does. */
-  { path: "/our-team", priority: 0.6, changeFrequency: "monthly" },
-  // An area page (/services/web-development) outranks a discipline under a
-  // practice (/services/digital-marketing/seo-aeo-geo), as it did before.
-  ...servicePages.map((page) => ({
-    path: page.href,
-    priority: page.parent ? 0.7 : 0.8,
-    changeFrequency: "monthly" as const,
-  })),
-  ...legalSlugs.map((slug) => ({
-    path: `/${slug}`,
-    priority: 0.3,
-    changeFrequency: "yearly" as const,
-  })),
+  { path: "/" },
+  { path: "/services" },
+  { path: "/portfolio" },
+  { path: "/contact-us" },
+  { path: "/about-us" },
+  { path: "/how-we-work" },
+  { path: "/our-team" },
+  { path: "/guides" },
+  ...servicePages.map((page) => ({ path: page.href })),
+  ...legalSlugs.map((slug) => ({ path: `/${slug}` })),
 ];

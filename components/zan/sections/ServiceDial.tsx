@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useRef, useState } from "react";
+import { Fragment, useId, useRef, useState } from "react";
 import { motion, type Variants } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { useGSAP } from "@gsap/react";
@@ -258,7 +258,7 @@ export function ServiceDial() {
   };
 
   return (
-    <section ref={sectionRef} id="expertise" aria-labelledby={`${uid}-title`} className="zan-dial relative bg-canvas">
+    <section ref={sectionRef} id="expertise" className="zan-dial relative bg-canvas">
       <div className="container-zan flex flex-col items-center pt-section text-center">
         <motion.div
           data-reveal
@@ -271,21 +271,24 @@ export function ServiceDial() {
           <Eyebrow>{pillarsIntro.eyebrow}</Eyebrow>
         </motion.div>
         {/* The h2 is what is observed: each line starts fully clipped below
-            its own mask, so an observer on the line would never see it. */}
+            its own mask, so an observer on the line would never see it. The
+            space between the lines renders nothing; it keeps their words apart
+            in the text. */}
         <motion.h2
-          id={`${uid}-title`}
-          aria-label={pillarsIntro.title.join(" ")}
           className="mt-5 font-display text-h2 text-balance"
           initial="hidden"
           whileInView="shown"
           viewport={VIEWPORT}
         >
           {pillarsIntro.title.map((line, i) => (
-            <span key={i} aria-hidden="true" className="-mb-[0.1em] block overflow-hidden pb-[0.1em]">
-              <motion.span data-reveal className="block" variants={LINE_RISE} custom={i}>
-                {line}
-              </motion.span>
-            </span>
+            <Fragment key={i}>
+              {i > 0 && " "}
+              <span className="-mb-[0.1em] block overflow-hidden pb-[0.1em]">
+                <motion.span data-reveal className="block" variants={LINE_RISE} custom={i}>
+                  {line}
+                </motion.span>
+              </span>
+            </Fragment>
           ))}
         </motion.h2>
         <motion.p
@@ -386,10 +389,12 @@ function DialSpread({ id, pillar, tone, href }: { id: string; pillar: Pillar; to
           </div>
 
           {/* When pinned the scale carries the name, so here it is for screen
-              readers only and the tagline is the headline (dial.css). */}
-          <h3 id={titleId} className="zan-dial-name mt-5 font-display text-h1 text-foreground">
+              readers only and the tagline is the headline (dial.css). A label,
+              not a heading: it names the article, and the deck above already
+              has these four names as headings. */}
+          <p id={titleId} className="zan-dial-name mt-5 font-display text-h1 text-foreground">
             {pillar.title}
-          </h3>
+          </p>
           <p className="mt-3 font-display text-[clamp(1.5rem,1.1rem+1.9vw,2.25rem)] leading-[1.1] text-foreground lg:mt-[clamp(1rem,2.6vh,1.75rem)] lg:text-[min(clamp(2rem,0.9rem+1.9vw,3rem),6vh)] lg:leading-[1.06]">
             {sentences(pillar.tagline).map((line, i, all) => (
               <span key={line} className="sm:block">
@@ -431,7 +436,7 @@ function DialSpread({ id, pillar, tone, href }: { id: string; pillar: Pillar; to
                   key={item}
                   className={`flex items-center gap-3 border-t py-2 sm:gap-4 sm:py-3 lg:py-[clamp(0.625rem,1.6vh,0.95rem)] ${tone.rule}`}
                 >
-                  <span className="w-5 shrink-0 font-mono text-eyebrow text-muted tabular-nums">{pad(i + 1)}</span>
+                  <span className="w-5 shrink-0 font-mono text-eyebrow text-muted tabular-nums">{pad(i + 1)}</span>{" "}
                   <span className="text-[0.9375rem] font-medium text-foreground sm:text-body lg:text-[1.0625rem] xl:text-lg">
                     {item}
                   </span>

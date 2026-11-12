@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRef, type CSSProperties, type ReactNode } from "react";
 import { useGSAP } from "@gsap/react";
 import { gsap, MQ } from "@/lib/gsap";
+import { MotionPauseToggle } from "@/components/zan/shell/MotionPauseControl";
 import { MarkStage } from "./MarkStage";
 import { STAR_LAYERS } from "./sky";
 import { GridField } from "./GridField";
@@ -36,7 +37,8 @@ const DEPTH = {
  *
  * Layers, back to front: sky (three star depths) · the grid field · copy
  * and mark · astronaut. (`ufo` in DEPTH is RoamingUfo's, which is not
- * mounted at the moment.)
+ * mounted at the moment.) In the lower left, the visible Pause animations
+ * button (shell/MotionPauseControl.tsx).
  *
  * Every GSAP scene is built inside gsap.matchMedia(MQ.motion), so reduced
  * motion reverts to the still composition with nothing hidden.
@@ -139,7 +141,10 @@ export function HeroScene({ children }: { children: ReactNode }) {
         </div>
       </div>
 
-      <div className="container-zan relative z-20 grid flex-1 content-center items-center gap-y-10 pt-nav pb-12 lg:grid-cols-12 lg:gap-x-8 lg:pb-16">
+      {/* pb-18 below 640px leaves the pause button its own strip under the
+          figures (see the button, below). Only where the button shows: with
+          reduced motion it is hidden, so the padding stays at 48px. */}
+      <div className="container-zan relative z-20 grid flex-1 content-center items-center gap-y-10 pt-nav pb-12 motion-safe:max-sm:pb-18 lg:grid-cols-12 lg:gap-x-8 lg:pb-16">
         {/* Below lg the copy clears the astronaut, which sits in the top-right
             corner under the navbar: the padding is the astronaut's height plus
             a gap, so the badge can never start beside it. */}
@@ -159,11 +164,32 @@ export function HeroScene({ children }: { children: ReactNode }) {
       >
         <div
           data-reveal
-          className="zan-hero-in flex flex-col items-center gap-2 font-mono text-[0.6875rem] tracking-[0.2em] text-subtle uppercase"
+          className="zan-hero-in flex flex-col items-center gap-2 font-mono text-[0.75rem] tracking-[0.2em] text-subtle uppercase"
           style={{ "--zan-d": 6 } as CSSProperties}
         >
           <span>Scroll</span>
           <span className="zan-hero-cue-line" />
+        </div>
+      </div>
+
+      {/* Pause animations (WCAG 2.2.2). The typing and the floating mark move
+          by themselves, so the hero carries a visible switch for every
+          animation on the site; the keyboard pill stays on every page.
+          Bottom left, 16px up, on the container's left edge, which from 1024px
+          is the copy's: the scroll cue holds the centre, and the contact dock
+          is fixed bottom right, over that corner whenever the hero fills the
+          screen. How it clears the copy at each width:
+          - below 640px the figures span the column, so the grid's bottom
+            padding is 72px there (pb-18): 16px, the button's 44px, then 12px;
+          - from 640px to 1023px the copy is centred, and nothing low in it
+            comes near the left edge (the figures are 27rem at most);
+          - from 1024px the figures sit in the left column at least 64px up
+            (lg:pb-16), 12px over the 36px button.
+          Outside the copy's parallax, so the copy only lifts away from it as
+          the page scrolls; it enters with the cue. */}
+      <div className="container-zan pointer-events-none absolute inset-x-0 bottom-4 z-20 flex">
+        <div data-reveal className="zan-hero-in pointer-events-auto flex" style={{ "--zan-d": 6 } as CSSProperties}>
+          <MotionPauseToggle />
         </div>
       </div>
 

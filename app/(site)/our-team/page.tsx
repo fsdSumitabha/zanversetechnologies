@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
 import "@/components/zan/team/teamPage.css";
+import { PageNotes, UpdatedLine } from "@/components/zan/page/ContentBlocks";
 import { PageHero } from "@/components/zan/page/PageHero";
 import { Reveal } from "@/components/zan/page/Reveal";
-import { Section } from "@/components/zan/page/Section";
+import { Section, toneAt } from "@/components/zan/page/Section";
 import { HeroPanel } from "@/components/zan/page/HeroPanel";
 import { SiteButtonLink } from "@/components/zan/services/SiteLinks";
 import { TeamLeadCard, TeamPersonCard } from "@/components/zan/team/TeamPageCard";
 import { labels, ourTeamPage, pageTrail } from "@/constants/pages";
 import { ctas, teamGroups, teamLead } from "@/constants/zan";
 import { pageMetadata } from "@/lib/metadata";
+import { jsonLd, webPageSchema } from "@/lib/schema";
 
 export const metadata: Metadata = pageMetadata({
   title: ourTeamPage.seoTitle,
@@ -24,10 +26,9 @@ export const metadata: Metadata = pageMetadata({
    description be read rather than glimpsed, with the profile links spelled out.
    Same data (constants/zan.ts), so the two can never say different things.
 
-   The director sits in the hero's panel rather than in a band of his own: the
-   card we can honestly build for him is a name and a job title, and a name and
-   a job title alone across 1224px of page would be a band mostly made of
-   nothing. In the panel it is the first thing on the page at every width, above
+   The director sits in the hero's panel rather than in a band of his own: his
+   card is a name, a job title and one approved line (10 Nov 2026), and that
+   alone across 1224px of page would be a band mostly made of nothing. In the panel it is the first thing on the page at every width, above
    both groups, and it fills the hero with something specific to this page
    instead of the facts two other pages already show there.
 
@@ -40,6 +41,19 @@ export const metadata: Metadata = pageMetadata({
 export default function OurTeamPage() {
   return (
     <main id="main">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: jsonLd(
+            webPageSchema({
+              path: "/our-team",
+              name: ourTeamPage.title.join(" "),
+              description: ourTeamPage.seoDescription,
+              type: "AboutPage",
+            }),
+          ),
+        }}
+      />
       <PageHero
         eyebrow={ourTeamPage.eyebrow}
         title={ourTeamPage.title}
@@ -54,7 +68,7 @@ export default function OurTeamPage() {
         <div className="mt-9 flex flex-wrap items-center gap-3">
           <SiteButtonLink href={ctas.consultation.href} size="lg">
             {ctas.consultation.label}
-          </SiteButtonLink>
+          </SiteButtonLink>{" "}
           <SiteButtonLink href="/how-we-work" variant="secondary" size="lg">
             How we work
           </SiteButtonLink>
@@ -94,6 +108,10 @@ export default function OurTeamPage() {
           </SiteButtonLink>
         </Reveal>
       </Section>
+
+      <PageNotes tone={toneAt(teamGroups.length + 1)}>
+        <UpdatedLine path="/our-team" />
+      </PageNotes>
     </main>
   );
 }

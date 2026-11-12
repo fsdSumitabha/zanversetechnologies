@@ -74,7 +74,9 @@ export function ProcessTrack() {
   const count = processSteps.length;
 
   return (
-    <ol ref={root} className="relative mt-12 grid gap-y-10 sm:mt-14 xl:grid-cols-4 xl:gap-x-8">
+    // A list may only hold its items, so the lines sit on a wrapper exactly the
+    // list's size. They come first, so the steps still paint over them.
+    <div className="relative mt-12 sm:mt-14">
       {/* Down the left, through the nodes' centres. */}
       <span aria-hidden="true" className="absolute top-2 bottom-2 left-[1.34375rem] w-px bg-border-strong xl:hidden" />
       <motion.span
@@ -90,9 +92,11 @@ export function ProcessTrack() {
         style={{ scaleX: still ? 1 : scrollYProgress }}
       />
 
-      {processSteps.map((step, i) => (
-        <Step key={step.id} step={step} at={i / count} progress={scrollYProgress} still={still} />
-      ))}
-    </ol>
+      <ol ref={root} className="grid gap-y-10 xl:grid-cols-4 xl:gap-x-8">
+        {processSteps.map((step, i) => (
+          <Step key={step.id} step={step} at={i / count} progress={scrollYProgress} still={still} />
+        ))}
+      </ol>
+    </div>
   );
 }

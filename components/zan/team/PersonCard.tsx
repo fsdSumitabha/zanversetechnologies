@@ -16,7 +16,10 @@ import type { Person } from "@/constants/zan";
    The profile links are bare glyphs here because a card this narrow has no
    width for a word beside them. On /our-team, where the card is half as wide
    again and the links are half the reason someone came, they are spelled out
-   (TeamPageCard.tsx). */
+   (TeamPageCard.tsx).
+
+   The {" "} between blocks renders nothing: it keeps the words apart in the raw
+   text. */
 
 const card =
   "group/person flex h-full flex-col rounded-3xl border border-border bg-surface p-6 transition-[border-color,box-shadow,transform] duration-500 ease-out-expo hover:-translate-y-0.5 hover:border-border-strong hover:shadow-lift sm:p-7";
@@ -35,15 +38,14 @@ export function PersonCard({ person }: { person: Person }) {
           className="size-20"
           monogramClassName="text-h2"
         />
-        <h4 className="mt-5 font-display text-h3 font-semibold text-foreground">{person.name}</h4>
-        <p className="mt-1.5 text-small font-medium text-accent-ink">{person.role}</p>
+        <h4 className="mt-5 font-display text-h3 font-semibold text-foreground">{person.name}</h4>{" "}
+        <p className="mt-1.5 text-small font-medium text-accent-ink">{person.role}</p>{" "}
         {person.description && <p className="mt-3.5 text-body text-muted">{person.description}</p>}
-      </div>
-
+      </div>{" "}
       <div className="mt-7 flex flex-wrap items-center justify-between gap-x-4 gap-y-3 border-t border-border pt-5">
         {person.experience && (
           <dl className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-            <dt className="font-mono text-eyebrow text-subtle uppercase">Experience</dt>
+            <dt className="font-mono text-eyebrow text-subtle uppercase">Experience</dt>{" "}
             <dd className="font-mono text-small font-medium text-accent-ink tabular-nums">{person.experience}</dd>
           </dl>
         )}

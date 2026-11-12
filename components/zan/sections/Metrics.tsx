@@ -129,12 +129,12 @@ function Tile({ m, index }: { m: Metric; index: number }) {
           layout.tall ? "text-[clamp(4.5rem,2.4rem+7vw,9rem)]" : "text-[clamp(3.25rem,2rem+4vw,5.5rem)]",
         )}
       >
-        <span className="sr-only">{m.value}</span>
+        <span className="sr-only">{m.value}</span>{" "}
         <span aria-hidden="true" data-count={m.value}>
           {m.value}
         </span>
       </p>
-      <h3 className="mt-4 text-h3 font-semibold">{m.label}</h3>
+      <p className="mt-4 text-h3 font-semibold">{m.label}</p>
       <p className={cn("mt-1 text-body", onBrand ? "text-action-foreground/85" : "text-muted")}>{m.detail}</p>
       {extra}
     </div>

@@ -2,8 +2,8 @@
    LINKS
 
    Every page this site links to lives in this site: the services index and its
-   sixteen service pages, portfolio, how we work, about, our team, contact and
-   the five policy pages are all routes under app/. A content href
+   sixteen service pages, portfolio, how we work, about, our team, contact, the
+   guides and the five policy pages are all routes under app/. A content href
    ("/services") is used exactly as written.
 
    The one thing that needs resolving is an in-page anchor. "#contact" is a

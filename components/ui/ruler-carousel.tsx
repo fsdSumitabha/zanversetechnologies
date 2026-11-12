@@ -17,7 +17,9 @@ import { cn } from "@/lib/utils";
 
    Keyboard: the words are buttons, and arrow keys, Home and End move between
    them. The parent decides what picking one does (the service dial scrolls
-   the page to it).
+   the page to it). The strip is one tab stop, the word on the centre tick, so
+   Tab can never land on a word clipped off to one side. A word that already
+   holds focus keeps it when scrolling moves the centre tick on.
    ─────────────────────────────────────────────────────────────────────────── */
 
 export interface RulerItem {
@@ -150,6 +152,7 @@ export function RulerStrip({
               id={`${idPrefix}-word-${item.id}`}
               data-ruler-word=""
               data-ruler-index={i}
+              tabIndex={i === active ? 0 : -1}
               aria-controls={controlsOf?.(i)}
               aria-current={i === active ? "true" : undefined}
               onClick={() => onPick(i)}

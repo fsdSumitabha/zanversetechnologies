@@ -85,7 +85,7 @@ export function PackageTabs({
             >
               <span className={cn("font-mono text-eyebrow", selected ? "text-accent-ink" : "text-subtle")}>
                 {String(i + 1).padStart(2, "0")}
-              </span>
+              </span>{" "}
               <span
                 className={cn(
                   "mt-2.5 font-display text-h3 font-semibold transition-colors duration-300",
@@ -93,7 +93,7 @@ export function PackageTabs({
                 )}
               >
                 {tab.label}
-              </span>
+              </span>{" "}
               <span className="mt-1 text-[0.8125rem] leading-snug text-subtle">{tab.covers}</span>
               {selected && (
                 <motion.span

@@ -67,6 +67,14 @@
   scroll-snap-align: start;
 }
 
+/* For anything that scrolls a link into view from a script. "Just far enough"
+   is not far enough here: snapping then pulls the rail back and the link is off
+   the edge again. Measured at 1440 and 390. This margin is more than snapping
+   can take back. It paints nothing, and Tab lands in the same places with it. */
+.zan-team-rail a {
+  scroll-margin-inline: min(12rem, 40vw);
+}
+
 /* The group marker: the practice's name set down a hairline, so the two
    groups are legible as groups even when only part of the rail is on screen. */
 .zan-team-marker {

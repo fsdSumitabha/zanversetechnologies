@@ -7,6 +7,7 @@ import { legalIntro, legalSlugs, type LegalSlug } from "@/constants/pages";
 import { legalDocuments, type LegalBlock } from "@/constants/legal";
 import { credits, office, site } from "@/constants/zan";
 import { pageMetadata } from "@/lib/metadata";
+import { jsonLd, webPageSchema } from "@/lib/schema";
 
 /** Title, description and canonical for a policy page, so the five routes stay one-liners. */
 export function legalMetadata(slug: LegalSlug): Metadata {
@@ -117,6 +118,12 @@ export function LegalDocumentView({ slug }: { slug: LegalSlug }) {
   const doc = legalDocuments[slug];
   return (
     <main id="main">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: jsonLd(webPageSchema({ path: `/${slug}`, name: doc.title, description: legalIntro[slug] })),
+        }}
+      />
       <PageHero
         eyebrow="Legal"
         title={[doc.title]}

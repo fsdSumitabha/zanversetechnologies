@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { FaqAccordion } from "@/components/zan/contact/FaqAccordion";
+import { ContentSections, PageNotes, SourcesList, UpdatedLine } from "@/components/zan/page/ContentBlocks";
 import { PageHero, PageHeroPhoto } from "@/components/zan/page/PageHero";
 import { ProjectPanel } from "@/components/zan/page/ProjectPanel";
 import { Reveal } from "@/components/zan/page/Reveal";
-import { Section } from "@/components/zan/page/Section";
+import { Section, toneAt } from "@/components/zan/page/Section";
 import { FactCard, ServiceCard, StepCard } from "@/components/zan/page/cards";
 import { HeroLinks, HeroList, HeroPanel } from "@/components/zan/page/HeroPanel";
 import { SiteButtonLink } from "@/components/zan/services/SiteLinks";
@@ -21,9 +22,10 @@ import {
   type ServicePage,
 } from "@/constants/pages";
 import { getServiceHero } from "@/constants/serviceHero";
+import { getServiceContent } from "@/constants/services";
 import { ctas, faqIntro, faqsForService, processSteps, projects, techDomains } from "@/constants/zan";
 import { pageMetadata } from "@/lib/metadata";
-import { faqSchema, jsonLd, serviceSchema } from "@/lib/schema";
+import { faqSchema, jsonLd, serviceSchema, webPageSchema } from "@/lib/schema";
 
 type RouteParams = { params: Promise<{ slug?: string[] }> };
 
@@ -41,9 +43,10 @@ export async function generateMetadata({ params }: RouteParams): Promise<Metadat
   const { slug = [] } = await params;
   const page = findServicePage(slug);
   if (!page) return {};
+  const content = getServiceContent(page.priceKey);
   return pageMetadata({
-    title: page.seoTitle,
-    description: page.seoDescription,
+    title: content?.seoTitle ?? page.seoTitle,
+    description: content?.seoDescription ?? page.seoDescription,
     path: page.href,
   });
 }
@@ -64,6 +67,14 @@ export default async function ServiceDetailPage({ params }: RouteParams) {
   const page = findServicePage(slug);
   if (!page) notFound();
 
+  /* The page's words: its h1, its opening, its sections, its questions and its
+     sources (constants/services). The short `page.title` stays what the trail
+     and the question band call it. */
+  const content = getServiceContent(page.priceKey);
+  const h1 = content?.h1 ?? page.title;
+  const lead = content?.lead ?? page.description;
+  const sections = content?.sections ?? [];
+
   const children = childrenOf(page.slug);
   const isBranding = page.slug === "branding-and-designing";
   const domains = (serviceTechDomains[page.priceKey] ?? [])
@@ -74,20 +85,28 @@ export default async function ServiceDetailPage({ params }: RouteParams) {
      have one; the lookup still returns undefined rather than a placeholder if
      a seventeenth is ever added before its picture is. */
   const hero = getServiceHero(page.priceKey);
-  /* Three of the sixteen pages have a question set of their own. The rest show
-     no section rather than a borrowed one. Looked up here, once, so the
-     accordion and the FAQPage markup below are handed the same array and
-     cannot disagree. */
-  const faqs = faqsForService[page.priceKey] ?? [];
-
-  /* The closing bands alternate ground, so each one has to know what the band
-     above it landed on. */
-  const processTone = domains.length > 0 || children.length > 0 ? "bg" : "surface";
-  const faqTone = processTone === "bg" ? "surface" : "bg";
-  const otherTone = faqs.length === 0 ? "surface" : faqTone === "bg" ? "surface" : "bg";
+  /* The set carried over for three of the sixteen pages, then the questions in
+     the page's copy file. Joined here, once, so the accordion and the FAQPage
+     markup below are handed the same array and cannot disagree. */
+  const faqs = [...(faqsForService[page.priceKey] ?? []), ...(content?.faqs ?? [])];
   const siblings = (practiceOf(page)?.items ?? [])
     .filter((item) => item.href !== page.href)
     .slice(0, 3);
+
+  /* The bands alternate ground, and which ones a page has varies, so each one
+     asks where it falls. The copy file's sections come first, straight under the
+     hero. */
+  const bands = [
+    children.length > 0 && "disciplines",
+    isBranding && "packages",
+    domains.length > 0 && "technology",
+    relatedWork.length > 0 && "work",
+    "process",
+    faqs.length > 0 && "faq",
+    siblings.length > 0 && "other-services",
+    "notes",
+  ].filter(Boolean);
+  const toneOf = (band: string) => toneAt(sections.length + bands.indexOf(band));
 
   /* The hero's right column, in order of what this page actually has: the
      disciplines under it, what it includes, or its siblings. Never a
@@ -109,21 +128,28 @@ export default async function ServiceDetailPage({ params }: RouteParams) {
 
   return (
     <main id="main">
-      {/* What this page sells, with a pointer back to the Organization node
-          the layout attaches. Without it these sixteen pages would carry a
-          BreadcrumbList and nothing else.
-
-          The FAQPage rides along on the three pages that render a question set
-          of their own; `faqSchema` returns null for the other thirteen and
-          `jsonLd` drops it. */}
+      {/* What this URL is and when it last changed, what it sells, and the
+          questions it answers, with pointers back to the Organization and
+          WebSite nodes the layout attaches. `faqSchema` returns null for a page
+          with no questions, and `jsonLd` drops it. */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: jsonLd(serviceSchema(page), faqSchema(faqs)) }}
+        dangerouslySetInnerHTML={{
+          __html: jsonLd(
+            webPageSchema({
+              path: page.href,
+              name: h1,
+              description: content?.seoDescription ?? page.seoDescription,
+            }),
+            serviceSchema(page, { name: h1, description: lead }),
+            faqSchema(faqs),
+          ),
+        }}
       />
       <PageHero
         eyebrow={page.tagline}
-        title={[page.title]}
-        lead={page.description}
+        title={[h1]}
+        lead={lead}
         trail={trailFor(page)}
         aside={aside}
         media={hero && <PageHeroPhoto photo={hero} />}
@@ -134,7 +160,7 @@ export default async function ServiceDetailPage({ params }: RouteParams) {
               to name the service they have just spent a page reading about. */}
           <SiteButtonLink href={`${ctas.consultation.href}?from=${page.href}`} size="lg">
             {ctas.consultation.label}
-          </SiteButtonLink>
+          </SiteButtonLink>{" "}
           {/* The branding page is the one page with a deck to jump to. The
               rest send the undecided visitor to the work instead, which is the
               only other thing a service page can offer above the fold. */}
@@ -150,10 +176,12 @@ export default async function ServiceDetailPage({ params }: RouteParams) {
         </div>
       </PageHero>
 
+      <ContentSections sections={sections} />
+
       {children.length > 0 && (
         <Section
           id="disciplines"
-          tone="surface"
+          tone={toneOf("disciplines")}
           eyebrow={labels.disciplines}
           title="Sold as separate disciplines"
           lead="Each has its own page, with what the work covers and how it is run."
@@ -180,6 +208,7 @@ export default async function ServiceDetailPage({ params }: RouteParams) {
       {isBranding && (
         <Section
           id="packages"
+          tone={toneOf("packages")}
           eyebrow={labels.packages}
           title="Three branding decks"
           lead="Buy a discipline on its own, or take one of these. Each deck is quoted against its scope after the discovery call."
@@ -200,7 +229,7 @@ export default async function ServiceDetailPage({ params }: RouteParams) {
       )}
 
       {domains.length > 0 && (
-        <Section id="technology" tone="surface" eyebrow={labels.technology} title="What we build it with">
+        <Section id="technology" tone={toneOf("technology")} eyebrow={labels.technology} title="What we build it with">
           <div className="grid gap-5 md:grid-cols-2">
             {domains.map((domain, i) => (
               <Reveal key={domain.id} delay={Math.min(i, 3) * 0.05} className="h-full">
@@ -227,6 +256,7 @@ export default async function ServiceDetailPage({ params }: RouteParams) {
       {relatedWork.length > 0 && (
         <Section
           id="work"
+          tone={toneOf("work")}
           eyebrow={labels.relatedWork}
           title={relatedWork.length > 1 ? "Projects in this discipline" : "A project in this discipline"}
           aside={
@@ -245,7 +275,7 @@ export default async function ServiceDetailPage({ params }: RouteParams) {
 
       <Section
         id="process"
-        tone={processTone}
+        tone={toneOf("process")}
         eyebrow={labels.process}
         title="Four steps, start to launch"
         aside={
@@ -272,7 +302,7 @@ export default async function ServiceDetailPage({ params }: RouteParams) {
       {faqs.length > 0 && (
         <Section
           id="faq"
-          tone={faqTone}
+          tone={toneOf("faq")}
           eyebrow={faqIntro.eyebrow}
           title={`${page.title} questions`}
           lead="Common questions about this work, answered in full."
@@ -284,7 +314,12 @@ export default async function ServiceDetailPage({ params }: RouteParams) {
       )}
 
       {siblings.length > 0 && (
-        <Section id="other-services" tone={otherTone} eyebrow={labels.otherServices} title="Also in this practice">
+        <Section
+          id="other-services"
+          tone={toneOf("other-services")}
+          eyebrow={labels.otherServices}
+          title="Also in this practice"
+        >
           <ul className="grid gap-5 md:grid-cols-3">
             {siblings.map((item, i) => (
               <li key={item.id} className="min-w-0">
@@ -301,6 +336,11 @@ export default async function ServiceDetailPage({ params }: RouteParams) {
           </ul>
         </Section>
       )}
+
+      <PageNotes tone={toneOf("notes")}>
+        <SourcesList sources={content?.sources} />
+        <UpdatedLine path={page.href} />
+      </PageNotes>
     </main>
   );
 }

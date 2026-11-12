@@ -151,7 +151,9 @@ export function LandingHero({ page }: { page: LandingPage }) {
 
         {/* What this page sells, in the words people search for, then the proof:
             this page's own results under a hairline, as the homepage sets its
-            figures, and the rating beside real client marks. */}
+            figures, and the rating beside real client marks. The figures'
+            labels are muted, as the homepage's are: subtle measured under 4.5:1
+            there, over the same canvas and grid field. */}
         <div data-reveal className="zan-hero-in min-w-0 lg:col-span-7 lg:self-start" style={delay(3)}>
           <div className="mb-5 max-w-2xl">
             <p id="lp-hero-services" className="font-mono text-eyebrow text-accent-ink uppercase">
@@ -178,7 +180,7 @@ export function LandingHero({ page }: { page: LandingPage }) {
                   i > 0 && "border-l border-border pl-3 sm:pl-5",
                 )}
               >
-                <dt className="text-[0.75rem] leading-snug text-subtle">{o.label}</dt>
+                <dt className="text-[0.75rem] leading-snug text-muted">{o.label}</dt>
                 <dd className="font-hero text-[1.375rem] leading-none font-bold tracking-[-0.03em] text-foreground tabular-nums [font-stretch:92%] sm:text-[1.875rem]">
                   {o.value}
                 </dd>

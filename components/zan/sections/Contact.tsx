@@ -27,11 +27,16 @@ export function Contact() {
   return (
     // overflow-clip, not hidden: `hidden` makes the section a scroll container
     // and the office card beside the form would stop sticking.
-    <section id="contact" className="relative isolate scroll-mt-nav overflow-clip border-t border-border bg-surface-muted py-section">
+    <section
+      id="contact"
+      aria-labelledby="contact-heading"
+      className="relative isolate scroll-mt-nav overflow-clip border-t border-border bg-surface-muted py-section"
+    >
       <ContactRays />
 
       <div className="container-zan relative">
         <SectionHeading
+          id="contact-heading"
           eyebrow={contactIntro.eyebrow}
           title={contactIntro.title}
           lead={contactIntro.lead}

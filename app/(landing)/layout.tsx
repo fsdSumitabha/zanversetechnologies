@@ -6,7 +6,11 @@ import { SmoothScrollProvider } from "@/components/animations/SmoothScrollProvid
 import { Analytics } from "@/components/zan/analytics/Analytics";
 import { ConsentBanner } from "@/components/zan/analytics/ConsentBanner";
 import { Providers } from "@/components/zan/Providers";
+import { MotionPauseControl } from "@/components/zan/shell/MotionPauseControl";
+import { EARLY_INPUT_SCRIPT } from "@/lib/earlyInput";
+import { MOTION_PAUSE_SCRIPT } from "@/lib/motionPause";
 import { ScrollProgress } from "@/components/zan/shell/ScrollProgress";
+import { WebMcpTools } from "@/components/zan/webmcp/WebMcpTools";
 import { site } from "@/constants/zan";
 import { brandPalette } from "@/lib/brand";
 
@@ -41,6 +45,10 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
+/* The browser's WebMCP origin trial token for this domain, once there is one:
+   see app/(site)/layout.tsx. */
+const webMcpTrialToken = process.env.NEXT_PUBLIC_WEBMCP_OT_TOKEN;
+
 /**
  * The landing pages' root layout, the site's third.
  *
@@ -66,9 +74,16 @@ export default function LandingLayout({ children }: Readonly<{ children: React.R
       suppressHydrationWarning
     >
       <head>
-        {/* Without JavaScript nothing would ever reveal: show everything at rest. */}
+        {webMcpTrialToken ? <meta httpEquiv="origin-trial" content={webMcpTrialToken} /> : null}
+        {/* A "Pause animations" choice saved on an earlier visit, before the page paints. */}
+        <script dangerouslySetInnerHTML={{ __html: MOTION_PAUSE_SCRIPT }} />
+        {/* Notes input before hydration, for the section-link hold. */}
+        <script dangerouslySetInnerHTML={{ __html: EARLY_INPUT_SCRIPT }} />
+        {/* Without JavaScript nothing would ever reveal: show everything at rest.
+            That goes for the closed FAQ answers too, which only a click could
+            open. */}
         <noscript>
-          <style>{`[data-reveal]{opacity:1!important;transform:none!important;clip-path:none!important}`}</style>
+          <style>{`[data-reveal]{opacity:1!important;transform:none!important;clip-path:none!important}.zan-faq-panel{grid-template-rows:1fr!important}.zan-faq-panel p,.zan-faq-panel [hidden]{opacity:1!important;transform:none!important;translate:none!important;content-visibility:visible!important}`}</style>
         </noscript>
       </head>
       <body className="bg-canvas text-foreground antialiased" suppressHydrationWarning>
@@ -76,8 +91,9 @@ export default function LandingLayout({ children }: Readonly<{ children: React.R
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[300] focus:rounded-full focus:bg-action focus:px-5 focus:py-3 focus:text-small focus:text-action-foreground"
         >
-          Skip to content
+          Skip to content{" "}
         </a>
+        <MotionPauseControl />
         <div className="noise-overlay" aria-hidden="true" />
         <Providers>
           <ConsentBanner />
@@ -85,6 +101,8 @@ export default function LandingLayout({ children }: Readonly<{ children: React.R
           <SmoothScrollProvider>{children}</SmoothScrollProvider>
         </Providers>
         <Analytics />
+        {/* Renders nothing, and loads nothing unless the browser has WebMCP. */}
+        <WebMcpTools />
       </body>
     </html>
   );
