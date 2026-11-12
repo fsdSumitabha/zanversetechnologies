@@ -10,14 +10,15 @@ import "./contact.css";
 const LightRays = dynamic(() => import("@/components/ui/LightRays"), { ssr: false });
 
 /** Desktop with motion allowed — everywhere else the static veil is enough. */
-const QUERY = `${MQ.desktop} and ${MQ.motion}`;
+/** Read when used: an agent's page answers no (lib/agentMode.ts). */
+const query = () => `${MQ.desktop} and ${MQ.motion}`;
 
 function subscribe(onChange: () => void) {
-  const mq = window.matchMedia(QUERY);
+  const mq = window.matchMedia(query());
   mq.addEventListener("change", onChange);
   return () => mq.removeEventListener("change", onChange);
 }
-const getSnapshot = () => window.matchMedia(QUERY).matches;
+const getSnapshot = () => window.matchMedia(query()).matches;
 const getServerSnapshot = () => false;
 
 /**

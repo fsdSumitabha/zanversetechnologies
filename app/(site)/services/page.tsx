@@ -183,8 +183,8 @@ export default function ServicesPage() {
       >
         <div className="lg:mx-auto lg:max-w-4xl">
           <FaqAccordion items={servicesFaqs} />
-          {/* The way to the list of guides, since the header and the footer stay
-              as they are. A service page's copy links to the single guides. */}
+          {/* The list of guides, next to the questions they answer at length.
+              The footer's Company column links to it on every page too. */}
           <p className="mt-8 text-body text-muted">
             Longer answers, such as what a website costs in Dubai, are in our{" "}
             <SiteLink href="/guides" className={inlineLink}>

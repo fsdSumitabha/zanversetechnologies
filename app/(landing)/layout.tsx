@@ -9,6 +9,7 @@ import { Providers } from "@/components/zan/Providers";
 import { MotionPauseControl } from "@/components/zan/shell/MotionPauseControl";
 import { EARLY_INPUT_SCRIPT } from "@/lib/earlyInput";
 import { MOTION_PAUSE_SCRIPT } from "@/lib/motionPause";
+import { AGENT_SCRIPT } from "@/lib/agentMode";
 import { ScrollProgress } from "@/components/zan/shell/ScrollProgress";
 import { WebMcpTools } from "@/components/zan/webmcp/WebMcpTools";
 import { site } from "@/constants/zan";
@@ -74,6 +75,9 @@ export default function LandingLayout({ children }: Readonly<{ children: React.R
       suppressHydrationWarning
     >
       <head>
+        {/* First: marks an agent's page before anything paints or reads
+            the motion queries (lib/agentMode.ts). People are never marked. */}
+        <script dangerouslySetInnerHTML={{ __html: AGENT_SCRIPT }} />
         {webMcpTrialToken ? <meta httpEquiv="origin-trial" content={webMcpTrialToken} /> : null}
         {/* A "Pause animations" choice saved on an earlier visit, before the page paints. */}
         <script dangerouslySetInnerHTML={{ __html: MOTION_PAUSE_SCRIPT }} />

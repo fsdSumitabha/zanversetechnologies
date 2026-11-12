@@ -1679,6 +1679,9 @@ export const footerColumns = [
       { label: "Our Team", href: "/our-team" },
       { label: "Portfolio", href: "/portfolio" },
       { label: "How We Work", href: "/how-we-work" },
+      /* The one sitewide link to the guides, added 12 Nov 2026. The header
+         stays as it is; a service page's copy links to the single guides. */
+      { label: "Guides", href: "/guides" },
       { label: "Contact", href: "/contact-us" },
     ],
   },

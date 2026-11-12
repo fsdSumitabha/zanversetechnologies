@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import Lenis from "lenis";
-import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { gsap, MQ, ScrollTrigger } from "@/lib/gsap";
 
 let lenisInstance: Lenis | null = null;
 
@@ -20,7 +20,8 @@ export function getLenis() {
  */
 export function useLenis() {
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    // MQ.reduce, not the bare query: an agent gets native scrolling too.
+    if (window.matchMedia(MQ.reduce).matches) return;
 
     const lenis = new Lenis({
       duration: 1.0,

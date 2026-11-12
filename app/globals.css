@@ -583,6 +583,20 @@ html.lenis body {
   }
 }
 
+/* ── Agents ───────────────────────────────────────────────────────────────────
+   A page in agent mode (html[data-agent], lib/agentMode.ts) gets every
+   reduced-motion rule in the CSS, and none of the motion-only ones, through
+   postcss/agent-still.cjs. Its reveals are also at rest from the start, as the
+   noscript rule in the layouts shows them, so an agent reads each section
+   without having to scroll it into view first. A person's page has no
+   data-agent, so none of this reaches them. */
+
+:root[data-agent] [data-reveal] {
+  opacity: 1 !important;
+  transform: none !important;
+  clip-path: none !important;
+}
+
 /* ── Pause animations ─────────────────────────────────────────────────────────
    The controls are in components/zan/shell/MotionPauseControl.tsx (a keyboard
    pill on every page and a visible button in the homepage hero), and
