@@ -10,6 +10,7 @@ import { FactCard, ServiceCard, StepCard } from "@/components/zan/page/cards";
 import { HeroLinks, HeroList, HeroPanel } from "@/components/zan/page/HeroPanel";
 import { SiteButtonLink } from "@/components/zan/services/SiteLinks";
 import { ButtonLink } from "@/components/zan/ui/Button";
+import { PortfolioDownload } from "@/components/zan/ui/PortfolioDownload";
 import {
   brandingPackages,
   childrenOf,
@@ -163,7 +164,8 @@ export default async function ServiceDetailPage({ params }: RouteParams) {
           </SiteButtonLink>{" "}
           {/* The branding page is the one page with a deck to jump to. The
               rest send the undecided visitor to the work instead, which is the
-              only other thing a service page can offer above the fold. */}
+              only other thing a service page can offer above the fold. Every
+              one of them then offers the portfolio PDF. */}
           {isBranding ? (
             <ButtonLink href="#packages" variant="secondary" size="lg" arrow={false}>
               See the packages
@@ -172,7 +174,8 @@ export default async function ServiceDetailPage({ params }: RouteParams) {
             <SiteButtonLink href={ctas.portfolio.href} variant="secondary" size="lg">
               {ctas.portfolio.label}
             </SiteButtonLink>
-          )}
+          )}{" "}
+          <PortfolioDownload />
         </div>
       </PageHero>
 

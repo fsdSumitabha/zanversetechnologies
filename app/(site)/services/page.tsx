@@ -8,6 +8,7 @@ import { Reveal } from "@/components/zan/page/Reveal";
 import { FactCard, ServiceCard, StepCard } from "@/components/zan/page/cards";
 import { HeroLinks, HeroPanel } from "@/components/zan/page/HeroPanel";
 import { SiteButtonLink, SiteLink } from "@/components/zan/services/SiteLinks";
+import { PortfolioDownload } from "@/components/zan/ui/PortfolioDownload";
 import { areaPages, childrenOf, pageTrail, servicesPage } from "@/constants/pages";
 import { getReasonArt } from "@/constants/serviceArt";
 import { ctas, faqIntro, processIntro, processSteps, servicesFaqs, whyUs } from "@/constants/zan";
@@ -79,7 +80,8 @@ export default function ServicesPage() {
           </SiteButtonLink>{" "}
           <SiteButtonLink href={ctas.portfolio.href} variant="secondary" size="lg">
             {ctas.portfolio.label}
-          </SiteButtonLink>
+          </SiteButtonLink>{" "}
+          <PortfolioDownload />
         </div>
       </PageHero>
 

@@ -99,9 +99,11 @@ function Switch({
  *
  * First in the body, straight after the skip link, so it is the first thing a
  * keyboard or a screen reader reaches, while on screen it runs along the
- * bottom: a card on a phone, one slim row across the window from md. Until the
- * visitor answers it covers the Contact Us dock, which is inert meanwhile
- * (FloatingActions); the navbar still carries the phone number. It never takes
+ * bottom: a card across a phone, and from md a panel over 8 of the 12 columns,
+ * from the left. On a phone, until the visitor answers, it covers the floating
+ * contact buttons, which are inert meanwhile (FloatingActions), and the navbar
+ * carries WhatsApp instead. From md the buttons stand clear on its right and
+ * work as usual. It never takes
  * focus on its own; opening the panel moves focus to it, and closing puts focus
  * back where it came from. Over the dock (z-40), under the chat panel (z-45),
  * the navbar (z-50) and the mobile menu (z-60).
@@ -203,7 +205,9 @@ export function ConsentBanner() {
           data-consent-banner=""
           className={cn(
             "fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-44",
-            "md:inset-x-6 md:bottom-6",
+            // From md, 8 of 12 columns from the left edge, so the floating
+            // contact buttons stand clear of it on the right and still work.
+            "md:right-auto md:bottom-6 md:left-6 md:w-[calc((100%_-_3rem)*2/3)]",
             // Never taller than the space under the navbar; the panel scrolls
             // inside itself on a landscape phone.
             "max-h-[calc(100dvh-6rem)] overflow-y-auto overscroll-contain",
@@ -232,8 +236,8 @@ export function ConsentBanner() {
                 </p>
 
                 {/* One column on a phone; three side by side once there is room. */}
-                <ul className="mt-3 divide-y divide-border border-y border-border md:mt-2 lg:grid lg:grid-cols-3 lg:divide-x lg:divide-y-0">
-                  <li className="flex items-start justify-between gap-4 py-3 lg:px-6 lg:py-2.5 lg:first:pl-0 lg:last:pr-0">
+                <ul className="mt-3 divide-y divide-border border-y border-border md:mt-2 xl:grid xl:grid-cols-3 xl:divide-x xl:divide-y-0">
+                  <li className="flex items-start justify-between gap-4 py-3 xl:px-6 xl:py-2.5 xl:first:pl-0 xl:last:pr-0">
                     <div className="min-w-0">
                       <p className="text-small font-medium text-foreground">Strictly necessary</p>
                       <p className="mt-0.5 text-[0.8125rem] leading-normal text-muted">
@@ -249,7 +253,7 @@ export function ConsentBanner() {
                     return (
                       <li
                         key={key}
-                        className="flex items-start justify-between gap-4 py-3 lg:px-6 lg:py-2.5 lg:first:pl-0 lg:last:pr-0"
+                        className="flex items-start justify-between gap-4 py-3 xl:px-6 xl:py-2.5 xl:first:pl-0 xl:last:pr-0"
                       >
                         <div className="min-w-0">
                           <label htmlFor={id} className="block text-small font-medium text-foreground">
@@ -281,9 +285,10 @@ export function ConsentBanner() {
               </>
             ) : (
               // One sentence, its two links inline, then the two answers:
-              // stacked on a phone, one row from md.
-              <div className="md:flex md:items-center md:gap-6">
-                <div className="min-w-0 text-[0.8125rem] leading-[1.6] text-muted md:flex-1">
+              // stacked until lg, one row from lg, where the banner's eight
+              // columns first leave the sentence room beside them.
+              <div className="lg:flex lg:items-center lg:gap-6">
+                <div className="min-w-0 text-[0.8125rem] leading-[1.6] text-muted lg:flex-1">
                   {/* The label runs in with the sentence rather than taking a
                       line of its own. */}
                   <h2 id={titleId} ref={headingRef} tabIndex={-1} className="mr-2 inline outline-none">
@@ -308,7 +313,7 @@ export function ConsentBanner() {
                     </SiteLink>
                   </p>
                 </div>
-                <div className="mt-3 grid grid-cols-2 gap-2 md:mt-0 md:w-60 md:shrink-0">
+                <div className="mt-3 grid grid-cols-2 gap-2 lg:mt-0 lg:w-60 lg:shrink-0">
                   <Button variant="secondary" className={cn("w-full", compactButton)} onClick={() => choose(NONE)}>
                     Reject all
                   </Button>

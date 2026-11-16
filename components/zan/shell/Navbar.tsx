@@ -17,13 +17,19 @@ import { ctas, mainNav, office, site } from "@/constants/zan";
 import { ButtonLink } from "@/components/zan/ui/Button";
 import { ZanLogo } from "@/components/zan/ui/ZanLogo";
 import { SiteLink } from "@/components/zan/services/SiteLinks";
+import { trackWhatsAppClick } from "@/lib/analytics";
+import { waLink } from "@/lib/links";
 import { useSiteHref } from "@/lib/useSiteHref";
 import { cn } from "@/lib/utils";
 import { FloatingActions } from "./FloatingActions";
 import { MegaMenu, MegaMenuLinks } from "./MegaMenu";
 import { MenuToggle } from "./MenuToggle";
 import { MobileMenu } from "./MobileMenu";
+import { SocialIcon } from "./SocialIcon";
 import { useLogoHref, usePreloaded } from "./shellStore";
+
+/** The Dubai desk on WhatsApp, with the company's name in the greeting. */
+const WHATSAPP_HREF = waLink(site.whatsapp, site.name);
 
 /* ── Scroll state ─────────────────────────────────────────────────────────────
    One passive listener shared by every subscriber; the snapshot is a boolean:
@@ -87,8 +93,10 @@ const onPath = (pathname: string | null, href: string) => {
  * the tabs in the middle (pages of this site; Services is a link to its page
  * and also opens the mega menu, on hover or from its chevron), and on the
  * right the Dubai office's phone and "Contact Us". Below 1280px the tabs fold
- * into the full-screen mobile menu, and below 1024px the number becomes a
- * round tap-to-call button beside the menu toggle. It also mounts the floating
+ * into the full-screen mobile menu. Below 1024px a round WhatsApp button
+ * takes the number's place beside the menu toggle, so WhatsApp is on screen
+ * even while the cookie banner covers the floating buttons on a phone; the
+ * number and its call button are in the menu. It also mounts the floating
  * contact buttons.
  *
  * Transparent at the very top of the page; from the first 24px of scroll it
@@ -379,8 +387,8 @@ export function Navbar() {
             </nav>
 
             <div className="flex items-center justify-end gap-2 sm:gap-3">
-              {/* Both phone links report the number itself as their
-                  contact_click label (ContactClicks), whatever they say. */}
+              {/* The phone link reports the number itself as its
+                  contact_click label (ContactClicks), whatever it says. */}
               <a
                 href={`tel:${office.phoneTel}`}
                 data-analytics-label={office.phoneDisplay}
@@ -394,12 +402,14 @@ export function Navbar() {
                 {ctas.contact.label}
               </ButtonLink>
               <a
-                href={`tel:${office.phoneTel}`}
-                aria-label={`Call the ${office.city} office: ${office.phoneDisplay}`}
-                data-analytics-label={office.phoneDisplay}
-                className="grid size-11 shrink-0 place-items-center rounded-full border border-border bg-surface text-foreground transition-colors duration-300 hover:border-border-strong hover:text-accent-ink lg:hidden"
+                href={WHATSAPP_HREF}
+                target="_blank"
+                rel="noopener"
+                onClick={() => trackWhatsAppClick("Header WhatsApp Button")}
+                aria-label={`WhatsApp the ${office.city} office (opens in a new tab)`}
+                className="grid size-11 shrink-0 place-items-center rounded-full border border-border bg-surface text-whatsapp-ink transition-colors duration-300 hover:border-border-strong lg:hidden"
               >
-                <Phone aria-hidden="true" className="size-[1.125rem]" />
+                <SocialIcon name="WhatsApp" className="size-5" />
               </a>
               <MenuToggle
                 ref={toggleRef}

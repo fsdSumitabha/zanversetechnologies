@@ -132,6 +132,7 @@
      #25d366 (white on it is 1.98:1) to a shade white text passes on: 5.02:1. */
   --color-whatsapp: #15803d;
   --color-whatsapp-hover: #166534;
+  --color-whatsapp-foreground: #ffffff;
   /* WhatsApp as icon or text colour. */
   --color-whatsapp-ink: #15803d;
 }

@@ -77,7 +77,8 @@ type Common = {
  * A call to action that navigates: a page of this site, an in-page anchor,
  * tel:, mailto: or an external URL. A path ("/services", "/#contact") goes
  * through next/link, so it never reloads the document; everything else is a
- * plain anchor.
+ * plain anchor. So is a file with `download`: next/link cannot open one, and
+ * would prefetch it as a page whenever the button scrolled into view.
  */
 export function ButtonLink({
   variant = "primary",
@@ -98,7 +99,8 @@ export function ButtonLink({
     </>
   );
   const classes = buttonClasses({ variant, size, className });
-  if (isInternalHref(href)) {
+  const isFile = rest.download !== undefined && rest.download !== false;
+  if (isInternalHref(href) && !isFile) {
     return (
       <Link href={href} className={classes} {...rest}>
         {body}

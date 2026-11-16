@@ -7,6 +7,7 @@ import { EnquiryForm } from "@/components/zan/contact/EnquiryForm";
 import { FaqAccordion } from "@/components/zan/contact/FaqAccordion";
 import { OfficeCards } from "@/components/zan/contact/OfficeCard";
 import { Eyebrow } from "@/components/zan/ui/Eyebrow";
+import { PortfolioDownload } from "@/components/zan/ui/PortfolioDownload";
 import { HeroPanel } from "@/components/zan/page/HeroPanel";
 import { contactPage, labels, pageTrail } from "@/constants/pages";
 import { faqIntro, faqs, site } from "@/constants/zan";
@@ -67,7 +68,11 @@ export default async function ContactPage({ searchParams }: PageProps<"/contact-
             </p>
           </HeroPanel>
         }
-      />
+      >
+        <div className="mt-9 flex flex-wrap items-center gap-3">
+          <PortfolioDownload />
+        </div>
+      </PageHero>
 
       <Section id="enquiry">
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-12">
