@@ -132,6 +132,7 @@
      #25d366 (white on it is 1.98:1) to a shade white text passes on: 5.02:1. */
   --color-whatsapp: #15803d;
   --color-whatsapp-hover: #166534;
+  --color-whatsapp-foreground: #ffffff;
   /* WhatsApp as icon or text colour. */
   --color-whatsapp-ink: #15803d;
 }
@@ -581,6 +582,20 @@ html.lenis body {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* ── Agents ───────────────────────────────────────────────────────────────────
+   A page in agent mode (html[data-agent], lib/agentMode.ts) gets every
+   reduced-motion rule in the CSS, and none of the motion-only ones, through
+   postcss/agent-still.cjs. Its reveals are also at rest from the start, as the
+   noscript rule in the layouts shows them, so an agent reads each section
+   without having to scroll it into view first. A person's page has no
+   data-agent, so none of this reaches them. */
+
+:root[data-agent] [data-reveal] {
+  opacity: 1 !important;
+  transform: none !important;
+  clip-path: none !important;
 }
 
 /* ── Pause animations ─────────────────────────────────────────────────────────

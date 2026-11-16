@@ -10,6 +10,7 @@ import { ScrollRefresh } from "@/components/zan/ScrollRefresh";
 import { MotionPauseControl } from "@/components/zan/shell/MotionPauseControl";
 import { EARLY_INPUT_SCRIPT } from "@/lib/earlyInput";
 import { MOTION_PAUSE_SCRIPT } from "@/lib/motionPause";
+import { AGENT_SCRIPT } from "@/lib/agentMode";
 import { Preloader } from "@/components/zan/shell/Preloader";
 import { Navbar } from "@/components/zan/shell/Navbar";
 import { Footer } from "@/components/zan/shell/Footer";
@@ -136,6 +137,9 @@ export default function SiteLayout({ children }: Readonly<{ children: React.Reac
       suppressHydrationWarning
     >
       <head>
+        {/* First: marks an agent's page before anything paints or reads
+            the motion queries (lib/agentMode.ts). People are never marked. */}
+        <script dangerouslySetInnerHTML={{ __html: AGENT_SCRIPT }} />
         {webMcpTrialToken ? <meta httpEquiv="origin-trial" content={webMcpTrialToken} /> : null}
         {/* A "Pause animations" choice saved on an earlier visit, before the page paints. */}
         <script dangerouslySetInnerHTML={{ __html: MOTION_PAUSE_SCRIPT }} />

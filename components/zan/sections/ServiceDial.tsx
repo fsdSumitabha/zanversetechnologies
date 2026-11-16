@@ -37,7 +37,8 @@ import "@/components/zan/services/dial.css";
    ─────────────────────────────────────────────────────────────────────────── */
 
 /** Mirrors the pin media query in dial.css. */
-const PIN_MQ = `${MQ.motion} and (min-height: 540px)`;
+/** Read when used: an agent's page answers no (lib/agentMode.ts). */
+const pinQuery = () => `${MQ.motion} and (min-height: 540px)`;
 const N = pillars.length;
 /** Share of the pin spent resting on the first area, and again on the last. */
 const HOLD = 0.14;
@@ -116,7 +117,7 @@ export function ServiceDial() {
       if (!section || !stage || !strip || !body || !track) return;
 
       const mm = gsap.matchMedia();
-      mm.add({ pin: PIN_MQ, desktop: MQ.desktop }, (context) => {
+      mm.add({ pin: pinQuery(), desktop: MQ.desktop }, (context) => {
         const { pin, desktop } = context.conditions as { pin: boolean; desktop: boolean };
         if (!pin) return;
 

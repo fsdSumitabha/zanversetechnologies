@@ -135,7 +135,8 @@ export const hero = {
 /* ── Calls to action ─────────────────────────────────────────────────────────
    contact / consultation open /contact-us. project and work are homepage
    anchors: the enquiry section (#contact) and the work section (#work).
-   SiteLink, or useSiteHref(), turns either into "/#…" on any other page. */
+   SiteLink, or useSiteHref(), turns either into "/#…" on any other page.
+   portfolioPdf is a file, not a page: PortfolioDownload links it. */
 
 export const ctas = {
   contact: { label: "Contact Us", href: "/contact-us" },
@@ -143,6 +144,13 @@ export const ctas = {
   project: { label: "Start a Project", href: "#contact" },
   work: { label: "See Our Work", href: "#work" },
   portfolio: { label: "View Portfolio", href: "/portfolio" },
+  /** public/downloads/zan-verse-technologies-portfolio.pdf. Nothing reads the
+      file, so a new PDF saved under the same name replaces it everywhere. */
+  portfolioPdf: {
+    label: "Download Portfolio",
+    short: "Portfolio",
+    href: "/downloads/zan-verse-technologies-portfolio.pdf",
+  },
 } as const;
 
 /* ── Chapter cards (the reference's pinned transitions) ──────────────────── */
@@ -1679,6 +1687,9 @@ export const footerColumns = [
       { label: "Our Team", href: "/our-team" },
       { label: "Portfolio", href: "/portfolio" },
       { label: "How We Work", href: "/how-we-work" },
+      /* The one sitewide link to the guides, added 12 Nov 2026. The header
+         stays as it is; a service page's copy links to the single guides. */
+      { label: "Guides", href: "/guides" },
       { label: "Contact", href: "/contact-us" },
     ],
   },

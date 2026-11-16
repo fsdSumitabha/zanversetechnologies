@@ -8,6 +8,7 @@ import { Reveal } from "@/components/zan/page/Reveal";
 import { FactCard, ServiceCard, StepCard } from "@/components/zan/page/cards";
 import { HeroLinks, HeroPanel } from "@/components/zan/page/HeroPanel";
 import { SiteButtonLink, SiteLink } from "@/components/zan/services/SiteLinks";
+import { PortfolioDownload } from "@/components/zan/ui/PortfolioDownload";
 import { areaPages, childrenOf, pageTrail, servicesPage } from "@/constants/pages";
 import { getReasonArt } from "@/constants/serviceArt";
 import { ctas, faqIntro, processIntro, processSteps, servicesFaqs, whyUs } from "@/constants/zan";
@@ -79,7 +80,8 @@ export default function ServicesPage() {
           </SiteButtonLink>{" "}
           <SiteButtonLink href={ctas.portfolio.href} variant="secondary" size="lg">
             {ctas.portfolio.label}
-          </SiteButtonLink>
+          </SiteButtonLink>{" "}
+          <PortfolioDownload />
         </div>
       </PageHero>
 
@@ -183,8 +185,8 @@ export default function ServicesPage() {
       >
         <div className="lg:mx-auto lg:max-w-4xl">
           <FaqAccordion items={servicesFaqs} />
-          {/* The way to the list of guides, since the header and the footer stay
-              as they are. A service page's copy links to the single guides. */}
+          {/* The list of guides, next to the questions they answer at length.
+              The footer's Company column links to it on every page too. */}
           <p className="mt-8 text-body text-muted">
             Longer answers, such as what a website costs in Dubai, are in our{" "}
             <SiteLink href="/guides" className={inlineLink}>

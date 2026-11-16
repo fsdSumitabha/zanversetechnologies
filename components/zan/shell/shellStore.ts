@@ -3,6 +3,7 @@
 import { useSyncExternalStore } from "react";
 import { usePathname } from "next/navigation";
 import { getLenis } from "@/hooks/useLenis";
+import { isAgent } from "@/lib/agentMode";
 
 /* ───────────────────────────────────────────────────────────────────────────
    Small shared pieces for the shell: the preloader handshake, media queries
@@ -43,13 +44,25 @@ export function announcePreloaded() {
 }
 
 /**
- * True in a browser driven by automation (`navigator.webdriver`). Only that:
- * it skips the preloader and the timed popup, which an agent acting on a loaded
- * page would otherwise run into. A person's browser never answers true, so
- * people see both exactly as they are. Browser only: call it from an effect.
+ * True in a browser driven by automation (`navigator.webdriver`) or marked as
+ * an agent (lib/agentMode.ts). Only that: it skips the preloader and the timed
+ * popup, which an agent acting on a loaded page would otherwise run into. A
+ * person's browser never answers true, so people see both exactly as they are.
+ * Lighthouse is not marked as an agent, but it skips them here through
+ * navigator.webdriver, as it always has. Browser only: call it from an effect.
  */
 export function isAutomated(): boolean {
-  return navigator.webdriver === true;
+  return navigator.webdriver === true || isAgent();
+}
+
+const noSubscribe = () => () => {};
+
+/**
+ * Agent mode as a value for render. False on the server and while hydrating,
+ * then the page's real answer; it never changes after that.
+ */
+export function useAgentMode(): boolean {
+  return useSyncExternalStore(noSubscribe, isAgent, () => false);
 }
 
 /**

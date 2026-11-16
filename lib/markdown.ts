@@ -552,6 +552,9 @@ export function llmsTxt(): string {
     para(
       "Every page below has a Markdown copy: add .md to its URL, and use /index.md for the homepage. A request for a page with Accept: text/markdown gets the same copy.",
     ),
+    para(
+      "A browser driven by automation (navigator.webdriver), or a request that signs itself with a Signature-Agent header (Web Bot Auth), gets each page in its still form: no intro animation, no timed enquiry popup, no pinned scroll scenes, and every section's text shown without scrolling.",
+    ),
     heading(2, "Main pages"),
     group("main"),
     heading(2, "Services"),

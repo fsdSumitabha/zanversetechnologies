@@ -37,7 +37,8 @@ import "./OfficeCard.css";
    ─────────────────────────────────────────────────────────────────────────── */
 
 /** Tilt only where a fine pointer can drive it and motion is welcome. */
-const TILT_QUERY = `${MQ.fine} and ${MQ.motion}`;
+/** Read when used: an agent's page answers no (lib/agentMode.ts). */
+const tiltQuery = () => `${MQ.fine} and ${MQ.motion}`;
 
 const MAX_TILT_X = 6; // deg, top/bottom
 const MAX_TILT_Y = 7; // deg, left/right
@@ -317,7 +318,7 @@ function OfficeCard() {
     const wrap = wrapRef.current;
     const card = cardRef.current;
     if (!wrap || !card) return;
-    const mq = window.matchMedia(TILT_QUERY);
+    const mq = window.matchMedia(tiltQuery());
     let detach: (() => void) | undefined;
     const sync = () => {
       detach?.();

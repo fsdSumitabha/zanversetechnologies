@@ -44,34 +44,34 @@ const reviewers: Readonly<Record<string, PersonId>> = {
   "/guides": "nadim",
 
   /* Development. */
-  "/services/web-development": "sumitabha",
-  "/services/mobile-apps": "sumitabha",
+  "/services/web-development": "karthikeyan",
+  "/services/mobile-apps": "karthikeyan",
   "/services/ai-machine-learning": "nadim",
   "/services/blockchain-web3": "karthikeyan",
-  "/services/cloud-devops": "sumitabha",
+  "/services/cloud-devops": "karthikeyan",
   "/services/cybersecurity": "nadim",
 
   /* Digital marketing. */
   "/services/digital-marketing": "saransh",
   "/services/digital-marketing/seo-aeo-geo": "saransh",
-  "/services/digital-marketing/performance-marketing": "ronit",
+  "/services/digital-marketing/performance-marketing": "saransh",
   "/services/digital-marketing/social-media-management": "saransh",
   "/services/digital-marketing/influencer-marketing": "saransh",
 
   /* Branding and design. */
   "/services/branding-and-designing": "saransh",
-  "/services/branding-and-designing/ui-ux-design": "sumitabha",
+  "/services/branding-and-designing/ui-ux-design": "karthikeyan",
   "/services/branding-and-designing/brand-identity-design": "saransh",
   "/services/branding-and-designing/graphic-design": "saransh",
-  "/services/branding-and-designing/website-design": "sumitabha",
+  "/services/branding-and-designing/website-design": "karthikeyan",
 
   /* The guides, in the order /guides lists them. */
-  "/guides/website-cost-dubai": "sumitabha",
+  "/guides/website-cost-dubai": "karthikeyan",
   "/guides/seo-aeo-geo-explained": "saransh",
   "/guides/what-is-vapt": "nadim",
   "/guides/what-is-a-smart-contract": "karthikeyan",
   "/guides/what-is-an-ai-agent": "nadim",
-  "/guides/google-ads-budget-dubai": "ronit",
+  "/guides/google-ads-budget-dubai": "saransh",
 };
 
 /** The colleague who reviews a page, or undefined for a page with none. */

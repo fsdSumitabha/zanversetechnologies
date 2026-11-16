@@ -6,6 +6,7 @@ import {
   useId,
   useRef,
   useState,
+  useSyncExternalStore,
   type CSSProperties,
   type ReactNode,
 } from "react";
@@ -25,12 +26,20 @@ import { usePreloaded } from "./shellStore";
 /** The Dubai desk, with the company's name in the greeting. */
 const WHATSAPP_HREF = waLink(site.whatsapp, site.name);
 
-/** Phones: back this long after scrolling stops, as on the old site. */
-const REVEAL_DELAY = 100;
 /** Scroll this far with the menu open and it folds away. */
 const COLLAPSE_AFTER = 24;
 const MOBILE = "(max-width: 767.98px)";
 const EASE = [0.16, 1, 0.3, 1] as const;
+
+/* MOBILE as a store, so the dock wakes and sleeps with a resize or a turn of
+   the phone. */
+function subscribePhone(onChange: () => void) {
+  const query = window.matchMedia(MOBILE);
+  query.addEventListener("change", onChange);
+  return () => query.removeEventListener("change", onChange);
+}
+const isPhone = () => window.matchMedia(MOBILE).matches;
+const notPhone = () => false;
 
 const SHADOW = "shadow-[0_12px_28px_-12px_color-mix(in_oklab,var(--color-shadow)_45%,transparent)]";
 
@@ -43,7 +52,7 @@ const row = {
   closed: { opacity: 0, y: 10, transition: { duration: 0.16 } },
 };
 
-/** One row of the menu, so the three read as one set whatever they do. */
+/** One row of the menu, so the two read as one set whatever they do. */
 function Row({
   icon,
   label,
@@ -65,21 +74,22 @@ function Row({
 }
 
 /**
- * Contact Us, bottom-right.
+ * Contact Us, bottom-right, with WhatsApp above it.
  *
- * One button, and three ways to reach the company behind it: the assistant
- * (which hands off to a person), WhatsApp with the Dubai desk, and the
- * enquiry form on /contact-us. Tap-to-call is not repeated here — the navbar
- * and the footer both carry the Dubai number.
+ * WhatsApp with the Dubai desk has a button of its own, one tap from any page.
+ * Contact Us opens two more ways to reach the company: the assistant (which
+ * hands off to a person) and the enquiry form on /contact-us. Its menu opens
+ * between the two buttons, so it stays against the button that opened it and
+ * WhatsApp glides up out of its way. Tap-to-call is not repeated here — the
+ * navbar (on a phone, its menu) and the footer carry the Dubai number.
  *
  * Above the sections (z-40) and under the navbar, the mobile menu and the
- * preloader. On phones the whole dock steps out of the way while the page is
- * being scrolled and comes back 100ms after it stops; that toggles a data
- * attribute directly, so scrolling never re-renders anything.
+ * preloader. Both buttons stay put while the page scrolls, on a phone as on a
+ * wide screen.
  *
- * The chat panel is a sibling, not a child: the dock's scroll-away uses
- * `translate`, and a translated ancestor becomes the containing block for a
- * fixed descendant, which would drag the panel around with it.
+ * The chat panel is a sibling, not a child: the dock steps aside with
+ * `translate` while the chat is up, and a translated ancestor becomes the
+ * containing block for a fixed descendant, which would drag the panel with it.
  */
 export function FloatingActions() {
   const entered = usePreloaded();
@@ -88,7 +98,6 @@ export function FloatingActions() {
   // server and during hydration, so both render the dock awake.
   const consent = useConsent();
 
-  const rootRef = useRef<HTMLElement>(null);
   const dialRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
   /** Scroll position when the menu opened; null while it is closed. */
@@ -100,6 +109,8 @@ export function FloatingActions() {
   /** Mounted on the first "Chat with us" and kept, so a thread survives a close. */
   const [chatMounted, setChatMounted] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
+  /** Phone width, where the cookie banner covers the dock. False on the server. */
+  const phone = useSyncExternalStore(subscribePhone, isPhone, notPhone);
 
   const close = useCallback(() => {
     openedAtY.current = null;
@@ -136,62 +147,17 @@ export function FloatingActions() {
     toggleRef.current?.focus();
   }, [chatOpen]);
 
-  // Phones: fold the menu once the page really moves, and step out of the way
-  // while it scrolls. A nudge with the menu open is ignored.
+  // Phones: fold the menu once the page really moves. A nudge with the menu
+  // open is ignored. The buttons themselves stay put while the page scrolls.
   useEffect(() => {
-    const el = rootRef.current;
-    if (!el) return;
     const mobile = window.matchMedia(MOBILE);
-    let timer = 0;
-
-    // A pinned scene (a GSAP pin is position: fixed while active, a sticky
-    // stage is position: sticky) holds its content still, so a visitor cannot
-    // scroll its last row out from under the dock. While one fills the screen
-    // behind the dock, the dock stays tucked away; the navbar still carries
-    // the phone number and the menu.
-    const coveredByPinnedStage = () => {
-      const r = el.getBoundingClientRect();
-      const x = Math.min(window.innerWidth - 1, Math.max(0, r.left + r.width / 2));
-      const y = Math.min(window.innerHeight - 1, Math.max(0, r.top + r.height / 2));
-      const h = window.innerHeight;
-      for (const hit of document.elementsFromPoint(x, y)) {
-        if (el.contains(hit)) continue;
-        for (let node: Element | null = hit; node && node !== document.body; node = node.parentElement) {
-          const pos = getComputedStyle(node).position;
-          if (pos !== "fixed" && pos !== "sticky") continue;
-          const b = node.getBoundingClientRect();
-          if (b.top <= 1 && b.bottom >= h - 1 && b.height >= h * 0.9) return true;
-        }
-        return false;
-      }
-      return false;
-    };
-    const checkPinned = () => {
-      if (mobile.matches && coveredByPinnedStage()) el.dataset.pinned = "1";
-      else delete el.dataset.pinned;
-    };
-
     const onScroll = () => {
-      if (!mobile.matches) return;
-      if (openedAtY.current !== null) {
-        if (Math.abs(window.scrollY - openedAtY.current) <= COLLAPSE_AFTER) return;
-        close();
-      }
-      el.dataset.scrolling = "1";
-      window.clearTimeout(timer);
-      timer = window.setTimeout(() => {
-        checkPinned();
-        delete el.dataset.scrolling;
-      }, REVEAL_DELAY);
+      if (!mobile.matches || openedAtY.current === null) return;
+      if (Math.abs(window.scrollY - openedAtY.current) <= COLLAPSE_AFTER) return;
+      close();
     };
     window.addEventListener("scroll", onScroll, { passive: true });
-    checkPinned();
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.clearTimeout(timer);
-      delete el.dataset.scrolling;
-      delete el.dataset.pinned;
-    };
+    return () => window.removeEventListener("scroll", onScroll);
   }, [close]);
 
   // While the menu is open: an outside pointer or Escape folds it.
@@ -228,28 +194,30 @@ export function FloatingActions() {
      layer below the panel. It goes away and comes back with the panel, so it
      must not be tabbed into meanwhile.
 
-     Under the cookie banner, until it is answered. The banner sits on top of the
-     dock, so a press aimed at Contact Us lands on the banner, and a tab stop here
-     would be a button nobody can see. The dock stays where it is and looks the
-     same.
+     Under the cookie banner on a phone, until it is answered. There the banner
+     is a card across the bottom of the screen, on top of the dock, so a press
+     aimed at Contact Us lands on the banner, and a tab stop here would be a
+     button nobody can see. The dock stays where it is and looks the same,
+     except WhatsApp, which fades out: above a short card it could stand clear,
+     a button that does nothing when pressed. The navbar carries WhatsApp
+     meanwhile. From md the banner keeps to 8 of the 12 columns on the left,
+     the dock stands clear of it, and it stays awake.
 
      `inert` goes on the inner element, not on the <aside>. The aside is a child
      of <body>, which lib/backgroundInert.ts sets and clears by hand behind the
      popups and the phone menu, and clearing it there would wake a dock that
      should still be asleep. aria-hidden takes the empty landmark out with it. */
-  const asleep = chatOpen || consent === null;
+  const underBanner = consent === null && phone;
+  const asleep = chatOpen || underBanner;
 
   return (
     <>
       <aside
-        ref={rootRef}
         aria-label="Contact options"
         aria-hidden={asleep || undefined}
         className={cn(
           "fixed right-4 bottom-[max(1.25rem,env(safe-area-inset-bottom))] z-40 sm:right-6 sm:bottom-6",
           "transition-[opacity,translate] duration-300 ease-out-expo",
-          "max-md:data-scrolling:pointer-events-none max-md:data-scrolling:translate-y-4 max-md:data-scrolling:opacity-0",
-          "max-md:data-pinned:pointer-events-none max-md:data-pinned:translate-y-4 max-md:data-pinned:opacity-0",
           chatOpen && "pointer-events-none translate-y-3 opacity-0",
         )}
       >
@@ -260,6 +228,35 @@ export function FloatingActions() {
           className="flex flex-col items-end gap-3 transition-[opacity,transform] duration-500 ease-out-expo"
           style={reveal}
         >
+          {/* The wrapper carries the glide (a layout animation, so it is
+              skipped under reduced motion and in agent mode); the anchor keeps
+              its own press and hover, whose CSS transitions would otherwise
+              fight framer-motion over `transform`. */}
+          <motion.div
+            layout="position"
+            transition={{ duration: 0.35, ease: EASE }}
+            className={cn("transition-opacity duration-300", underBanner && "opacity-0")}
+          >
+            <a
+              href={WHATSAPP_HREF}
+              target="_blank"
+              rel="noopener"
+              onClick={() => {
+                trackWhatsAppClick("Floating WhatsApp Button");
+                close();
+              }}
+              data-contact="whatsapp"
+              aria-label="WhatsApp (opens in a new tab)"
+              className={cn(
+                "grid size-12 place-items-center rounded-full bg-whatsapp text-whatsapp-foreground sm:size-13",
+                SHADOW,
+                "transition-[scale,background-color] duration-300 ease-out-expo hover:bg-whatsapp-hover active:scale-95",
+              )}
+            >
+              <SocialIcon name="WhatsApp" className="size-6 sm:size-[1.625rem]" />
+            </a>
+          </motion.div>
+
           <AnimatePresence>
             {open && (
               <motion.ul
@@ -285,27 +282,6 @@ export function FloatingActions() {
                       tone="text-accent-ink"
                     />
                   </button>
-                </motion.li>
-
-                <motion.li variants={row}>
-                  <a
-                    href={WHATSAPP_HREF}
-                    target="_blank"
-                    rel="noopener"
-                    onClick={() => {
-                      trackWhatsAppClick("Floating WhatsApp Button");
-                      close();
-                    }}
-                    data-contact="whatsapp"
-                    aria-label="WhatsApp (opens in a new tab)"
-                    className="group/row block rounded-full"
-                  >
-                    <Row
-                      icon={<SocialIcon name="WhatsApp" className="size-[1.125rem]" />}
-                      label="WhatsApp"
-                      tone="text-whatsapp-ink"
-                    />
-                  </a>
                 </motion.li>
 
                 {/* next/link, like every other page link, so the form opens

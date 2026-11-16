@@ -7,6 +7,7 @@ import { about, metrics, office, practices, processIntro, processSteps, site } f
 import { useContainerScroll } from "@/components/ui/container-scroll-animation";
 import { ZanIcon } from "@/components/zan/ui/icons";
 import { ZanLogo } from "@/components/zan/ui/ZanLogo";
+import { useAgentMode } from "@/components/zan/shell/shellStore";
 import { cn } from "@/lib/utils";
 import { useMotionPaused } from "@/lib/useMotionPaused";
 import { formatClock, formatOffset, useMinute } from "./clock";
@@ -43,7 +44,11 @@ const eyebrow = "font-mono text-[10.5px] uppercase tracking-[0.14em]";
 export function ProjectBoard() {
   const fitRef = useRef<HTMLDivElement>(null);
   const boardRef = useRef<HTMLDivElement>(null);
-  const reduced = useReducedMotion();
+  // framer's own reading of the setting, which MotionConfig does not change:
+  // an agent (lib/agentMode.ts) counts as reduced here too.
+  const agent = useAgentMode();
+  const prefersReduced = useReducedMotion();
+  const reduced = agent ? true : prefersReduced;
   const motionPaused = useMotionPaused();
   const visible = useInView(boardRef, { amount: 0.15 });
   const seen = useInView(boardRef, { amount: 0.5 });

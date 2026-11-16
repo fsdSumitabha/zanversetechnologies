@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUp, Headset, RotateCcw, WifiOff, X } from "lucide-react";
 import { office, site } from "@/constants/zan";
+import { isAgent } from "@/lib/agentMode";
 import { lockScroll } from "@/lib/scrollLock";
 import { cn } from "@/lib/utils";
 import { useMediaQuery } from "@/components/zan/shell/shellStore";
@@ -56,7 +57,7 @@ export function ChatPanel({ open, onClose }: { open: boolean; onClose: () => voi
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduce = isAgent() || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     el.scrollTo({ top: el.scrollHeight, behavior: reduce ? "auto" : "smooth" });
   }, [chat.messages, chat.aiTyping, capturing]);
 

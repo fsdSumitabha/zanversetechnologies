@@ -9,6 +9,7 @@ import { FactCard, FactList, MetricRow } from "@/components/zan/page/cards";
 import { HeroFacts, HeroPanel } from "@/components/zan/page/HeroPanel";
 import { OfficeCards } from "@/components/zan/contact/OfficeCard";
 import { SiteButtonLink } from "@/components/zan/services/SiteLinks";
+import { PortfolioDownload } from "@/components/zan/ui/PortfolioDownload";
 import { aboutFaqs } from "@/constants/pageFaqs";
 import { aboutPage, labels, pageTrail } from "@/constants/pages";
 import { getIndustryArt } from "@/constants/serviceArt";
@@ -89,7 +90,8 @@ export default function AboutPage() {
           </SiteButtonLink>{" "}
           <SiteButtonLink href={ctas.portfolio.href} variant="secondary" size="lg">
             {ctas.portfolio.label}
-          </SiteButtonLink>
+          </SiteButtonLink>{" "}
+          <PortfolioDownload />
         </div>
       </PageHero>
 

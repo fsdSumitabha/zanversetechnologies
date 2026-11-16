@@ -24,7 +24,7 @@ import { hero, metrics, office, site, type Metric } from "@/constants/zan";
    headline has a voice of its own rather than the default system sans.
 
    The h1 opens with site.heroOwner ("Dubai's") and the number under it is the
-   Dubai office's, both plain server HTML. The two calls to action are
+   Dubai office's, both plain server HTML. The calls to action are
    HeroActions, a client component for the WhatsApp click's analytics event.
    ─────────────────────────────────────────────────────────────────────────── */
 
