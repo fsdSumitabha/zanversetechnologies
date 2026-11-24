@@ -51,7 +51,8 @@ export const config = {
   path: "/*",
   /* Everything that is not a public page. "/*.*" is any URL with a dot in it:
      files, /robots.txt, /sitemap.xml, the .md addresses and /.well-known/*. /ae
-     has to reach its redirect in next.config.ts. */
+     and /lp have to reach their redirects in next.config.ts. The landing pages
+     have no Markdown copy. */
   excludedPath: [
     "/_next/*",
     "/api/*",
@@ -59,6 +60,7 @@ export const config = {
     "/md/*",
     "/og/*",
     "/images/*",
+    "/landing-pages/*",
     "/lp/*",
     "/ae",
     "/ae/*",

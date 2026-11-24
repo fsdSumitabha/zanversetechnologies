@@ -799,6 +799,128 @@ const DRAWINGS: Record<PackageArtKey, () => ReactNode> = {
       </g>
     </>
   ),
+
+  /* ── Blockchain ─────────────────────────────────────────────────────────── */
+
+  /* A contract's source, and the seal it has to earn before it ships. The seal
+     lifts on hover. */
+  "smart-contract": () => (
+    <>
+      <rect x={64} y={20} width={176} height={140} rx={9} className={frame} />
+      <path d="M64 40H240" className={hair} />
+      <Bar x={76} y={28} w={46} h={4} className={ink} />
+      {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
+        <Bar key={i} x={76} y={51 + i * 13} w={6} h={3} className={pale} />
+      ))}
+      <Bar x={90} y={50} w={62} className={accent} />
+      <Bar x={102} y={63} w={86} />
+      <Bar x={102} y={76} w={60} />
+      <rect x={96} y={86} width={112} height={11} rx={3} className={tint} />
+      <Bar x={102} y={89.5} w={92} className="fill-accent-ink/60" />
+      <Bar x={114} y={102} w={70} />
+      <Bar x={114} y={115} w={50} />
+      <Bar x={102} y={128} w={16} />
+      <Bar x={90} y={141} w={12} />
+      <g className={cn(MOVES, "group-hover/card:-translate-y-1.5 group-hover/card:scale-110")}>
+        <path d="M236 106l15 5.5v12c0 10-6.4 16.6-15 20-8.6-3.4-15-10-15-20v-12L236 106Z" className={accent} />
+        <path
+          d="m229.5 125 4.6 4.6 8.4-9"
+          className="fill-none stroke-accent-foreground"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </g>
+    </>
+  ),
+
+  /* The screen people use, and the wallet that asks them to approve. The
+     wallet steps forward on hover. */
+  dapp: () => (
+    <>
+      <Browser x={40} y={20} w={176} h={140}>
+        <Bar x={52} y={44} w={40} h={5} className={ink} />
+        <rect x={148} y={40} width={56} height={13} rx={6.5} className={accent} />
+        <rect x={52} y={62} width={152} height={34} rx={6} className={tint} />
+        <Bar x={62} y={72} w={56} h={6} className={ink} />
+        <Bar x={62} y={84} w={36} />
+        {[0, 1].map((i) => (
+          <g key={i}>
+            <circle cx={59} cy={113 + i * 20} r={5} className={i === 0 ? accent : rule} />
+            <Bar x={70} y={111 + i * 20} w={60 - i * 16} />
+            <Bar x={150} y={111 + i * 20} w={26} className={pale} />
+          </g>
+        ))}
+      </Browser>
+      <g className={cn(MOVES, "group-hover/card:-translate-x-1.5 group-hover/card:-translate-y-1.5")}>
+        <rect x={190} y={60} width={86} height={102} rx={11} className={frame} />
+        <rect x={219} y={71} width={28} height={20} rx={5} className={ink} />
+        <rect x={237} y={77} width={12} height={8} rx={3} className={accent} />
+        <Bar x={203} y={101} w={60} h={4} className={ink} />
+        <Bar x={211} y={111} w={44} />
+        <rect x={201} y={123} width={64} height={14} rx={7} className={accent} />
+        <rect x={201} y={142} width={64} height={12} rx={6} className={pale} />
+      </g>
+    </>
+  ),
+
+  /* A marketplace's shelf of tokens, the one being bought lifted off it. */
+  "nft-marketplace": () => (
+    <>
+      {[46, 210].map((x) => (
+        <g key={x}>
+          <rect x={x} y={46} width={64} height={100} rx={9} className={frame} />
+          <rect x={x + 7} y={53} width={50} height={50} rx={5} className={pale} />
+          <Bar x={x + 7} y={112} w={34} h={4} className={rule} />
+          <Bar x={x + 7} y={123} w={46} />
+        </g>
+      ))}
+      <g className={cn(MOVES, "group-hover/card:-translate-y-2")}>
+        <rect x={124} y={30} width={72} height={120} rx={10} className={frame} />
+        <Picture x={131} y={37} w={58} h={58} />
+        <Bar x={131} y={104} w={40} h={4} className={ink} />
+        <Bar x={131} y={115} w={52} />
+        <rect x={131} y={127} width={58} height={15} rx={7.5} className={accent} />
+        <polygon points="196,19 205.5,24.5 205.5,35.5 196,41 186.5,35.5 186.5,24.5" className={accent} />
+        <polygon
+          points="196,25 200.3,27.5 200.3,32.5 196,35 191.7,32.5 191.7,27.5"
+          className="fill-none stroke-accent-foreground"
+          strokeWidth={1.4}
+          strokeLinejoin="round"
+        />
+      </g>
+    </>
+  ),
+
+  /* The code read line by line, a flaw found, and the report that lists it. The
+     lens moves along the line on hover. */
+  "contract-audit": () => (
+    <>
+      <rect x={46} y={22} width={152} height={136} rx={9} className={frame} />
+      <Bar x={58} y={36} w={40} h={4} className={ink} />
+      <Bar x={58} y={52} w={84} />
+      <Bar x={70} y={65} w={98} />
+      <Bar x={70} y={78} w={64} />
+      <rect x={54} y={88} width={136} height={14} rx={4} className={tint} />
+      <Bar x={70} y={93} w={88} className="fill-accent-ink/60" />
+      <Bar x={70} y={110} w={76} />
+      <Bar x={70} y={123} w={52} />
+      <Bar x={58} y={136} w={14} />
+      <rect x={212} y={42} width={64} height={104} rx={9} className={frame} />
+      <Bar x={222} y={55} w={32} h={4} className={ink} />
+      {[0, 1, 2].map((i) => (
+        <g key={i}>
+          <circle cx={228} cy={78 + i * 22} r={6.5} className={i < 2 ? accent : pale} />
+          {i < 2 && <Tick cx={228} cy={78 + i * 22} r={6.5} />}
+          <Bar x={240} y={76 + i * 22} w={26} className={i < 2 ? rule : pale} />
+        </g>
+      ))}
+      <g className={cn(MOVES, "group-hover/card:translate-x-2 group-hover/card:-translate-y-0.5")}>
+        <path d="M164 112l13 13" className="fill-none stroke-foreground/75" strokeWidth={5} strokeLinecap="round" />
+        <circle cx={148} cy={95} r={22} className="fill-surface/55 stroke-foreground/75" strokeWidth={3} />
+      </g>
+    </>
+  ),
 };
 
 export function PackageArt({ name, className }: { name: PackageArtKey; className?: string }) {

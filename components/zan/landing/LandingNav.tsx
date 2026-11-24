@@ -4,7 +4,7 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 import { Phone } from "lucide-react";
 import { SocialIcon } from "@/components/zan/shell/SocialIcon";
 import { ZanLogo } from "@/components/zan/ui/ZanLogo";
-import { landingCopy } from "@/constants/landing";
+import { landingCopy, type LandingSection } from "@/constants/landing";
 import { hero, office, site } from "@/constants/zan";
 import { trackWhatsAppClick } from "@/lib/analytics";
 import { waLink } from "@/lib/links";
@@ -64,11 +64,14 @@ function useCurrentSection() {
  * WhatsApp and the phone are always here, on every width. The sticky button
  * carries them too, but it steps aside whenever a form is on screen, and in this
  * market a visitor who would rather message than fill in a form is common.
+ *
+ * `sections` is the page's own (`landingSections`): the anchors are the same on
+ * every page, but one can be named for what that page puts there.
  */
-export function LandingNav() {
+export function LandingNav({ sections = landingCopy.sections }: { sections?: readonly LandingSection[] }) {
   const scrolled = useScrolled();
   const current = useCurrentSection();
-  const { sections, cta } = landingCopy;
+  const { cta } = landingCopy;
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 h-nav">
