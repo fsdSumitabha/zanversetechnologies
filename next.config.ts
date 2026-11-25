@@ -139,26 +139,19 @@ const nextConfig: NextConfig = {
      path built out of an empty parameter. Query strings are carried across
      by Next, so a tagged campaign link keeps its tags.
 
-     ── The old /lp addresses ─────────────────────────────────────────────
-     The landing pages moved from /lp/<slug> to /landing-pages/<slug> on
-     24 November 2026 (constants/landing.ts, `landingPath`). Ads and shared
-     links that still carry the old address land on the same page, with their
-     gclid and utm tags, which the query string keeps. One segment only: /lp/
-     never had anything deeper, and a bare /lp was never a page either, so
-     both still get the 404. Each ad should still be moved to the new address,
-     because every click through here costs one extra round trip. */
+     The landing pages are at /lp/<slug>. See the rewrite below for
+     /landing-pages/<slug>, which must never become a redirect. */
   async redirects() {
     return [
       { source: "/ae", destination: "/", permanent: true },
       { source: "/ae/:path*", destination: "/:path*", permanent: true },
-      { source: "/lp/:slug", destination: "/landing-pages/:slug", permanent: true },
     ];
   },
 
   /* ── The Markdown copy of each page ─────────────────────────────────────
      /services/web-development.md is answered by app/md, as
      /md/services/web-development, and /index.md by /md/index. In beforeFiles, so
-     /services/[...slug] and /landing-pages/[slug] never see a .md address.
+     /services/[...slug] and /lp/[slug] never see a .md address.
 
      NEVER REWRITE A PAGE'S OWN URL ON THE Accept HEADER, here or in proxy.ts.
      The live site answers pages from Netlify's durable cache, and Netlify-Vary
@@ -171,7 +164,15 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return {
       beforeFiles: [{ source: "/:path(.*)\\.md", destination: "/md/:path" }],
-      afterFiles: [],
+      /* /landing-pages/<slug> SERVES THE SAME PAGE AS /lp/<slug>, WITHOUT A
+         REDIRECT. From 24 to 25 November 2026 the pages were at
+         /landing-pages/<slug> and /lp/<slug> sent a permanent (308) redirect
+         there. Browsers keep a permanent redirect, so a visitor from those
+         days is still sent from /lp/<slug> to /landing-pages/<slug>. A
+         redirect back to /lp would loop for them. This rewrite answers them
+         with the page. The pages are noindex, so the second address costs
+         nothing in search. */
+      afterFiles: [{ source: "/landing-pages/:slug", destination: "/lp/:slug" }],
       fallback: [],
     };
   },

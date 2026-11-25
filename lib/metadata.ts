@@ -23,7 +23,7 @@ import { site } from "@/constants/zan";
 
    WHAT `path` ALSO DECIDES. A public, indexed page gets a Markdown alternate
    and, unless it is the homepage, a share card of its own. Anything else (the
-   /landing-pages pages, /thank-you) gets neither. The builder only ever receives a path,
+   /lp pages, /thank-you) gets neither. The builder only ever receives a path,
    so the test is on the path, and this file must stay light: it may not import
    constants/services or constants/guides, which hold every page's copy.
    ─────────────────────────────────────────────────────────────────────────── */
@@ -66,7 +66,7 @@ function isPublicPage(path: string): boolean {
  * THAT IS DECIDED: `shareImage` asks it before naming a card's URL, and
  * app/og/[...path]/route.tsx asks it before drawing one, so a page cannot
  * advertise a card that gives a 404. The homepage keeps the default card, as
- * do the /landing-pages pages, /thank-you and the 404s, none of which pass this test.
+ * do the /lp pages, /thank-you and the 404s, none of which pass this test.
  */
 export function hasShareCard(path: string): boolean {
   return path !== "/" && isPublicPage(path);
@@ -117,7 +117,7 @@ export function pageMetadata({ title, description, path, absoluteTitle = false }
     description,
     alternates: {
       canonical,
-      // Only where app/md has a copy to point at. The /landing-pages pages have none.
+      // Only where app/md has a copy to point at. The /lp pages have none.
       ...(isPublicPage(path) ? { types: { "text/markdown": markdownUrl(path) } } : {}),
     },
     openGraph: {

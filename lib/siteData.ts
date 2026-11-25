@@ -71,7 +71,7 @@ import { absoluteUrl, markdownUrl } from "@/lib/metadata";
    EVERY PAGE PATH COMES FROM ONE PLACE: `siteRoutes` in constants/pages.ts, plus
    the guides, which that file may not import. See `publicPaths`. A page added
    there is in the data, /llms.txt, /llms-full.txt and /md without touching them.
-   /agent, /thank-you and /landing-pages/* are not in that registry, so they are in none of
+   /agent, /thank-you and /lp/* are not in that registry, so they are in none of
    these.
    ─────────────────────────────────────────────────────────────────────────── */
 

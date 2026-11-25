@@ -74,7 +74,7 @@ Limits: 5 leads per IP in 10 minutes, 40 per hour across the site, and 3 confirm
 | `app/(site)/layout.tsx` | Fonts, the metadata every route inherits, the company's JSON-LD, and the shell: consent banner, preloader, scroll progress, smooth scroll, navbar, footer, contact modal, analytics |
 | `app/(site)/page.tsx` | The homepage's section order, with a map of every scene |
 | `app/(site)/*/` | Every other page: services and the sixteen service pages, portfolio, how we work, about us, our team, contact, thank you and the five policies |
-| `app/(landing)/` | The paid landing pages (`/landing-pages/<slug>`), with their own root layout: no preloader, no mega menu, no timed modal. Consent banner and tags as everywhere else. See "Landing pages" below |
+| `app/(landing)/` | The paid landing pages (`/lp/<slug>`), with their own root layout: no preloader, no mega menu, no timed modal. Consent banner and tags as everywhere else. See "Landing pages" below |
 | `app/(console)/agent/` | The agent console, with its own root layout: no site shell, no consent banner, no tags |
 | `app/api/` | The chat, the enquiry forms' leads, the agent console's API, Pusher auth and the WhatsApp webhook |
 | `app/global-not-found.tsx` | The 404 for unmatched URLs, rendered in the site layout (the two root layouts leave no shared one) |
@@ -103,9 +103,9 @@ Limits: 5 leads per IP in 10 minutes, 40 per hour across the site, and 3 confirm
 
 ## Landing pages
 
-`/landing-pages/web-development`, `/landing-pages/app-development`, `/landing-pages/digital-marketing` and `/landing-pages/blockchain-development`, for paid traffic. One layout draws them all; `landingPages` in `constants/landing.ts` is the only thing that differs. To add a page, add an entry there: its route, metadata and form follow from it. A page lists one or more groups of packages (`decks`); more than one become tabs. A page with a headline line longer than "Marketing Judged On" needs the size in `LandingHero.tsx` checking. An unknown slug gets a 404 that offers the pages that do exist.
+`/lp/web-development`, `/lp/app-development`, `/lp/digital-marketing` and `/lp/blockchain-development`, for paid traffic. One layout draws them all; `landingPages` in `constants/landing.ts` is the only thing that differs. To add a page, add an entry there: its route, metadata and form follow from it. A page lists one or more groups of packages (`decks`); more than one become tabs. A page with a headline line longer than "Marketing Judged On" needs the size in `LandingHero.tsx` checking. An unknown slug gets a 404 that offers the pages that do exist.
 
-- **The old addresses.** Until 24 Nov 2026 these pages were at `/lp/<slug>`. `next.config.ts` redirects `/lp/<slug>` to `/landing-pages/<slug>` (308, query string kept), so old ads and links still land. Point each ad's final URL at the new address anyway: the redirect adds a round trip to every click.
+- **`/landing-pages/<slug>`** serves the same page, through a rewrite in `next.config.ts`. From 24 to 25 Nov 2026 the pages lived there, and `/lp/<slug>` sent a permanent redirect to it, which browsers keep. Never turn that rewrite into a redirect back to `/lp`: it would loop for those visitors.
 - **A page with no case study** (blockchain, so far) quotes no other service's results. Its figures are the site's own (`metrics`) and its "Our work" section shows its stack instead (`stack`), with the nav calling it "Tech Stack". Add a project with that page's `projectCategory` to `projects` and the case study replaces the stack.
 
 - **Leads** go through `/api/leads`, the same as the site's enquiry form (see "Enquiry mail"). They are told apart by the hidden `lead_source` field (`landing:<slug>`) and by which form sent them. Both are the Source row of the team's mail, beside the page's address with any campaign tags. In the GTM dataLayer they are `form_submission` with `form_name: "landing_lead_form"`, `landing_page` and `form_location`.

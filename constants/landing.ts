@@ -1,8 +1,8 @@
 /* ───────────────────────────────────────────────────────────────────────────
-   THE LANDING PAGES: /landing-pages/<slug>
+   THE LANDING PAGES: /lp/<slug>
 
-   They were at /lp/<slug> until 24 November 2026. next.config.ts sends those
-   addresses here, so an ad or a shared link with the old address still lands.
+   From 24 to 25 November 2026 they were at /landing-pages/<slug>. That address
+   still serves the same page, through a rewrite in next.config.ts.
 
    Paid-traffic pages, one per service, all drawn by one layout
    (components/zan/landing). What differs between them is the entry in
@@ -169,7 +169,7 @@ export interface LandingComparison {
 }
 
 export interface LandingPage {
-  /** Last path segment: /landing-pages/<slug>. */
+  /** Last path segment: /lp/<slug>. */
   slug: string;
   /** Short name, for the sticky bar and in running copy. */
   label: string;
@@ -1001,8 +1001,8 @@ export const landingPages: readonly LandingPage[] = [
 export const landingPageBySlug = (slug: string): LandingPage | undefined =>
   landingPages.find((page) => page.slug === slug);
 
-/** The folder the pages are served from: app/(landing)/landing-pages. */
-const LANDING_ROOT = "/landing-pages";
+/** The folder the pages are served from: app/(landing)/lp. */
+const LANDING_ROOT = "/lp";
 
 export const landingPath = (slug: string) => `${LANDING_ROOT}/${slug}`;
 

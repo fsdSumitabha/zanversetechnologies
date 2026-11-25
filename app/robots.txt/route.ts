@@ -24,7 +24,7 @@ import { site } from "@/constants/zan";
    and change ai-train=yes to ai-train=no in both places.
 
    NOTE: this file does not decide whether a page is indexed. A meta tag or an
-   X-Robots-Tag does that, per page: the /landing-pages pages, /thank-you and /agent carry a
+   X-Robots-Tag does that, per page: the /lp pages, /thank-you and /agent carry a
    noindex, and they have to stay crawlable here, or a crawler could never read
    it and any of those URLs that picked up a link could still surface as a bare
    listing.

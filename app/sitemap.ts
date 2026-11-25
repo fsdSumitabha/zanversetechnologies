@@ -28,7 +28,7 @@ import { absoluteUrl } from "@/lib/metadata";
 
    NO priority AND NO changeFrequency. Google ignores both.
 
-   NO /landing-pages/* PAGES. Those are for paid traffic and carry a noindex, and a sitemap
+   NO /lp/* PAGES. Those are for paid traffic and carry a noindex, and a sitemap
    entry for a page that refuses the index is a contradiction Search Console
    reports as an error. See app/(landing)/layout.tsx.
    ─────────────────────────────────────────────────────────────────────────── */

@@ -46,7 +46,7 @@ export async function generateMetadata({ params }: RouteParams): Promise<Metadat
  * be bought, why us, how it runs, the proof, the objections, and the ask again.
  * A page with no case study yet has its stack where the proof would be.
  *
- * Served at /landing-pages/<slug>; the old /lp/<slug> addresses redirect here
+ * Served at /lp/<slug>, and also at /landing-pages/<slug> through a rewrite
  * (next.config.ts).
  */
 export default async function LandingPageRoute({ params }: RouteParams) {
