@@ -69,10 +69,14 @@ Limits: 5 leads per IP in 10 minutes, 40 per hour across the site, and 3 confirm
 
 ## Newsletter
 
-The band above the footer on every site page (`components/zan/shell/Newsletter.tsx`) posts to `app/api/newsletter/route.ts`. The route checks the address and the consent box, then passes the sign-up to zan-workspace, which stores it and sends the newsletter. This site keeps no list. The request zan-workspace receives, and what it should do with it, is written out at the top of `server/services/newsletter.service.ts`.
+The band above the footer on every site page (`components/zan/shell/Newsletter.tsx`) posts to `app/api/newsletter/route.ts`. The route checks the address and the consent box, then passes the sign-up to zan-workspace at `/api/integrations/zanverse/newsletter`, which stores it and sends the newsletter. This site keeps no list. The request zan-workspace receives, and what it should do with it, is written out at the top of `server/services/newsletter.service.ts`.
 
-- `ZAN_WORKSPACE_NEWSLETTER_URL`: the full address of zan-workspace's POST route, `https://` in production.
-- `ZAN_WORKSPACE_API_KEY`: a shared secret of at least 32 characters, sent as the `x-api-key` header. Put the same value in zan-workspace.
+Every call to zan-workspace goes through `server/lib/workspace.ts`, with two settings:
+
+- `ZAN_WORKSPACE_URL`: zan-workspace's base URL, such as `https://crm.example.com`, `https://` in production. Each route is a path under it, listed in `WORKSPACE_PATHS`.
+- `ZAN_WORKSPACE_API_KEY`: a shared secret of at least 32 characters, sent as the `x-api-key` header on every call. Put the same value in zan-workspace.
+
+A new call between the two apps needs a path in `WORKSPACE_PATHS` and a function that calls `postToWorkspace()`, and no new settings.
 
 Set both before building: a production build without them shows no band. In development the band always shows, and a sign-up is logged instead of sent.
 

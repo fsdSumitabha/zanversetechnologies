@@ -82,20 +82,25 @@ const mailSchema = z.object({
 });
 
 /**
- * Where newsletter sign-ups go: zan-workspace's intake route, and the key it
- * checks to know a request came from this site. A schema of its own, like the
- * mail account's, so a gap in Mongo, WhatsApp or Pusher cannot stop a sign-up.
- * See server/services/newsletter.service.ts for the request it is used in.
+ * zan-workspace, the company's CRM: where it is, and the key it checks to know
+ * a request came from this site. Every call this site makes to it uses these
+ * two (server/lib/workspace.ts), so a new integration needs a path, not new
+ * settings. A schema of its own, like the mail account's, so a gap in Mongo,
+ * WhatsApp or Pusher cannot stop a call.
  */
 const workspaceSchema = z.object({
-  /** The full address of the POST route, e.g. https://crm.example.com/api/public/newsletter. */
-  ZAN_WORKSPACE_NEWSLETTER_URL: z
+  /** The app's base URL, e.g. https://crm.example.com. A path under it is kept. */
+  ZAN_WORKSPACE_URL: z
     .string()
     .trim()
     .pipe(z.url())
+    .refine((url) => {
+      const { search, hash } = new URL(url);
+      return !search && !hash;
+    }, "ZAN_WORKSPACE_URL must be a base URL, with no ? or # part")
     .refine(
       (url) => !isProduction() || url.startsWith("https://"),
-      "ZAN_WORKSPACE_NEWSLETTER_URL must start with https:// in production: the key travels with every request",
+      "ZAN_WORKSPACE_URL must start with https:// in production: the key travels with every request",
     ),
   /** A shared secret, the same value in both apps. Never sent to a browser. */
   ZAN_WORKSPACE_API_KEY: z.string().trim().min(32, "ZAN_WORKSPACE_API_KEY must be at least 32 characters"),
@@ -134,7 +139,7 @@ let cachedWorkspace: z.infer<typeof workspaceSchema> | null | undefined;
  */
 export function getWorkspaceEnv() {
   if (cachedWorkspace !== undefined) return cachedWorkspace;
-  const unset = !process.env.ZAN_WORKSPACE_NEWSLETTER_URL?.trim() && !process.env.ZAN_WORKSPACE_API_KEY?.trim();
+  const unset = !process.env.ZAN_WORKSPACE_URL?.trim() && !process.env.ZAN_WORKSPACE_API_KEY?.trim();
   return (cachedWorkspace = unset ? null : parse(workspaceSchema));
 }
 

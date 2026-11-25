@@ -9,7 +9,7 @@
 
 /**
  * Whether the band is shown, from next.config.ts: true when the build could
- * see ZAN_WORKSPACE_NEWSLETTER_URL and ZAN_WORKSPACE_API_KEY, and always in
+ * see ZAN_WORKSPACE_URL and ZAN_WORKSPACE_API_KEY, and always in
  * development, where a sign-up is logged instead of sent. A production build
  * without them shows no band: a form that cannot keep an address is worse
  * than no form.

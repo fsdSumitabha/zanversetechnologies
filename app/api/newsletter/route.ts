@@ -18,7 +18,8 @@ import {
 } from "@/server/lib/http";
 import { fromAnotherSite, ownReferer } from "@/server/lib/origin";
 import { clientIp, rateLimitWithin as limit } from "@/server/lib/rateLimit";
-import { forwardSubscription, WorkspaceNotConnected } from "@/server/services/newsletter.service";
+import { WorkspaceNotConnected } from "@/server/lib/workspace";
+import { forwardSubscription } from "@/server/services/newsletter.service";
 
 /** Mongoose, for the rate limits. */
 export const runtime = "nodejs";
@@ -130,7 +131,7 @@ export const POST = route(async (request: Request) => {
   } catch (error) {
     // Never the address: logs are no place for it.
     if (error instanceof WorkspaceNotConnected) {
-      logger.error({}, "newsletter: ZAN_WORKSPACE_NEWSLETTER_URL and ZAN_WORKSPACE_API_KEY are not set");
+      logger.error({}, "newsletter: ZAN_WORKSPACE_URL and ZAN_WORKSPACE_API_KEY are not set");
       return plain ? backToBand(request, "notSent") : fail(503, "Sign-ups are not open yet. Please try again later.");
     }
     logger.error({ err: error instanceof Error ? error.message : String(error) }, "newsletter: not passed on to zan-workspace");

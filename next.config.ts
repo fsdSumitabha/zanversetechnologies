@@ -117,10 +117,10 @@ const nextConfig: NextConfig = {
   env: {
     NEXT_PUBLIC_LEADS_READY: process.env.SMTP_USER && process.env.SMTP_PASS ? "true" : "false",
     /* The same for the newsletter band (lib/newsletter.ts): shown when the
-       build can see where to send a sign-up and the key to send with it, and
+       build can see zan-workspace's base URL and the key to call it with, and
        always in development, where a sign-up is logged and not sent. */
     NEXT_PUBLIC_NEWSLETTER_READY:
-      (process.env.ZAN_WORKSPACE_NEWSLETTER_URL?.trim() && process.env.ZAN_WORKSPACE_API_KEY?.trim()) ||
+      (process.env.ZAN_WORKSPACE_URL?.trim() && process.env.ZAN_WORKSPACE_API_KEY?.trim()) ||
       process.env.NODE_ENV !== "production"
         ? "true"
         : "false",
