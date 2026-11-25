@@ -12,7 +12,7 @@ import { Process } from "@/components/zan/landing/Process";
 import { QuoteProvider } from "@/components/zan/landing/QuoteProvider";
 import { WhyUs } from "@/components/zan/landing/WhyUs";
 import { Work } from "@/components/zan/landing/Work";
-import { landingPageBySlug, landingPages, landingPath } from "@/constants/landing";
+import { landingPageBySlug, landingPages, landingPath, landingSections } from "@/constants/landing";
 import { pageMetadata } from "@/lib/metadata";
 
 type RouteParams = { params: Promise<{ slug: string }> };
@@ -44,6 +44,10 @@ export async function generateMetadata({ params }: RouteParams): Promise<Metadat
  * differs between them. The sections run in the order a paid visitor is walked
  * through: the ask first, then what happens next, who else trusts us, what can
  * be bought, why us, how it runs, the proof, the objections, and the ask again.
+ * A page with no case study yet has its stack where the proof would be.
+ *
+ * Served at /landing-pages/<slug>; the old /lp/<slug> addresses redirect here
+ * (next.config.ts).
  */
 export default async function LandingPageRoute({ params }: RouteParams) {
   const { slug } = await params;
@@ -62,7 +66,7 @@ export default async function LandingPageRoute({ params }: RouteParams) {
         })),
       }}
     >
-      <LandingNav />
+      <LandingNav sections={landingSections(page)} />
       <main id="main">
         <LandingHero page={page} />
         <NextSteps page={page} />

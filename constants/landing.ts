@@ -1,5 +1,8 @@
 /* ───────────────────────────────────────────────────────────────────────────
-   THE LANDING PAGES: /lp/<slug>
+   THE LANDING PAGES: /landing-pages/<slug>
+
+   They were at /lp/<slug> until 24 November 2026. next.config.ts sends those
+   addresses here, so an ad or a shared link with the old address still lands.
 
    Paid-traffic pages, one per service, all drawn by one layout
    (components/zan/landing). What differs between them is the entry in
@@ -30,6 +33,11 @@
    page now quotes its own case study instead, from `projects`, because a figure
    about organic traffic proves nothing about an app.
 
+   A page with no case study of its own (blockchain, so far) borrows no other
+   page's. Its figures are the site's own and its senior blockchain developer's
+   experience, as the team page gives it, and where the case studies would be it
+   shows what the work is built with (`stack`), as its service page does.
+
    WHAT THE ADS ARE JUDGED ON. These pages run on Google Ads in Dubai. Quality
    Score's landing page component measures how relevant and useful the page is
    to someone who clicked the ad, so what counts is the service and the city on
@@ -54,10 +62,12 @@ import {
   office,
   practices,
   projects,
+  techDomains,
   webDevFaqs,
   whyUs,
   type FAQ,
   type Project,
+  type TechDomain,
 } from "@/constants/zan";
 
 /* ── The figures ─────────────────────────────────────────────────────────── */
@@ -120,7 +130,11 @@ export type PackageArtKey =
   | "creator-vetting"
   | "creator-campaign"
   | "ugc-whitelist"
-  | "creator-attribution";
+  | "creator-attribution"
+  | "smart-contract"
+  | "dapp"
+  | "nft-marketplace"
+  | "contract-audit";
 
 export interface LandingPackage {
   title: string;
@@ -155,7 +169,7 @@ export interface LandingComparison {
 }
 
 export interface LandingPage {
-  /** Last path segment: /lp/<slug>. */
+  /** Last path segment: /landing-pages/<slug>. */
   slug: string;
   /** Short name, for the sticky bar and in running copy. */
   label: string;
@@ -169,14 +183,23 @@ export interface LandingPage {
   subhead: string;
   /** The services in the words people search for: the hero's visible list. */
   serviceTerms: readonly string[];
-  /** Three results from this page's own case studies. */
+  /**
+   * Three results from this page's own case studies. A page with none gives
+   * published figures instead, and never another service's results.
+   */
   outcomes: readonly { value: string; label: string }[];
-  /** One headline number, taken from a case study shown on this page. */
+  /** One headline number: from a case study shown on this page, or as `outcomes` says. */
   proof: { value: string; label: string };
   packagesIntro: { title: readonly string[]; lead: string };
   decks: readonly LandingDeck[];
   /** `Project.category`: the case studies this page shows. */
   projectCategory: string;
+  /**
+   * For a page with no case study of its own: what the work is built with, by
+   * `techDomains` id, shown where the case studies would be, as the service
+   * page's technology band shows it. The nav calls that section "Tech Stack".
+   */
+  stack?: { lead: string; domains: readonly string[] };
   comparison: LandingComparison;
   faqs: readonly FAQ[];
   /**
@@ -769,12 +792,219 @@ export const landingPages: readonly LandingPage[] = [
     ],
     featuredFaqs: ["How much should I budget for digital marketing?", "How long does SEO take to show results?"],
   },
+  /* The words are /services/blockchain-web3's (constants/services/blockchain-web3.ts),
+     set out for a paid visitor. Nothing new is claimed: what it sells, how a
+     price is reached and how an audit runs are that page's own, the figures are
+     `metrics`, and the "5+" is the senior blockchain developer's experience on the
+     team page (`teamGroups` in constants/zan.ts). Change it there and here
+     together. The site has no blockchain case study yet, so this page shows its
+     stack where the others show their work. */
+  {
+    slug: "blockchain-development",
+    label: "Blockchain Development",
+    // The enquiry form's own option for this service (`serviceOptions`), so reports agree.
+    service: "Blockchain & Web3",
+    seo: {
+      title: "Blockchain Development Company in Dubai | Free Quote",
+      description:
+        "Blockchain development services in Dubai: smart contracts on Ethereum and Polygon, dApps, DeFi, NFT marketplaces and smart contract audits. Free quote.",
+      /* The service page's keyword research (docs/SEO_KEYWORDS_LEAN.md, November
+         2026), cut to what Google Ads' "Cryptocurrencies and related products"
+         policy allows without certification (support.google.com/adspolicy/answer/
+         14009787, read 24 Nov 2026). It allows businesses "that don't pertain to
+         buying, holding, or exchanging cryptocurrencies", and it prohibits ads for
+         ICOs, DeFi trading protocols, crypto trading, token liquidity pools,
+         unhosted wallets and "unregulated dApps". So only development, smart
+         contract and audit phrases are listed. Left out: DeFi, NFT marketplace,
+         dApp and Web3 phrases, which the policy does not define and an automated
+         review may read as the products themselves; tokenization, wallets and
+         tokens, which the site does not sell; and "polygon development", which
+         mostly finds a property company. No Keyword Planner report exists for
+         this campaign yet. */
+      keywords: [
+        "blockchain development company dubai",
+        "blockchain development in dubai",
+        "blockchain development services dubai",
+        "blockchain development company uae",
+        "blockchain company dubai",
+        "blockchain companies in dubai",
+        "blockchain companies in uae",
+        "blockchain developer dubai",
+        "blockchain developer uae",
+        "blockchain app development company in dubai",
+        "blockchain applications",
+        "smart contract development",
+        "smart contract development agency",
+        "smart contract development service provider",
+        "smart contract audit company",
+        "smart contract audit firms",
+        "smart contract security audit",
+        "what is a smart contract",
+        "what is blockchain",
+        "how to audit smart contracts",
+      ],
+    },
+    eyebrow: "Blockchain Development Company in Dubai",
+    headline: { lead: "Smart Contracts", accent: "Written for Audit" },
+    subhead:
+      "Blockchain development services in Dubai, from a single smart contract to a full dApp, DeFi platform or NFT marketplace: written in Solidity for Ethereum and Polygon, reviewed for security before launch, and priced before a line of code is written.",
+    /* The keywords above, as a visitor reads them. No DeFi, NFT, dApp or Web3
+       term here, for the same policy reason. */
+    serviceTerms: [
+      "Blockchain development",
+      "Blockchain app development",
+      "Smart contract development",
+      "Smart contract audit",
+      "Smart contract security review",
+      "Solidity development",
+      "Ethereum and Polygon development",
+    ],
+    outcomes: [
+      { value: "5+ yrs", label: "Senior blockchain developer's experience" },
+      { value: stat("projects"), label: "Projects delivered" },
+      { value: stat("on-time"), label: "On-time delivery" },
+    ],
+    proof: { value: "5+", label: "years of experience behind our senior blockchain developer" },
+    packagesIntro: {
+      title: ["Blockchain development", "services in Dubai"],
+      lead: "We are a blockchain development company in Dubai. Our blockchain developers provide smart contract development, dApp and DeFi development, NFT marketplace development and smart contract security audits, on Ethereum and Polygon. Blockchain development cost depends on what the contracts must do, so the final price is confirmed in a written quotation before work begins.",
+    },
+    /* No card is marked popular: there are no figures to say which one is. */
+    decks: [
+      {
+        label: "Blockchain development services",
+        covers: "",
+        packages: [
+          {
+            title: "Smart Contract Development",
+            description:
+              "Custom smart contract development in Solidity with Hardhat, on Ethereum and Polygon. Each contract is written to be audited before it goes live, so a reviewer can follow what each function does and who is allowed to call it.",
+            includes: ["Solidity and Hardhat", "Ethereum or Polygon", "Written to be audited", "Gas-aware design"],
+            art: "smart-contract",
+          },
+          {
+            title: "dApp & DeFi Development",
+            description:
+              "dApp development from the contracts to the screens, including the step where a person connects a wallet and approves a transaction. DeFi development for financial applications whose rules run in smart contracts rather than through a middleman.",
+            includes: ["Contracts and screens", "Wallet connection", "Transaction approvals", "Back end for on-chain data"],
+            art: "dapp",
+          },
+          {
+            title: "NFT Marketplace Development",
+            description:
+              "NFT marketplace development and other digital asset platforms, built on audited contracts, with the listing and transfer rules agreed up front and media files stored on IPFS where that suits the project.",
+            includes: ["Listing and transfer rules", "Audited contracts", "Media stored on IPFS", "Marketplace screens"],
+            art: "nft-marketplace",
+          },
+          {
+            title: "Smart Contract Audit",
+            description:
+              "A smart contract security audit before launch: the code read line by line against what it is meant to do, automated analysis and attempts at known attacks such as reentrancy. Each flaw found is reported by severity, and the fixes are checked.",
+            includes: ["Line-by-line review", "Automated analysis", "Known-attack testing", "Report and fix check"],
+            art: "contract-audit",
+          },
+        ],
+      },
+    ],
+    projectCategory: "blockchain-web3",
+    stack: {
+      lead: "Smart contracts in Solidity with Hardhat, for Ethereum and Polygon, and the screens people use on top of them, on the frameworks we use for our web work.",
+      domains: ["blockchain", "frontend"],
+    },
+    comparison: {
+      title: "Ethereum vs Polygon for your smart contracts",
+      description:
+        "We build on both, and the same Solidity code runs on each. The choice comes down to transaction fees and to where your users already are. Here is a side-by-side comparison to help you decide.",
+      feature: "Feature",
+      options: ["Ethereum", "Polygon"],
+      rows: [
+        { feature: "Smart contract language", values: ["Solidity", "Solidity (EVM compatible)"] },
+        { feature: "Development tooling", values: ["Hardhat", "Hardhat, the same set-up"] },
+        { feature: "Transaction fees", values: ["Higher, and they rise when the network is busy", "Lower per transaction"] },
+        {
+          feature: "Who secures the network",
+          values: ["Ethereum's own validators", "Polygon's validators, with checkpoints to Ethereum"],
+        },
+        { feature: "Best for", values: ["Contracts that will hold significant value", "Products with many small transactions"] },
+      ],
+      recommendation:
+        "Choose Ethereum when your contracts will hold significant value and your users are already there. Choose Polygon when your product depends on many small transactions and lower fees matter more. Because both run Solidity, the choice changes the fees and the audience rather than the code, and your written proposal includes a tech-stack recommendation.",
+    },
+    /* The first six are this page's own, answering what the ads bid on. The last
+       six are the service page's, word for word. They are copied, not imported:
+       constants/services stays out of the browser bundle, and this file is in it.
+       Change them in both places. */
+    faqs: [
+      {
+        question: "Are you a blockchain development company in Dubai?",
+        answer: `Yes. We are a blockchain development company based in Dubai, at ${office.addressLines.join(", ")}. Our blockchain developers write smart contracts in Solidity on Ethereum and Polygon, build dApps, DeFi platforms and NFT marketplaces, and carry out smart contract security audits, for clients in Dubai and across the UAE. The scope is confirmed in a written quotation before work begins.`,
+      },
+      {
+        question: "How much does blockchain development cost?",
+        answer:
+          "Blockchain development has no standard price, because the cost follows what the contracts must do and how much value they will hold. One contract with a few rules is less work than several contracts that call each other, contracts that will hold funds justify more testing and a deeper audit, and a dApp or marketplace also needs screens, a wallet connection and often a back end. We quote after a free 30-minute discovery call, as a written proposal with a line-item cost breakdown, so you can drop anything you do not need. Nothing is charged until you sign it.",
+      },
+      {
+        question: "How long does smart contract development take?",
+        answer: `It depends on what the contracts must do. One contract with a few rules takes less time than several that call each other, and contracts that will hold funds need more testing and a deeper audit before launch. The milestones and the timeline are set out in your written proposal, which you get within 3 to 5 business days of the discovery call. The work runs in agile sprints with weekly updates, and ${stat("on-time")} of our projects are delivered on time against the agreed timeline.`,
+      },
+      {
+        question: "Who will write our smart contracts?",
+        answer:
+          "The developers on our team: a senior blockchain developer with 5+ years of experience, who works on smart contracts from architecture through audit and deployment, and a blockchain developer who builds on-chain systems and the services that connect them to the product. You talk to the developers building your project directly.",
+      },
+      {
+        question: "Does my product need a blockchain?",
+        answer:
+          "A blockchain suits a job where several parties need a shared record that none of them controls. If one company owns the data and everyone trusts it, a normal database is usually simpler and cheaper. Whether your product needs regulatory approval is a legal question, so take advice from a qualified lawyer before the build starts.",
+      },
+      {
+        question: "Can you build the dApp's front end as well as the smart contracts?",
+        answer:
+          "Yes. A dApp combines the contracts with the screens people use, and we build both, including the step where a person connects a wallet and approves a transaction. We are also a web and mobile app development company, so the website or app around your product can come from the same team.",
+      },
+      {
+        question: "What is a smart contract?",
+        answer:
+          "A smart contract is a program that runs on a blockchain and carries out its rules when someone calls it. By default, its code cannot be edited after deployment, and transactions with it cannot be reversed. For that reason, a contract has to be tested and reviewed before it goes live.",
+      },
+      {
+        question: "How much does NFT marketplace development cost?",
+        answer:
+          "NFT marketplace development has no standard price, because it depends on what the marketplace must do. Listing and transfer rules, the number of contracts, the screens people use and the depth of the audit all change the work. We quote it after a free discovery call as a line-item estimate in writing, so you can drop anything you do not need.",
+      },
+      {
+        question: "How do you audit a smart contract?",
+        answer:
+          "A smart contract audit usually combines a line-by-line reading of the code against what it is meant to do, automated analysis and attempts at known attacks such as reentrancy. The report lists each flaw and how serious it is, the developer fixes it, and the fixes are checked. Ethereum's security guidance says audits will not catch every bug, so testing still matters.",
+      },
+      {
+        question: "What is blockchain, and how is it different from Web3?",
+        answer:
+          "A blockchain is a shared ledger kept by a network of computers, where each new block of records is linked to the one before. Web3 is a broader term for internet services built on blockchains, with ownership spread among users rather than held by one company. A Web3 product is usually a smart contract plus an interface.",
+      },
+      {
+        question: "Which blockchains do you build on?",
+        answer:
+          "We build on Ethereum and Polygon. Contracts are written in Solidity with Hardhat, and Polygon's compatibility with the Ethereum Virtual Machine means the same language works on both. The choice depends on transaction fees and on where your users already are, and your written proposal includes a tech-stack recommendation.",
+      },
+      {
+        question: "Can a smart contract be changed after it goes live?",
+        answer:
+          "Not directly. Code deployed on Ethereum cannot be edited, which is why contracts are audited before launch. An upgrade pattern, such as a proxy that points to a new logic contract, lets behaviour change later, but it adds complexity and asks users to trust whoever controls the upgrade.",
+      },
+    ],
+    featuredFaqs: ["How much does blockchain development cost?", "How long does smart contract development take?"],
+  },
 ];
 
 export const landingPageBySlug = (slug: string): LandingPage | undefined =>
   landingPages.find((page) => page.slug === slug);
 
-export const landingPath = (slug: string) => `/lp/${slug}`;
+/** The folder the pages are served from: app/(landing)/landing-pages. */
+const LANDING_ROOT = "/landing-pages";
+
+export const landingPath = (slug: string) => `${LANDING_ROOT}/${slug}`;
 
 /* ── Worked out from a page ──────────────────────────────────────────────── */
 
@@ -787,6 +1017,13 @@ export function landingProjects(page: LandingPage): readonly Project[] {
   return projects
     .filter((p) => p.category === page.projectCategory)
     .map((p) => ({ ...p, results: p.results.filter((r) => !/[$€£]|AED/.test(r.value)) }));
+}
+
+/** What a page with no case study shows instead, in the order `stack` names it. */
+export function landingStack(page: LandingPage): readonly TechDomain[] {
+  return (page.stack?.domains ?? [])
+    .map((id) => techDomains.find((domain) => domain.id === id))
+    .filter((domain): domain is TechDomain => domain !== undefined);
 }
 
 /** The two questions shown open, then the rest in their published order. */
@@ -903,6 +1140,8 @@ export const landingCopy = {
     more: "See what we can do for you",
     compareEyebrow: "Which is right for you",
     verdict: "Our recommendation",
+    /** In place of the case studies, on a page with none (`stack`). The title is the service page's. */
+    stack: { eyebrow: "Tech stack", title: ["What we build", "it with"], nav: "Tech Stack" },
   },
 
   faq: {
@@ -925,7 +1164,7 @@ export const landingCopy = {
   },
 
   footer: {
-    blurb: "Web development, mobile apps and digital marketing, delivered by one team and quoted up front.",
+    blurb: "Web development, mobile apps, blockchain and digital marketing, delivered by one team and quoted up front.",
     mainSite: "Visit the main site",
   },
 
@@ -935,3 +1174,20 @@ export const landingCopy = {
     lead: "The link you followed may be out of date. These are the pages we run at the moment.",
   },
 } as const;
+
+export interface LandingSection {
+  id: string;
+  label: string;
+}
+
+/**
+ * One page's nav anchors. On a page whose "work" section is its stack, the
+ * anchor says so: "Our Work" over a list of tools would promise a portfolio
+ * the section does not have.
+ */
+export function landingSections(page: LandingPage): readonly LandingSection[] {
+  if (landingProjects(page).length > 0 || !page.stack) return sections;
+  return sections.map((section) =>
+    section.id === "work" ? { ...section, label: landingCopy.work.stack.nav } : section,
+  );
+}

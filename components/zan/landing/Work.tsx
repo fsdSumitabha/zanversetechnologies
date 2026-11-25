@@ -2,8 +2,14 @@ import Image from "next/image";
 import { Reveal } from "@/components/zan/page/Reveal";
 import { SectionHeading } from "@/components/zan/ui/SectionHeading";
 import type { CSSProperties } from "react";
-import { landingCopy, landingProjects, type LandingComparison, type LandingPage } from "@/constants/landing";
-import type { Project } from "@/constants/zan";
+import {
+  landingCopy,
+  landingProjects,
+  landingStack,
+  type LandingComparison,
+  type LandingPage,
+} from "@/constants/landing";
+import type { Project, TechDomain } from "@/constants/zan";
 import { cn } from "@/lib/utils";
 import { CountFigure } from "./CountFigure";
 import { QuoteButton } from "./QuoteButton";
@@ -94,6 +100,38 @@ function CaseStudy({ project, flip }: { project: Project; flip: boolean }) {
         </dl>
       </article>
     </Reveal>
+  );
+}
+
+/**
+ * What the work is built with, for a page that has no case study to show. The
+ * service page's technology band, as cards on this page's ground: each domain's
+ * line and its tools. Nothing here stands for a result.
+ */
+function Stack({ domains }: { domains: readonly TechDomain[] }) {
+  return (
+    <ul className="mt-10 grid gap-5 sm:mt-12 md:grid-cols-2">
+      {domains.map((domain, i) => (
+        <li key={domain.id} className="min-w-0">
+          <Reveal delay={i * 0.06} className="h-full">
+            <article className="h-full rounded-3xl border border-border bg-surface p-6 shadow-lift sm:p-8">
+              <h3 className="font-display text-h3 font-semibold text-foreground">{domain.label}</h3>
+              <p className="mt-3 text-body text-muted">{domain.blurb}</p>
+              <ul className="mt-6 flex flex-wrap gap-2">
+                {domain.stack.map((tool) => (
+                  <li
+                    key={tool}
+                    className="rounded-full border border-border bg-surface-muted px-3 py-1.5 text-[0.8125rem] leading-none text-muted"
+                  >
+                    {tool}
+                  </li>
+                ))}
+              </ul>
+            </article>
+          </Reveal>
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -195,18 +233,42 @@ function Comparison({ data }: { data: LandingComparison }) {
   );
 }
 
+/**
+ * The proof: the page's case studies, or, on a page that has none yet, its
+ * stack under a heading that says so. Never another service's work. Then the
+ * comparison, on every page.
+ */
 export function Work({ page }: { page: LandingPage }) {
   const { work } = landingCopy;
+  const projects = landingProjects(page);
+  const stack = projects.length > 0 ? [] : landingStack(page);
   return (
     <section id="work" className="scroll-mt-nav border-t border-border bg-canvas py-[clamp(4rem,2.8rem+4.6vw,7rem)]">
       <div className="container-zan">
-        <SectionHeading eyebrow={work.eyebrow} title={work.title} size="h1" accentLine={1} />
+        {projects.length > 0 ? (
+          <>
+            <SectionHeading eyebrow={work.eyebrow} title={work.title} size="h1" accentLine={1} />
 
-        <div className="mt-10 space-y-6 sm:mt-12">
-          {landingProjects(page).map((project, i) => (
-            <CaseStudy key={project.id} project={project} flip={i % 2 === 1} />
-          ))}
-        </div>
+            <div className="mt-10 space-y-6 sm:mt-12">
+              {projects.map((project, i) => (
+                <CaseStudy key={project.id} project={project} flip={i % 2 === 1} />
+              ))}
+            </div>
+          </>
+        ) : (
+          stack.length > 0 && (
+            <>
+              <SectionHeading
+                eyebrow={work.stack.eyebrow}
+                title={work.stack.title}
+                lead={page.stack?.lead}
+                size="h1"
+                accentLine={1}
+              />
+              <Stack domains={stack} />
+            </>
+          )
+        )}
 
         <Comparison data={page.comparison} />
       </div>

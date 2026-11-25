@@ -6,7 +6,7 @@ import { Phone } from "lucide-react";
 import { Eyebrow } from "@/components/zan/ui/Eyebrow";
 import { SocialIcon } from "@/components/zan/shell/SocialIcon";
 import { landingCopy } from "@/constants/landing";
-import { office, site } from "@/constants/zan";
+import { hero, office, site } from "@/constants/zan";
 import { trackWhatsAppClick } from "@/lib/analytics";
 import { waLink } from "@/lib/links";
 import { useConsent } from "@/lib/useConsent";
@@ -35,28 +35,39 @@ const iconButton =
  *
  * The cookie banner runs along the same edge until it is answered, and it stays
  * on top of this. Hiding under it would lose the button for anyone who ignores
- * the banner, so the dock measures it and rides on top instead.
+ * the banner. While it is up the dock goes compact (no label, the short button
+ * text) and stays on the bottom edge beside it, from md the banner takes the
+ * left two thirds. Only where the two would still overlap, on a phone or a
+ * narrow tablet, does the dock measure the banner and ride on top of it.
  */
 export function QuoteDock({ label, show }: { label: string; show: boolean }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const consent = useConsent();
   const copy = landingCopy;
+  const bannerUp = consent === null;
 
   useEffect(() => {
     const root = rootRef.current;
-    if (!root || consent !== null) return;
+    if (!root || !bannerUp) return;
     const banner = document.querySelector("[data-consent-banner]");
     if (!banner) return;
-    const measure = () =>
-      root.style.setProperty("--lp-dock-lift", `${banner.getBoundingClientRect().height + BANNER_GAP}px`);
+    const measure = () => {
+      const edge = banner.getBoundingClientRect();
+      const dock = root.querySelector("aside")?.getBoundingClientRect();
+      // The dock's left edge does not move with the lift, so it can be read now.
+      const beside = dock !== undefined && dock.left >= edge.right + BANNER_GAP;
+      root.style.setProperty("--lp-dock-lift", beside ? "0px" : `${edge.height + BANNER_GAP}px`);
+    };
     measure();
     const observer = new ResizeObserver(measure);
     observer.observe(banner);
+    window.addEventListener("resize", measure);
     return () => {
       observer.disconnect();
+      window.removeEventListener("resize", measure);
       root.style.removeProperty("--lp-dock-lift");
     };
-  }, [consent]);
+  }, [bannerUp, show]);
 
   return (
     <div
@@ -84,7 +95,7 @@ export function QuoteDock({ label, show }: { label: string; show: boolean }) {
               "md:w-auto md:gap-2.5 md:rounded-full md:border md:border-border-strong md:p-2 md:shadow-float xl:pl-6",
             )}
           >
-            <p className="mr-4 hidden min-w-0 xl:block">
+            <p className={cn("mr-4 hidden min-w-0", !bannerUp && "xl:block")}>
               <span className="block text-small leading-tight font-semibold whitespace-nowrap text-foreground">{label}</span>
               <Eyebrow as="span" className="mt-1 text-[0.625rem] leading-none">
                 Free consultation
@@ -114,7 +125,7 @@ export function QuoteDock({ label, show }: { label: string; show: boolean }) {
               size="lg"
               className="h-12 min-w-0 flex-1 px-5 text-[0.9375rem] md:flex-none md:px-6"
             >
-              {copy.cta.primary}
+              {bannerUp ? hero.primary.short : copy.cta.primary}
             </QuoteButton>
           </motion.aside>
         )}
