@@ -74,6 +74,28 @@ export async function rateLimit(
   }
 }
 
+/**
+ * rateLimit() with a ceiling on the wait, for the public forms' routes. Mongo
+ * takes 10 seconds to report itself unreachable and a form route asks two or
+ * three times, which held a lead's mail back 20 seconds, long enough for a host
+ * to end the function. Past `waitMs` the check counts as passed, as it does
+ * when rateLimit() itself gives up.
+ */
+export function rateLimitWithin(
+  identity: string,
+  scope: string,
+  limit: number,
+  windowSeconds: number,
+  waitMs = 3000,
+): Promise<RateLimitResult> {
+  return Promise.race([
+    rateLimit(identity, scope, limit, windowSeconds),
+    new Promise<RateLimitResult>((resolve) =>
+      setTimeout(() => resolve({ allowed: true, remaining: 0, retryAfterSeconds: 0 }), waitMs),
+    ),
+  ]);
+}
+
 /** Forget a caller's count in the current window. Takes the same window as the limit it resets. */
 export async function clearRateLimit(
   identity: string,

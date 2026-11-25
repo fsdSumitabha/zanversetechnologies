@@ -14,6 +14,7 @@ import { AGENT_SCRIPT } from "@/lib/agentMode";
 import { Preloader } from "@/components/zan/shell/Preloader";
 import { Navbar } from "@/components/zan/shell/Navbar";
 import { Footer } from "@/components/zan/shell/Footer";
+import { Newsletter } from "@/components/zan/shell/Newsletter";
 import { ScrollProgress } from "@/components/zan/shell/ScrollProgress";
 import { RouteChange } from "@/components/zan/shell/RouteChange";
 import { WebMcpTools } from "@/components/zan/webmcp/WebMcpTools";
@@ -185,6 +186,10 @@ export default function SiteLayout({ children }: Readonly<{ children: React.Reac
             <RouteChange />
             <Navbar />
             {children}
+            {/* On every page of the site, so it is part of the shell and not
+                of any one page. Renders nothing when zan-workspace is not
+                connected in a production build (lib/newsletter.ts). */}
+            <Newsletter />
             <Footer />
           </SmoothScrollProvider>
           {/* Mounted once for the whole site, so the delay and the "asked

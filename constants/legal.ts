@@ -55,6 +55,15 @@
    period. Counsel should still read the new bullet, and should know that it
    no longer defers to the SOW.
 
+   One subsection is not counsel's text either: on 25 November 2026 privacy §3
+   gained "Newsletter", for the sign-up band above the footer
+   (components/zan/shell/Newsletter.tsx), and the policy's effective date
+   moved to November 25, 2026. It says what the band collects, what for, on
+   what basis, where it is kept, how to withdraw, and that an address that
+   unsubscribes stays on a do-not-email list. Counsel should read it, and
+   should check whether §4 has to name the company that runs the contact
+   system (zan-workspace), if that is not Zan Verse Technologies itself.
+
    Structure is flattened to tagged blocks so one renderer can lay out all five
    pages consistently.
    ─────────────────────────────────────────────────────────────────────────── */
@@ -89,7 +98,7 @@ export interface LegalDocument {
 export const legalDocuments: Record<string, LegalDocument> = {
   "privacy-policy": {
     title: "Privacy Policy",
-    effective: "October 23, 2026",
+    effective: "November 25, 2026",
     blocks: [
       { tag: "p", text: "Zan Verse Technologies (\"we,\" \"us,\" or \"our\"), located at IFZA Business Park, DDP, Premises Number 91117-001, Dubai Silicon Oasis, Dubai, United Arab Emirates, is committed to protecting your privacy. This Privacy Policy describes how we collect, use, process, store, share, and protect your personal data when you visit our website zanversetechnologies.com, contact us, request quotes, engage our services (web development, mobile apps, blockchain/Web3, AI solutions, digital marketing), or interact with us in any way." },
       { tag: "p", text: "We act as the controller of the personal data we process, within the meaning of the UAE's Federal Decree-Law No. 45 of 2021 regarding the Protection of Personal Data (PDPL) and other applicable data protection laws. By using our website or services, you consent to the practices described here. If you do not agree, please do not use our website or provide us with any personal data." },
@@ -119,6 +128,9 @@ export const legalDocuments: Record<string, LegalDocument> = {
       { tag: "li", text: "Comply with legal obligations, prevent fraud, enforce agreements, or protect rights/safety." },
       { tag: "li", text: "Legitimate interests (where applicable and balanced with your rights) or your consent." },
       { tag: "p", text: "Under the PDPL, processing is based on your consent or on another lawful basis the law recognizes (e.g., contract performance, legal compliance)." },
+      { tag: "h3", text: "Newsletter" },
+      { tag: "p", text: "If you sign up for our newsletter, we collect your email address, the date and time you agreed, the words you agreed to, and the page you signed up on. We use them only to send you the newsletter and to show that you agreed to receive it. The lawful basis is your consent. The newsletter is for people aged 18 and over." },
+      { tag: "p", text: "Sign-ups are kept in our internal contact management system. You can withdraw your consent at any time with the unsubscribe link in every newsletter, or by contacting us (details below). After you unsubscribe, we keep only your email address on a do-not-email list, so that we never send you the newsletter again." },
       { tag: "h2", text: "4. Sharing & Disclosure of Personal Data" },
       { tag: "p", text: "We do not sell your personal data. Sharing is limited to:" },
       { tag: "li", text: "Service providers/vendors: hosting, cloud (e.g., AWS), payment processors, analytics tools, all bound by strict confidentiality and purpose-limited agreements." },

@@ -31,6 +31,8 @@
      phone Icon click  a tel: link was followed, under the name the container's
                        call conversion listens for
      popup_view        an overlay was shown
+     newsletter_signup the newsletter band's sign-up went through. Not a lead,
+                       so never generate_lead, and nothing personal
 
    Every push guards `window.dataLayer` itself rather than assuming the
    bootstrap has run. An event can happen before the tags have loaded — a
@@ -143,6 +145,15 @@ export function trackPhoneClick() {
 /** An overlay the visitor was shown. */
 export function trackPopupView(popupName: string) {
   push({ event: "popup_view", popup_name: popupName });
+}
+
+/**
+ * A newsletter sign-up that went through. Not fired on a failed one. The
+ * address stays out of the dataLayer, for the reason given at
+ * trackFormSubmission.
+ */
+export function trackNewsletterSignup() {
+  push({ event: "newsletter_signup", form_name: "newsletter" });
 }
 
 /* ── The lead the /thank-you page reports ─────────────────────────────────── */

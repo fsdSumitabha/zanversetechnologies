@@ -8,7 +8,6 @@ import {
   forbidden,
   isFormPost,
   isJsonPost,
-  isLocalPath,
   methodNotAllowed,
   ok,
   parseBody,
@@ -19,7 +18,8 @@ import {
   seeOther,
   tooMany,
 } from "@/server/lib/http";
-import { clientIp, rateLimit, type RateLimitResult } from "@/server/lib/rateLimit";
+import { fromAnotherSite, httpUrl, ownReferer } from "@/server/lib/origin";
+import { clientIp, rateLimitWithin as limit } from "@/server/lib/rateLimit";
 import { sendLeadConfirmation, sendLeadNotification } from "@/server/services/mail.service";
 
 /** Nodemailer needs node:net and node:tls, and Mongoose the Node runtime. */
@@ -42,21 +42,6 @@ const bodySchema = z.object({
   page: pageLine.optional(),
 });
 
-/**
- * rateLimit() with a ceiling on the wait. Mongo takes 10 seconds to report itself
- * unreachable and this route asks three times, which held the team's mail back
- * 20 seconds, long enough for a host to end the function. Past 3 seconds the
- * check counts as passed, as it does when rateLimit() itself gives up.
- */
-function limit(identity: string, scope: string, max: number, windowSeconds: number): Promise<RateLimitResult> {
-  return Promise.race([
-    rateLimit(identity, scope, max, windowSeconds),
-    new Promise<RateLimitResult>((resolve) =>
-      setTimeout(() => resolve({ allowed: true, remaining: 0, retryAfterSeconds: 0 }), 3000),
-    ),
-  ]);
-}
-
 /* ── A plain form post ───────────────────────────────────────────────────── */
 
 /** Where a refused plain post lands when no page of this site sent it. */
@@ -66,53 +51,15 @@ const INVALID = "form=invalid";
 const TOO_MANY = `Too many enquiries right now. Please try again in a few minutes, or email us directly at ${site.email}.`;
 const NOT_SENT = `That did not send. Please go back and try again, or email us directly at ${site.email}.`;
 
-function httpUrl(value: string | null): URL | null {
-  if (!value) return null;
-  try {
-    const url = new URL(value);
-    return url.protocol === "https:" || url.protocol === "http:" ? url : null;
-  } catch {
-    return null;
-  }
-}
-
-/** The names this site answers to. Another site's page cannot set any of these on a post. */
-function ownHosts(request: Request): Set<string> {
-  const hosts = new Set([new URL(site.url).host, new URL(request.url).host]);
-  for (const header of ["host", "x-forwarded-host"]) {
-    const value = request.headers.get(header)?.split(",")[0].trim().toLowerCase();
-    if (value) hosts.add(value);
-  }
-  return hosts;
-}
-
-/**
- * Whether a browser sent this from another site's page. The browser writes both
- * headers and a page cannot change them. "same-site" is a sibling subdomain, which
- * has no form of ours either: the forms post to their own origin. A caller with
- * neither header is not a browser on someone else's page, and it passes: an agent
- * or a script speaks for itself, and the limits still apply to it.
- */
-function fromAnotherSite(request: Request): boolean {
-  const fetchSite = request.headers.get("sec-fetch-site");
-  if (fetchSite) return fetchSite === "cross-site" || fetchSite === "same-site";
-  const origin = request.headers.get("origin");
-  if (!origin) return false;
-  const from = httpUrl(origin);
-  return !from || !ownHosts(request).has(from.host);
-}
-
 /**
  * Back to the page that sent a refused post: only ever its path and query string,
  * only when the Referer names this site, and only a path that stays on this site
- * once it is a Location. Nothing in the body is read for this. Anything else goes
- * to the contact page.
+ * once it is a Location (ownReferer). Nothing in the body is read for this.
+ * Anything else goes to the contact page.
  */
 function backToForm(request: Request): Response {
-  const from = httpUrl(request.headers.get("referer"));
-  if (!from || !ownHosts(request).has(from.host) || !isLocalPath(from.pathname)) {
-    return seeOther(`${FORM_PAGE}?${INVALID}`);
-  }
+  const from = ownReferer(request);
+  if (!from) return seeOther(`${FORM_PAGE}?${INVALID}`);
   from.searchParams.set("form", "invalid");
   return seeOther(`${from.pathname}?${from.searchParams}`);
 }

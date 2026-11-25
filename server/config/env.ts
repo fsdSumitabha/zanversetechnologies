@@ -81,6 +81,26 @@ const mailSchema = z.object({
   MAIL_TO: z.string().email().optional().or(z.literal("")),
 });
 
+/**
+ * Where newsletter sign-ups go: zan-workspace's intake route, and the key it
+ * checks to know a request came from this site. A schema of its own, like the
+ * mail account's, so a gap in Mongo, WhatsApp or Pusher cannot stop a sign-up.
+ * See server/services/newsletter.service.ts for the request it is used in.
+ */
+const workspaceSchema = z.object({
+  /** The full address of the POST route, e.g. https://crm.example.com/api/public/newsletter. */
+  ZAN_WORKSPACE_NEWSLETTER_URL: z
+    .string()
+    .trim()
+    .pipe(z.url())
+    .refine(
+      (url) => !isProduction() || url.startsWith("https://"),
+      "ZAN_WORKSPACE_NEWSLETTER_URL must start with https:// in production: the key travels with every request",
+    ),
+  /** A shared secret, the same value in both apps. Never sent to a browser. */
+  ZAN_WORKSPACE_API_KEY: z.string().trim().min(32, "ZAN_WORKSPACE_API_KEY must be at least 32 characters"),
+});
+
 function parse<T extends z.ZodType>(from: T): z.infer<T> {
   const parsed = from.safeParse(process.env);
   if (!parsed.success) {
@@ -103,6 +123,19 @@ export function getEnv() {
 
 export function getMailEnv() {
   return (cachedMail ??= parse(mailSchema));
+}
+
+let cachedWorkspace: z.infer<typeof workspaceSchema> | null | undefined;
+
+/**
+ * Null when neither value is set: zan-workspace is not connected yet. Throws
+ * when only one is set, or a value is wrong, so a half-done setup shows in the
+ * log instead of passing for "not connected".
+ */
+export function getWorkspaceEnv() {
+  if (cachedWorkspace !== undefined) return cachedWorkspace;
+  const unset = !process.env.ZAN_WORKSPACE_NEWSLETTER_URL?.trim() && !process.env.ZAN_WORKSPACE_API_KEY?.trim();
+  return (cachedWorkspace = unset ? null : parse(workspaceSchema));
 }
 
 export const isProduction = () => process.env.NODE_ENV === "production";

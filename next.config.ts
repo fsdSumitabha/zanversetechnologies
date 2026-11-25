@@ -116,6 +116,14 @@ const nextConfig: NextConfig = {
      a build is where this has to be decided. */
   env: {
     NEXT_PUBLIC_LEADS_READY: process.env.SMTP_USER && process.env.SMTP_PASS ? "true" : "false",
+    /* The same for the newsletter band (lib/newsletter.ts): shown when the
+       build can see where to send a sign-up and the key to send with it, and
+       always in development, where a sign-up is logged and not sent. */
+    NEXT_PUBLIC_NEWSLETTER_READY:
+      (process.env.ZAN_WORKSPACE_NEWSLETTER_URL?.trim() && process.env.ZAN_WORKSPACE_API_KEY?.trim()) ||
+      process.env.NODE_ENV !== "production"
+        ? "true"
+        : "false",
   },
   /* The API is this project's own: /api/chat/*, /api/leads, /api/pusher/auth,
      /api/agent/* and the WhatsApp webhook are all implemented in app/api, over

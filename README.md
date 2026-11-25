@@ -67,6 +67,17 @@ To set it up on Gmail or Google Workspace:
 
 Limits: 5 leads per IP in 10 minutes, 40 per hour across the site, and 3 confirmations per address per hour. They count in MongoDB and fail open, so a database outage cannot stop a lead. They also fail open if `getEnv()` in `server/config/env.ts` rejects any chat setting, with an error in the log for every request, so check the log after setting up a new environment.
 
+## Newsletter
+
+The band above the footer on every site page (`components/zan/shell/Newsletter.tsx`) posts to `app/api/newsletter/route.ts`. The route checks the address and the consent box, then passes the sign-up to zan-workspace, which stores it and sends the newsletter. This site keeps no list. The request zan-workspace receives, and what it should do with it, is written out at the top of `server/services/newsletter.service.ts`.
+
+- `ZAN_WORKSPACE_NEWSLETTER_URL`: the full address of zan-workspace's POST route, `https://` in production.
+- `ZAN_WORKSPACE_API_KEY`: a shared secret of at least 32 characters, sent as the `x-api-key` header. Put the same value in zan-workspace.
+
+Set both before building: a production build without them shows no band. In development the band always shows, and a sign-up is logged instead of sent.
+
+The consent box starts unticked and is required. Its words and their version (`constants/newsletter.ts`) are sent with each sign-up as the record of what the person agreed to. The Privacy Policy describes the newsletter in §3. Limits: 5 sign-ups per IP in 10 minutes and 100 per hour across the site, counted in MongoDB and failing open. With no script running, the form still posts, and the route answers 303 back to the page with `#newsletter-subscribed`, `#newsletter-invalid` or `#newsletter-not-sent`, which the band shows through CSS `:target`.
+
 ## Structure
 
 | Path | What it holds |
@@ -76,7 +87,7 @@ Limits: 5 leads per IP in 10 minutes, 40 per hour across the site, and 3 confirm
 | `app/(site)/*/` | Every other page: services and the sixteen service pages, portfolio, how we work, about us, our team, contact, thank you and the five policies |
 | `app/(landing)/` | The paid landing pages (`/lp/<slug>`), with their own root layout: no preloader, no mega menu, no timed modal. Consent banner and tags as everywhere else. See "Landing pages" below |
 | `app/(console)/agent/` | The agent console, with its own root layout: no site shell, no consent banner, no tags |
-| `app/api/` | The chat, the enquiry forms' leads, the agent console's API, Pusher auth and the WhatsApp webhook |
+| `app/api/` | The chat, the enquiry forms' leads, newsletter sign-ups, the agent console's API, Pusher auth and the WhatsApp webhook |
 | `app/global-not-found.tsx` | The 404 for unmatched URLs, rendered in the site layout (the two root layouts leave no shared one) |
 | `app/robots.txt/`, `app/llms.txt/`, `app/llms-full.txt/`, `app/data/`, `app/md/`, `app/openapi.json/`, `app/.well-known/` | What crawlers and agents read, built from `lib/siteData.ts` and `lib/markdown.ts` |
 | `netlify/edge-functions/markdown-negotiation.ts` | Answers a page's URL in Markdown for `Accept: text/markdown`. Never do this in `next.config.ts` or `proxy.ts`: the file says why |

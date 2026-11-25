@@ -52,6 +52,10 @@ const CHANGED: Readonly<Record<string, string>> = {
   "/services/ai-machine-learning": "2026-11-10",
   // §6: three months of support for bug fixes. Effective November 10, 2026.
   "/refund-policy": "2026-11-10",
+
+  /* 25 November 2026. */
+  // §3 "Newsletter", for the sign-up band above the footer. Effective November 25, 2026.
+  "/privacy-policy": "2026-11-25",
 };
 
 /** The ISO date a path's content last changed. */
