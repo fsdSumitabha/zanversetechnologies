@@ -52,10 +52,12 @@ When a request arrives without the header, for example on localhost, the per-IP 
 
 ## Enquiry mail
 
-Every enquiry form, on the site and the landing pages, posts to `app/api/leads/route.ts`. That sends two mails from `SMTP_USER` through nodemailer (`server/services/mail.service.ts`):
+Every enquiry form, on the site and the landing pages, posts to `app/api/leads/route.ts`. That stores the lead in zan-workspace first (see "zan-workspace" below), then sends two mails from `SMTP_USER` through nodemailer (`server/services/mail.service.ts`):
 
-- **To the team:** `MAIL_TO`, or `site.email` if that is empty. It holds everything the visitor sent, and pressing Reply answers the visitor. If this mail fails, the visitor is told, and they get no confirmation.
+- **To the team:** `MAIL_TO`, or `site.email` if that is empty. It holds everything the visitor sent, and pressing Reply answers the visitor. It is sent whatever happened in zan-workspace. If it fails and zan-workspace has the lead, the lead still counts as sent. If both fail, the visitor is told, and they get no confirmation.
 - **To the visitor:** a confirmation. It is fixed text with no words from the form except a checked name, because anyone can type someone else's address into a public form. If only this mail fails, the lead still counts as sent.
+
+The chat widget's contact card (`app/api/chat/lead/route.ts`) copies its lead to zan-workspace too, after the handoff.
 
 With no script running, the forms still work. The route takes form data as well as JSON, and answers 303 to `/thank-you`, or 303 back to the page with `?form=invalid`. A filled trap field (`hp_leave_blank`) gets the same 303 to `/thank-you` with nothing sent. A post from another site's page is refused, with nothing sent. A lead sent this way reaches the inbox with `form` or `plain post` in its Source row, and fires no `generate_lead`.
 
@@ -69,18 +71,28 @@ Limits: 5 leads per IP in 10 minutes, 40 per hour across the site, and 3 confirm
 
 ## Newsletter
 
-The band above the footer on every site page (`components/zan/shell/Newsletter.tsx`) posts to `app/api/newsletter/route.ts`. The route checks the address and the consent box, then passes the sign-up to zan-workspace at `/api/integrations/zanverse/newsletter`, which stores it and sends the newsletter. This site keeps no list. The request zan-workspace receives, and what it should do with it, is written out at the top of `server/services/newsletter.service.ts`.
+The band above the footer on every site page (`components/zan/shell/Newsletter.tsx`) posts to `app/api/newsletter/route.ts`. The route checks the address and the consent box, then passes the sign-up to zan-workspace, which stores it and sends the newsletter. This site keeps no list. A sign-up is not a lead, and a lead is never added to the list.
 
-Every call to zan-workspace goes through `server/lib/workspace.ts`, with two settings:
-
-- `ZAN_WORKSPACE_URL`: zan-workspace's base URL, such as `https://crm.example.com`, `https://` in production. Each route is a path under it, listed in `WORKSPACE_PATHS`.
-- `ZAN_WORKSPACE_API_KEY`: a shared secret of at least 32 characters, sent as the `x-api-key` header on every call. Put the same value in zan-workspace.
-
-A new call between the two apps needs a path in `WORKSPACE_PATHS` and a function that calls `postToWorkspace()`, and no new settings.
-
-Set both before building: a production build without them shows no band. In development the band always shows, and a sign-up is logged instead of sent.
+Set `ZAN_WORKSPACE_URL` and `ZAN_WORKSPACE_API_KEY` before building: a production build without them shows no band. In development, or with `ZAN_WORKSPACE_DRY_RUN=true`, the band always shows, and a sign-up is logged instead of sent.
 
 The consent box starts unticked and is required. Its words and their version (`constants/newsletter.ts`) are sent with each sign-up as the record of what the person agreed to. The Privacy Policy describes the newsletter in §3. Limits: 5 sign-ups per IP in 10 minutes and 100 per hour across the site, counted in MongoDB and failing open. With no script running, the form still posts, and the route answers 303 back to the page with `#newsletter-subscribed`, `#newsletter-invalid` or `#newsletter-not-sent`, which the band shows through CSS `:target`.
+
+## zan-workspace
+
+zan-workspace is the company's CRM. This site and zanservices send it their leads and newsletter sign-ups the same way: the same two routes, the same body, the same headers. The code that does it is the same in both sites:
+
+- `server/config/workspace.ts`: the settings, this site's id (`SITE`), and the two routes, `/api/integrations/leads` and `/api/integrations/newsletter`.
+- `server/lib/workspaceClient.ts`: every request. It sends `Authorization: Bearer <ZAN_WORKSPACE_API_KEY>` and an `Idempotency-Key`, follows no redirect, and retries once.
+- `server/services/workspace.service.ts`: the body of each route, written out at the top.
+- `server/lib/phone.ts`: phone numbers in E.164, read the way zan-workspace reads them, with +971 for a number typed without a country code.
+
+Three settings:
+
+- `ZAN_WORKSPACE_URL`: zan-workspace's base URL, such as `https://crm.example.com`, with `https://`.
+- `ZAN_WORKSPACE_API_KEY`: this site's own key, at least 32 characters. zan-workspace holds the same value as `ZANVERSE_TECHNOLOGIES_SITE_API_KEY`. The key is how it knows a call is from this site, so it may write to the UAE region only, and its records get the source name `zanversetechnologies.com`. It must not be the key zanservices uses.
+- `ZAN_WORKSPACE_DRY_RUN`: `true` logs every lead and sign-up instead of sending it, for a preview deploy.
+
+Every lead and sign-up carries the region `AE` and the form it came from, in names that both sites share: `contact_form`, `contact_modal`, `landing_page_form`, `chat_widget`, `webmcp`, `api` and `newsletter_form`.
 
 ## Structure
 

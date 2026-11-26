@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { NEWSLETTER_CONSENT, NEWSLETTER_RECORD } from "@/constants/newsletter";
 import { EMAIL_PATTERN, TRAP_FIELD } from "@/lib/leads";
 import { NEWSLETTER_HASH } from "@/lib/newsletter";
 import { logger } from "@/server/config/logger";
@@ -18,8 +19,7 @@ import {
 } from "@/server/lib/http";
 import { fromAnotherSite, ownReferer } from "@/server/lib/origin";
 import { clientIp, rateLimitWithin as limit } from "@/server/lib/rateLimit";
-import { WorkspaceNotConnected } from "@/server/lib/workspace";
-import { forwardSubscription } from "@/server/services/newsletter.service";
+import { captureToWorkspace } from "@/server/services/workspace.service";
 
 /** Mongoose, for the rate limits. */
 export const runtime = "nodejs";
@@ -50,17 +50,20 @@ function backToBand(request: Request, outcome: keyof typeof NEWSLETTER_HASH): Re
 }
 
 /** In the shape the band's script sends: host, path and query string. */
-function pageFromReferer(request: Request): string {
+function pageFromReferer(request: Request): string | null {
   const from = ownReferer(request);
-  return from ? pageLine.parse(`${from.host}${from.pathname}${from.search}`) : "unknown";
+  return from ? pageLine.parse(`${from.host}${from.pathname}${from.search}`) : null;
 }
 
 /**
  * POST /api/newsletter
  *
- * The sign-up band above the footer. It checks the address and the consent,
- * then hands the sign-up to zan-workspace, which stores it and sends the
- * newsletter (server/services/newsletter.service.ts). Nothing is stored here.
+ * The sign-up band above the footer. zanservices has a route of the same
+ * name for its own newsletter form. It checks the address and the consent,
+ * then hands the sign-up to zan-workspace's /api/integrations/newsletter,
+ * which stores it and sends the newsletter
+ * (server/services/workspace.service.ts has the contract). Nothing is stored
+ * here.
  *
  *   Per caller   5 in 10 minutes. Enough for a person, not for a script.
  *   Site-wide    100 an hour, so a flood of made-up addresses stops here and
@@ -121,23 +124,28 @@ export const POST = route(async (request: Request) => {
   const everyone = await limit("site", "newsletter-global", 100, 3600);
   if (!everyone.allowed) return refuseTooMany(everyone.retryAfterSeconds);
 
-  try {
-    const result = await forwardSubscription({
-      email: body.email,
-      page: body.page || pageFromReferer(request),
-      consentAt: new Date(),
-    });
-    logger.info({ result }, "newsletter: subscribed");
-  } catch (error) {
-    // Never the address: logs are no place for it.
-    if (error instanceof WorkspaceNotConnected) {
-      logger.error({}, "newsletter: ZAN_WORKSPACE_URL and ZAN_WORKSPACE_API_KEY are not set");
+  // The words and their version come from constants/newsletter.ts, never
+  // from the request, so a caller cannot record words nobody was shown.
+  // consent.at is this server's clock, not the browser's.
+  const result = await captureToWorkspace("newsletter", {
+    region: NEWSLETTER_RECORD.region,
+    form: NEWSLETTER_RECORD.form,
+    page: body.page || pageFromReferer(request),
+    email: body.email.toLowerCase(),
+    consent: { text: NEWSLETTER_CONSENT.text, version: NEWSLETTER_CONSENT.version, at: new Date().toISOString() },
+  });
+
+  // Never the address: logs are no place for it.
+  if (!result.ok) {
+    if (result.reason === "not_configured") {
+      logger.error({}, "newsletter: zan-workspace is not set up (ZAN_WORKSPACE_URL, ZAN_WORKSPACE_API_KEY)");
       return plain ? backToBand(request, "notSent") : fail(503, "Sign-ups are not open yet. Please try again later.");
     }
-    logger.error({ err: error instanceof Error ? error.message : String(error) }, "newsletter: not passed on to zan-workspace");
+    logger.error({ reason: result.reason }, "newsletter: not passed on to zan-workspace");
     return plain ? backToBand(request, "notSent") : fail(502, "That did not go through. Please try again.");
   }
 
+  logger.info({ dryRun: result.dryRun }, "newsletter: subscribed");
   return plain ? backToBand(request, "subscribed") : ok({ subscribed: true });
 });
 

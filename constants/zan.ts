@@ -74,6 +74,11 @@ export const site = {
   heroOwner: "Dubai's",
   /** Country dialling code for phone fields. */
   dialCode: "+971",
+  /**
+   * zan-workspace's region code for this site's leads and newsletter
+   * sign-ups. Every one of them belongs to the UAE team.
+   */
+  region: "AE",
   /** ISO code of the currency work is invoiced in, and its name in prose. */
   currency: "AED",
   currencyName: "Dirhams",

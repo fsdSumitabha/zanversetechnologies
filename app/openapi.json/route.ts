@@ -108,11 +108,15 @@ const spec = {
     schemas: {
       Enquiry: {
         type: "object",
-        required: ["name", "email", "service"],
+        required: ["name", "email", "phone", "service"],
         properties: {
           name: { type: "string", minLength: 1, description: "The person's name. Must not be blank. Cut at 80 characters." },
           email: { type: "string", format: "email", maxLength: 160, description: "Where the reply goes." },
-          phone: { type: "string", description: "A phone number, if they gave one. Cut at 32 characters." },
+          phone: {
+            type: "string",
+            minLength: 1,
+            description: "The person's phone number, with its country code. Must not be blank. Cut at 32 characters.",
+          },
           service: {
             type: "string",
             description: "The service asked about. Use one of the examples where one fits. Cut at 120 characters.",

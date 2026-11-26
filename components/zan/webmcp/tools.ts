@@ -445,7 +445,7 @@ const sendEnquiry: Tool = {
       },
       phone: {
         type: "string",
-        description: "A phone number with its country code, in digits, spaces and + ( ) - only. Optional.",
+        description: "A phone number with its country code, in digits, spaces and + ( ) - only. Required: ask the person for it.",
         maxLength: 20,
         pattern: PHONE_PATTERN,
       },
@@ -461,7 +461,7 @@ const sendEnquiry: Tool = {
         maxLength: 5000,
       },
     },
-    ["name", "email", "service", "message"],
+    ["name", "email", "phone", "service", "message"],
   ),
   annotations: { consequentialHint: true },
   run: async (values, signal) => {

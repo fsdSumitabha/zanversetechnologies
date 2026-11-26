@@ -3,16 +3,16 @@
 
    What the sign-up band (components/zan/shell/Newsletter.tsx) and
    app/api/newsletter share. The route checks a sign-up and passes it on to
-   zan-workspace (server/services/newsletter.service.ts), so the key that
+   zan-workspace (server/services/workspace.service.ts), so the key that
    zan-workspace checks stays on the server.
    ─────────────────────────────────────────────────────────────────────────── */
 
 /**
  * Whether the band is shown, from next.config.ts: true when the build could
- * see ZAN_WORKSPACE_URL and ZAN_WORKSPACE_API_KEY, and always in
- * development, where a sign-up is logged instead of sent. A production build
- * without them shows no band: a form that cannot keep an address is worse
- * than no form.
+ * see ZAN_WORKSPACE_URL and ZAN_WORKSPACE_API_KEY, in a dry run, and always
+ * in development, where a sign-up is logged instead of sent. A production
+ * build without them shows no band: a form that cannot keep an address is
+ * worse than no form.
  */
 export const newsletterReady = process.env.NEXT_PUBLIC_NEWSLETTER_READY === "true";
 

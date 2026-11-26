@@ -1,10 +1,11 @@
 /* ───────────────────────────────────────────────────────────────────────────
    LEADS
 
-   What the enquiry forms and app/api/leads share. The forms post here and the
-   route sends the mail (server/services/mail.service.ts), so the SMTP password
-   stays on the server and nothing about the mail account reaches the bundle
-   except the one yes or no below.
+   What the enquiry forms and app/api/leads share. The forms post here, and
+   the route stores the lead in zan-workspace first and then sends the mail
+   (server/services/mail.service.ts), so the SMTP password and the
+   zan-workspace key stay on the server and nothing about either reaches the
+   bundle except the one yes or no below.
    ─────────────────────────────────────────────────────────────────────────── */
 
 /**
@@ -51,7 +52,8 @@ export function scriptValidates(form: HTMLFormElement | null) {
 export interface Lead {
   name: string;
   email: string;
-  phone?: string;
+  /** Required on every form: every lead in zan-workspace has a phone. */
+  phone: string;
   /** The service asked about. */
   service: string;
   /** The package picked, on a landing page. */
@@ -66,6 +68,13 @@ export interface Lead {
    * apart by the same word.
    */
   source: string;
+  /**
+   * Which enquiry form, in zan-workspace's names, when the form can say: the
+   * contact popup ("contact_modal") is the same form as the contact section.
+   * Left out, the route works it out from `source`. The team's mail does not
+   * show it; it already shows the Source row.
+   */
+  form?: "contact_form" | "contact_modal";
   /**
    * Host, path and query string, so a tagged ad link says which campaign paid.
    * The route takes it from the Referer if the caller gave none, or says "unknown".

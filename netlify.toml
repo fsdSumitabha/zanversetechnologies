@@ -61,6 +61,10 @@
   #                               can stay unset (Netlify's own header is the
   #                               default); listed so that setting it cannot
   #                               break a deploy for a reason nobody would guess.
+  #   ZAN_WORKSPACE_URL          zan-workspace's address, not a credential. Its
+  #                               key, ZAN_WORKSPACE_API_KEY, stays scanned.
+  #   ZAN_WORKSPACE_DRY_RUN      "true" or "false", words that appear throughout
+  #                               any bundle.
   #
   # The analytics IDs are NOT listed because they are not environment variables:
   # GTM, Google Ads, Meta Pixel and LinkedIn are hardcoded public IDs in
@@ -69,7 +73,7 @@
   # Before adding anything to this list, confirm the variable is genuinely not
   # a credential. If a future build flags one that is NOT listed here, treat it
   # as a real finding and investigate rather than extending the list.
-  SECRETS_SCAN_OMIT_KEYS = "LOG_LEVEL,NODE_ENV,GEMINI_MODEL,WHATSAPP_API_VERSION,WHATSAPP_TEMPLATE_LOCALE,WHATSAPP_DRY_RUN,WHATSAPP_LEAD_TEMPLATE,TRUSTED_IP_HEADER,NEXT_PUBLIC_PUSHER_KEY,NEXT_PUBLIC_PUSHER_CLUSTER,NEXT_PUBLIC_WEBMCP_OT_TOKEN,PUSHER_APP_ID,SMTP_HOST,SMTP_PORT,SMTP_USER,MAIL_TO"
+  SECRETS_SCAN_OMIT_KEYS = "LOG_LEVEL,NODE_ENV,GEMINI_MODEL,WHATSAPP_API_VERSION,WHATSAPP_TEMPLATE_LOCALE,WHATSAPP_DRY_RUN,WHATSAPP_LEAD_TEMPLATE,TRUSTED_IP_HEADER,NEXT_PUBLIC_PUSHER_KEY,NEXT_PUBLIC_PUSHER_CLUSTER,NEXT_PUBLIC_WEBMCP_OT_TOKEN,PUSHER_APP_ID,SMTP_HOST,SMTP_PORT,SMTP_USER,MAIL_TO,ZAN_WORKSPACE_URL,ZAN_WORKSPACE_DRY_RUN"
 
   # The build cache is restored and saved between builds but is never deployed,
   # so scanning it reports on bytes no visitor can reach. It produced the

@@ -88,9 +88,11 @@ const NOT_SURE = "Not sure yet";
 const FORM_NAME = "enquiry_form";
 /**
  * The phone field's hint: the UAE format, with its dialling code. A hint and
- * not a prefilled "+971", because the field is optional: a prefilled code
- * would either arrive as somebody's "number" or fail the pattern for a
- * visitor who skipped the field. Any international number is accepted.
+ * not a prefilled "+971", because visitors from elsewhere type their own
+ * code, and a prefilled one would end up in front of it. Any international
+ * number is accepted; one without a code is read as a UAE number. Required,
+ * as on every lead form of both sites: every lead in zan-workspace has a
+ * phone.
  */
 const PHONE_HINT = `${site.dialCode} 5X XXX XXXX`;
 /** What each field is called, on its label and in the live region. */
@@ -122,7 +124,7 @@ function messageFor(el: Control): string | undefined {
         ? "We need an email address to reply to."
         : "That email address looks incomplete. Check it and try again.";
     case "phone":
-      return "Use digits, spaces and + ( ) - only.";
+      return v.valueMissing ? "We need a phone number to reach you." : "Use digits, spaces and + ( ) - only.";
     case "service":
       return `Pick the closest service, or “${NOT_SURE}”.`;
     case "message":
@@ -338,7 +340,14 @@ export function EnquiryForm({
     reply?.(AGENT_REPLY.sending);
     setState("sending");
     try {
-      await sendLead({ ...lead, service: chosen, message: get("message"), source: FORM_NAME });
+      await sendLead({
+        ...lead,
+        service: chosen,
+        message: get("message"),
+        source: FORM_NAME,
+        // zan-workspace's name for where this form is: the popup, or the page.
+        form: compact ? "contact_modal" : "contact_form",
+      });
 
       trackFormSubmission(FORM_NAME, chosen);
       // What /thank-you reports as user_data for Enhanced Conversions.
@@ -423,18 +432,19 @@ export function EnquiryForm({
           />
         </FieldShell>
 
-        <FieldShell id={id("phone")} label={LABELS.phone} optional error={errors.phone}>
+        <FieldShell id={id("phone")} label={LABELS.phone} error={errors.phone}>
           <input
             id={id("phone")}
             name="phone"
             type="tel"
             inputMode="tel"
             autoComplete="tel"
+            required
             disabled={busy}
             pattern="[0-9+\s\(\)\-]{6,20}"
             placeholder={PHONE_HINT}
             className={cn(control, "h-12")}
-            {...toolParam("A phone number with its country code. Optional.")}
+            {...toolParam("A phone number with its country code.")}
             {...invalid("phone")}
           />
         </FieldShell>

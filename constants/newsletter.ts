@@ -6,12 +6,14 @@
    the browser: nothing here is a secret.
 
    THE CONSENT WORDING IS A RECORD. The route (app/api/newsletter) sends
-   `consent.text` and `consent.version` to zan-workspace with every sign-up, as
-   the proof of what the person agreed to. The text is taken from here on the
+   `text` and `version` to zan-workspace with every sign-up, as the proof of
+   what the person agreed to. The text is taken from here on the
    server, never from the request, so a caller cannot record words nobody was
    shown. Change the text and you must change the version, so older sign-ups
    still point at the wording they saw.
    ─────────────────────────────────────────────────────────────────────────── */
+
+import { site } from "./zan";
 
 export const newsletter = {
   eyebrow: "Newsletter",
@@ -59,11 +61,11 @@ export const NEWSLETTER_CONSENT = {
 
 /**
  * Where the address is stored, in zan-workspace's own words: its region code
- * for the UAE, where the consent came from, and the tags its audience rules
- * can pick sign-ups out by.
+ * for the UAE, and this form's id. zan-workspace makes the source name and
+ * the tags itself, from this site's key: "form:zanversetechnologies.com/
+ * newsletter_form", and the tags "newsletter" and "zanversetechnologies.com".
  */
 export const NEWSLETTER_RECORD = {
-  region: "AE",
-  consentSource: "form:zanversetechnologies.com/newsletter",
-  tags: ["newsletter", "zanversetechnologies.com"],
+  region: site.region,
+  form: "newsletter_form",
 } as const;

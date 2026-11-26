@@ -409,7 +409,7 @@ function contact(): string {
     contactDetails(),
     para("The Dubai office answers this number on calls and on WhatsApp. Every enquiry is answered within 24 hours."),
     heading(2, "Send an enquiry"),
-    para(`The form on this page asks for your name, your email, the service and your project. Phone is optional. Page: ${absoluteUrl("/contact-us")}`),
+    para(`The form on this page asks for your name, your email, your phone number, the service and your project. Page: ${absoluteUrl("/contact-us")}`),
     para(`An agent acting for a person can send the same enquiry with POST ${absoluteUrl("/api/leads")}, described in ${absoluteUrl("/openapi.json")}.`),
     faqBand(faqIntro.title.join(" "), faqs),
   );
@@ -581,7 +581,7 @@ export function llmsTxt(): string {
       `${link(office.phoneDisplay, `tel:${office.phoneTel}`)}: Calls and WhatsApp.`,
       `${link("WhatsApp", waLink(site.whatsapp, site.name))}: Start a chat.`,
       `${link("Office", officeMapUrl)}: ${text(officeAddress)}`,
-      `${link("Send an enquiry", absoluteUrl("/openapi.json"))}: POST ${absoluteUrl("/api/leads")} with a name, email and service, when the person you act for has asked you to.`,
+      `${link("Send an enquiry", absoluteUrl("/openapi.json"))}: POST ${absoluteUrl("/api/leads")} with a name, email, phone number and service, when the person you act for has asked you to.`,
     ]),
     heading(2, "Optional"),
     list([

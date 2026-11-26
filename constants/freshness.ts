@@ -56,6 +56,11 @@ const CHANGED: Readonly<Record<string, string>> = {
   /* 25 November 2026. */
   // §3 "Newsletter", for the sign-up band above the footer. Effective November 25, 2026.
   "/privacy-policy": "2026-11-25",
+
+  /* 26 November 2026. */
+  // The enquiry form asks for a phone number, as every lead form does, and
+  // the page's Markdown copy says so.
+  "/contact-us": "2026-11-26",
 };
 
 /** The ISO date a path's content last changed. */
